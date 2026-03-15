@@ -1,27 +1,31 @@
-name: Build and deploy guide
+name: Build and validate
+
 on:
-  push:
-    branches: [main]
+  pull_request:
     paths:
       - 'docs/guide/*.md'
       - 'templates/**'
       - 'scripts/**'
       - '_layouts/**'
+      - 'package.json'
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
-        with: {node-version: '20'}
+        with:
+          node-version: '20'
+          cache: npm
+
       - run: npm ci
-      - run: node scripts/build-guide.js
-      - run: node scripts/build-forms.js
-      - run: node scripts/validate-build.js
-      - name: Commit rendered HTML
+
+      - name: Build guide and forms
         run: |
-          git config user.name  "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add docs/guide/*.html docs/forms/*.html
-          git diff --staged --quiet || git commit -m "ci: rebuild guide and forms"
-          git push
+          node scripts/build-guide.js
+          node scripts/build-forms.js
+
+      - name: Validate build
+        run: node scripts/validate-build.js
