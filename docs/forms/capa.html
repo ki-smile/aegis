@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CAPA record — AEGIS Forms</title>
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <link rel="stylesheet" href="../assets/css/forms.css">
+  <script src="../assets/js/theme.js"></script>
+</head>
+<body>
+  <nav class="site-nav">
+    <div class="nav-logo">
+      <a href="../index.html">AEGIS</a>
+    </div>
+    <div class="nav-links">
+      <a href="../index.html">Home</a>
+      <a href="../guide/index.html">Guide</a>
+      <a href="index.html">Forms</a>
+      <a href="https://github.com/ki-smile/aegis" target="_blank" rel="noopener">GitHub</a>
+      <button class="theme-toggle" id="theme-toggle">☾ Dark</button>
+    </div>
+  </nav>
+
+  <div class="form-page">
+    <h1>CAPA record</h1>
+    <div class="form-supplement">Supplement Appendix D</div>
+    <p class="form-description">Corrective and preventive action record for REJECT, ALARM, or escalated CLINICAL REVIEW events. Includes root cause analysis, corrective action plan, and regulatory notification assessment.</p>
+
+    <div class="prefill-bar">
+  <button type="button" class="btn-prefill" id="prefill-sepsis">Load sepsis example</button>
+  <button type="button" class="btn-prefill" id="prefill-brats">Load BraTS example</button>
+</div>
+
+
+    <form id="capa" onsubmit="return false;">
+      <div class="form-section">
+  <h2>Device information</h2>
+  <div class="section-source">Common header</div>
+<div class="form-group">
+  <label for="device_name">Device name *</label>
+  <input type="text" id="device_name" name="device_name" placeholder="e.g. SepsisGuard v2.1" required>
+  <div class="help-text">Include version number</div>
+</div>
+<div class="form-group">
+  <label for="intended_use">Intended use *</label>
+  <textarea id="intended_use" name="intended_use" placeholder="Describe the intended clinical use of the device" required></textarea>
+  <div class="help-text">Reference IEC 62304 or IFU documentation</div>
+</div>
+<div class="form-group">
+  <label for="author_name">Author name *</label>
+  <input type="text" id="author_name" name="author_name" placeholder="e.g. Jane Doe" required>
+</div>
+<div class="form-group">
+  <label for="author_role">Author role *</label>
+  <input type="text" id="author_role" name="author_role" placeholder="e.g. ML Engineer" required>
+</div>
+<div class="form-group">
+  <label for="date">Date *</label>
+  <input type="date" id="date" name="date" required>
+</div>
+<div class="form-group">
+  <label for="org">Organisation *</label>
+  <input type="text" id="org" name="org" placeholder="e.g. Karolinska University Hospital" required>
+</div>
+</div>
+<div class="form-section">
+  <h2>Event identification</h2>
+  <div class="section-source">Supplementary Appendix D</div>
+<div class="form-group">
+  <label for="iteration">Iteration number *</label>
+  <input type="number" id="iteration" name="iteration" placeholder="e.g. 10" value="" step="any" required>
+</div>
+<div class="form-group">
+  <label for="decision_trigger">Decision trigger *</label>
+  <select id="decision_trigger" name="decision_trigger" required>
+    <option value="">Select...</option>
+    <option value="REJECT">REJECT</option>
+    <option value="ALARM">ALARM</option>
+    <option value="REJECT + ALARM">REJECT + ALARM</option>
+    <option value="CLINICAL REVIEW escalated">CLINICAL REVIEW escalated</option>
+  </select>
+</div>
+<div class="form-group">
+  <label for="alarm_conditions">Alarm conditions triggered</label>
+  <input type="text" id="alarm_conditions" name="alarm_conditions">
+</div>
+<div class="form-group">
+  <label for="trigger_metrics">Trigger metrics and values *</label>
+  <textarea id="trigger_metrics" name="trigger_metrics" placeholder="List the specific metrics that triggered the event" required></textarea>
+</div>
+<div class="form-group">
+  <label for="event_date">Event date *</label>
+  <input type="date" id="event_date" name="event_date" required>
+</div>
+</div>
+<div class="form-section">
+  <h2>Root cause analysis</h2>
+  <div class="section-source">Supplementary Appendix D</div>
+<div class="form-group">
+  <label for="root_cause_category">Root cause category *</label>
+  <select id="root_cause_category" name="root_cause_category" required>
+    <option value="">Select...</option>
+    <option value="Data drift — covariate drift">Data drift — covariate drift</option>
+    <option value="Data drift — concept drift">Data drift — concept drift</option>
+    <option value="Data quality — labelling error">Data quality — labelling error</option>
+    <option value="Data quality — missing values">Data quality — missing values</option>
+    <option value="Model degradation — overfitting">Model degradation — overfitting</option>
+    <option value="Model degradation — underfitting">Model degradation — underfitting</option>
+    <option value="Infrastructure failure">Infrastructure failure</option>
+    <option value="Unknown — under investigation">Unknown — under investigation</option>
+  </select>
+</div>
+<div class="form-group">
+  <label for="root_cause_desc">Root cause description *</label>
+  <textarea id="root_cause_desc" name="root_cause_desc" placeholder="Describe the identified or suspected root cause" required></textarea>
+</div>
+<div class="form-group">
+  <label for="supporting_evidence">Supporting evidence</label>
+  <textarea id="supporting_evidence" name="supporting_evidence" placeholder="Reference audit logs, metric plots, or drift analysis results"></textarea>
+</div>
+</div>
+<div class="form-section">
+  <h2>Corrective action plan</h2>
+  <div class="section-source">Supplementary Appendix D</div>
+<div class="form-group">
+  <label for="action_desc">Corrective action description *</label>
+  <textarea id="action_desc" name="action_desc" placeholder="Describe the planned corrective action" required></textarea>
+</div>
+<div class="form-group">
+  <label for="responsible_person">Responsible person *</label>
+  <input type="text" id="responsible_person" name="responsible_person" placeholder="e.g. Dr. A. Clinician" required>
+</div>
+<div class="form-group">
+  <label for="target_date">Target completion date *</label>
+  <input type="date" id="target_date" name="target_date" required>
+</div>
+<div class="form-group">
+  <label for="verification_method">Verification method *</label>
+  <textarea id="verification_method" name="verification_method" placeholder="How will you verify the corrective action was effective?" required></textarea>
+</div>
+<div class="form-group">
+  <label for="preventive_action">Preventive action</label>
+  <textarea id="preventive_action" name="preventive_action" placeholder="Actions to prevent recurrence"></textarea>
+</div>
+</div>
+<div class="form-section">
+  <h2>Regulatory notification assessment</h2>
+  <div class="section-source">Supplementary Appendix D</div>
+<div class="form-group">
+  <label for="regulatory_notification">Regulatory notification required *</label>
+  <select id="regulatory_notification" name="regulatory_notification" required>
+    <option value="">Select...</option>
+    <option value="No">No</option>
+    <option value="Yes — EU MDR Art. 87">Yes — EU MDR Art. 87</option>
+    <option value="Yes — FDA MDR">Yes — FDA MDR</option>
+    <option value="Yes — both">Yes — both</option>
+    <option value="Under review">Under review</option>
+  </select>
+</div>
+<div class="form-group">
+  <label for="notification_rationale">Notification rationale</label>
+  <textarea id="notification_rationale" name="notification_rationale" placeholder="Explain why notification is or is not required"></textarea>
+</div>
+<div class="form-group">
+  <label for="notification_date">Notification date (if applicable)</label>
+  <input type="date" id="notification_date" name="notification_date">
+</div>
+</div>
+
+
+      <button type="button" class="btn-download" id="download-docx">
+        Download .docx
+      </button>
+
+      <div class="form-privacy">
+        All data stays in your browser. Nothing is sent to any server.
+      </div>
+    </form>
+  </div>
+
+  <script src="https://unpkg.com/docx@8/build/index.umd.js"></script>
+  <script src="../assets/js/forms-docx.js"></script>
+  <script>
+    document.getElementById('prefill-sepsis')?.addEventListener('click', function() {
+  var ex = {"device_name":"SepsisGuard v2.1","intended_use":"Early prediction of sepsis onset in adult ICU patients using continuous EHR monitoring","author_name":"Dr. A. Clinician","author_role":"Clinical Data Scientist","org":"Karolinska University Hospital","iteration":"10","decision_trigger":"REJECT + ALARM","alarm_conditions":["a3"],"trigger_metrics":"Sensitivity 0.428 < P_fail 0.65; Drift score 1.000 > θ_major 0.90","root_cause_category":"Data drift — concept drift","root_cause_desc":"Catastrophic label corruption (80% positive flip, 30% negative flip) with Gaussian noise σ=4×std across n=25,000 samples.","supporting_evidence":"Audit log iteration 10: sensitivity dropped from 0.890 (gold standard) to 0.428. Drift score reached 1.000 (all 34 features significant). Label corruption confirmed via comparison with original PhysioNet labels.","action_desc":"Discard corrupted drifting dataset D_D,10. Retrain model on D_T,10 excluding corrupted samples. Re-evaluate on golden dataset D_G.","responsible_person":"Dr. A. Clinician","verification_method":"Re-run iteration with clean data; verify sensitivity ≥ P_fail (0.65) and drift score < θ_major (0.90); compare against gold standard.","preventive_action":"Implement automated data quality checks before ingestion: label consistency validation, distribution comparison against reference, and outlier detection.","regulatory_notification":"Under review","notification_rationale":"Event involves simulated data corruption in research setting; no patient impact. Review with regulatory affairs team required before determination."};
+  for (var id in ex) {
+    var el = document.getElementById(id) || document.querySelector('[name="'+id+'"]');
+    if (el) {
+      if (el.type === 'checkbox') { el.checked = true; }
+      else { el.value = ex[id]; }
+      if (el.type === 'range') { var valEl = document.getElementById(id+'-val'); if(valEl) valEl.textContent = ex[id]; }
+    }
+  }
+});
+document.getElementById('prefill-brats')?.addEventListener('click', function() {
+  var ex = {"device_name":"BraTSeg v1.0","intended_use":"Automated segmentation of brain tumours (glioma) from multi-modal MRI for surgical planning","author_name":"Dr. B. Radiologist","author_role":"Neuroradiology Fellow","org":"Karolinska University Hospital"};
+  for (var id in ex) {
+    var el = document.getElementById(id) || document.querySelector('[name="'+id+'"]');
+    if (el) {
+      if (el.type === 'checkbox') { el.checked = true; }
+      else { el.value = ex[id]; }
+      if (el.type === 'range') { var valEl = document.getElementById(id+'-val'); if(valEl) valEl.textContent = ex[id]; }
+    }
+  }
+});
+
+document.getElementById('download-docx')?.addEventListener('click', function() {
+  if (!window.AEGISForms || !window.docx) { alert('Libraries not loaded yet. Please wait.'); return; }
+  var F = window.AEGISForms;
+  var docx = window.docx;
+
+  var headerValues = {
+    device_name: (document.getElementById('device_name') || {}).value || '',
+    intended_use: (document.getElementById('intended_use') || {}).value || '',
+    author_name: (document.getElementById('author_name') || {}).value || '',
+    author_role: (document.getElementById('author_role') || {}).value || '',
+    date: (document.getElementById('date') || {}).value || '',
+    org: (document.getElementById('org') || {}).value || ''
+  };
+
+  var children = [];
+  children = children.concat(F.buildTitle("AEGIS CAPA Record", "Appendix D"));
+
+  children = children.concat(F.buildHeader(headerValues));
+
+  // Section: Device information
+  children = children.concat(F.buildSectionHeading("Device information", "Common header"));
+  children.push(F.buildLabelValue("Device name", (document.getElementById('device_name') || {}).value || ''));
+  children.push(F.buildLabelValue("Intended use", (document.getElementById('intended_use') || {}).value || ''));
+  children.push(F.buildLabelValue("Author name", (document.getElementById('author_name') || {}).value || ''));
+  children.push(F.buildLabelValue("Author role", (document.getElementById('author_role') || {}).value || ''));
+  children.push(F.buildLabelValue("Date", (document.getElementById('date') || {}).value || ''));
+  children.push(F.buildLabelValue("Organisation", (document.getElementById('org') || {}).value || ''));
+
+  // Section: Event identification
+  children = children.concat(F.buildSectionHeading("Event identification", "Supplementary Appendix D"));
+  children.push(F.buildLabelValue("Iteration number", (document.getElementById('iteration') || {}).value || ''));
+  children.push(F.buildLabelValue("Decision trigger", (document.getElementById('decision_trigger') || {}).value || ''));
+  children.push(F.buildLabelValue("Alarm conditions triggered", (document.getElementById('alarm_conditions') || {}).value || ''));
+  children.push(F.buildLabelValue("Trigger metrics and values", (document.getElementById('trigger_metrics') || {}).value || ''));
+  children.push(F.buildLabelValue("Event date", (document.getElementById('event_date') || {}).value || ''));
+
+  // Section: Root cause analysis
+  children = children.concat(F.buildSectionHeading("Root cause analysis", "Supplementary Appendix D"));
+  children.push(F.buildLabelValue("Root cause category", (document.getElementById('root_cause_category') || {}).value || ''));
+  children.push(F.buildLabelValue("Root cause description", (document.getElementById('root_cause_desc') || {}).value || ''));
+  children.push(F.buildLabelValue("Supporting evidence", (document.getElementById('supporting_evidence') || {}).value || ''));
+
+  // Section: Corrective action plan
+  children = children.concat(F.buildSectionHeading("Corrective action plan", "Supplementary Appendix D"));
+  children.push(F.buildLabelValue("Corrective action description", (document.getElementById('action_desc') || {}).value || ''));
+  children.push(F.buildLabelValue("Responsible person", (document.getElementById('responsible_person') || {}).value || ''));
+  children.push(F.buildLabelValue("Target completion date", (document.getElementById('target_date') || {}).value || ''));
+  children.push(F.buildLabelValue("Verification method", (document.getElementById('verification_method') || {}).value || ''));
+  children.push(F.buildLabelValue("Preventive action", (document.getElementById('preventive_action') || {}).value || ''));
+
+  // Section: Regulatory notification assessment
+  children = children.concat(F.buildSectionHeading("Regulatory notification assessment", "Supplementary Appendix D"));
+  children.push(F.buildLabelValue("Regulatory notification required", (document.getElementById('regulatory_notification') || {}).value || ''));
+  children.push(F.buildLabelValue("Notification rationale", (document.getElementById('notification_rationale') || {}).value || ''));
+  children.push(F.buildLabelValue("Notification date (if applicable)", (document.getElementById('notification_date') || {}).value || ''));
+
+  // Version history
+  children = children.concat(F.buildSectionHeading('Version history'));
+  children.push(F.buildVersionHistory(headerValues.author_name, headerValues.date));
+
+  // Sign-off
+  children = children.concat(F.buildSectionHeading('Sign-off'));
+  children = children.concat(F.buildSignoff());
+
+  var doc = new docx.Document({
+    sections: [{
+      footers: F.buildFooterConfig(),
+      children: children
+    }],
+    styles: {
+      default: {
+        document: {
+          run: { font: 'Arial', size: 20, color: '000000' }
+        },
+        heading1: {
+          run: { font: 'Arial', size: 36, bold: true, color: '4F0433' }
+        },
+        heading2: {
+          run: { font: 'Arial', size: 28, bold: true, color: '870052' }
+        }
+      }
+    }
+  });
+
+  var filename = "AEGIS_CAPA_{device_name}_Iter{iteration}_{date}.docx";
+  filename = filename.replace('{device_name}', (headerValues.device_name || 'device').replace(/[^a-zA-Z0-9]/g, '_'));
+  filename = filename.replace('{date}', headerValues.date || new Date().toISOString().split('T')[0]);
+  filename = filename.replace('{iteration}', (document.getElementById('iteration') || {}).value || '0');
+  F.triggerDownload(doc, filename);
+});
+
+  </script>
+</body>
+</html>

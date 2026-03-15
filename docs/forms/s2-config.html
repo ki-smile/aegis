@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Domain configuration template — AEGIS Forms</title>
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <link rel="stylesheet" href="../assets/css/forms.css">
+  <script src="../assets/js/theme.js"></script>
+</head>
+<body>
+  <nav class="site-nav">
+    <div class="nav-logo">
+      <a href="../index.html">AEGIS</a>
+    </div>
+    <div class="nav-links">
+      <a href="../index.html">Home</a>
+      <a href="../guide/index.html">Guide</a>
+      <a href="index.html">Forms</a>
+      <a href="https://github.com/ki-smile/aegis" target="_blank" rel="noopener">GitHub</a>
+      <button class="theme-toggle" id="theme-toggle">☾ Dark</button>
+    </div>
+  </nav>
+
+  <div class="form-page">
+    <h1>Domain configuration template</h1>
+    <div class="form-supplement">Supplement S2</div>
+    <p class="form-description">Complete domain configuration covering deployment context, datasets, thresholds, MLcps weights, drift detection, decision categories, gold standard, and regulatory pathway mapping.</p>
+
+    <div class="prefill-bar">
+  <button type="button" class="btn-prefill" id="prefill-sepsis">Load sepsis example</button>
+  <button type="button" class="btn-prefill" id="prefill-brats">Load BraTS example</button>
+</div>
+
+
+    <form id="s2-config" onsubmit="return false;">
+      <div class="form-section">
+  <h2>Device information</h2>
+  <div class="section-source">Common header</div>
+<div class="form-group">
+  <label for="device_name">Device name *</label>
+  <input type="text" id="device_name" name="device_name" placeholder="e.g. SepsisGuard v2.1" required>
+  <div class="help-text">Include version number</div>
+</div>
+<div class="form-group">
+  <label for="intended_use">Intended use *</label>
+  <textarea id="intended_use" name="intended_use" placeholder="Describe the intended clinical use of the device" required></textarea>
+  <div class="help-text">Reference IEC 62304 or IFU documentation</div>
+</div>
+<div class="form-group">
+  <label for="author_name">Author name *</label>
+  <input type="text" id="author_name" name="author_name" placeholder="e.g. Jane Doe" required>
+</div>
+<div class="form-group">
+  <label for="author_role">Author role *</label>
+  <input type="text" id="author_role" name="author_role" placeholder="e.g. ML Engineer" required>
+</div>
+<div class="form-group">
+  <label for="date">Date *</label>
+  <input type="date" id="date" name="date" required>
+</div>
+<div class="form-group">
+  <label for="org">Organisation *</label>
+  <input type="text" id="org" name="org" placeholder="e.g. Karolinska University Hospital" required>
+</div>
+</div>
+<div class="form-section">
+  <h2>Deployment context</h2>
+  <div class="section-source">Supplementary S2.1</div>
+<div class="form-group">
+  <label for="data_modality">Data modality *</label>
+  <select id="data_modality" name="data_modality" required>
+    <option value="">Select...</option>
+    <option value="Tabular EHR">Tabular EHR</option>
+    <option value="Medical imaging (2D)">Medical imaging (2D)</option>
+    <option value="Medical imaging (3D volumetric)">Medical imaging (3D volumetric)</option>
+    <option value="Time series">Time series</option>
+    <option value="Genomics / omics">Genomics / omics</option>
+    <option value="Natural language / clinical notes">Natural language / clinical notes</option>
+    <option value="Multi-modal">Multi-modal</option>
+  </select>
+</div>
+<div class="form-group">
+  <label for="model_arch">Model architecture *</label>
+  <input type="text" id="model_arch" name="model_arch" placeholder="e.g. Random Forest, 300 trees" required>
+</div>
+<div class="form-group">
+  <label for="primary_metrics">Primary performance metrics *</label>
+  <input type="text" id="primary_metrics" name="primary_metrics" placeholder="e.g. Sensitivity, Specificity, ROC-AUC" required>
+</div>
+<div class="form-group">
+  <label for="use_case">Clinical use case *</label>
+  <textarea id="use_case" name="use_case" placeholder="Describe the clinical context, target population, and intended workflow" required></textarea>
+</div>
+</div>
+<div class="form-section">
+  <h2>Dataset configuration</h2>
+  <div class="section-source">Supplementary S2.2</div>
+<div class="form-group">
+  <label for="golden_size">Golden dataset size (N) *</label>
+  <input type="number" id="golden_size" name="golden_size" placeholder="e.g. 4067" value="" step="any" required>
+</div>
+<div class="form-group">
+  <label for="golden_desc">Golden dataset description *</label>
+  <textarea id="golden_desc" name="golden_desc" placeholder="Source, inclusion/exclusion criteria, time period" required></textarea>
+</div>
+<div class="form-group">
+  <label for="split_strategy">Split strategy *</label>
+  <select id="split_strategy" name="split_strategy" required>
+    <option value="">Select...</option>
+    <option value="Random hold-out">Random hold-out</option>
+    <option value="Temporal split">Temporal split</option>
+    <option value="Site-based split">Site-based split</option>
+    <option value="Stratified random">Stratified random</option>
+    <option value="Cross-validation">Cross-validation</option>
+    <option value="Other">Other</option>
+  </select>
+</div>
+<div class="form-group">
+  <label for="split_detail">Split details *</label>
+  <textarea id="split_detail" name="split_detail" placeholder="Training/golden/drifting proportions and methodology" required></textarea>
+</div>
+<div class="form-group">
+  <label for="dedup_method">Deduplication method *</label>
+  <input type="text" id="dedup_method" name="dedup_method" placeholder="e.g. Patient ID hashing across all splits" required>
+</div>
+</div>
+<div class="form-section">
+  <h2>Threshold specification</h2>
+  <div class="section-source">Supplementary S2.3</div>
+  <div class="section-instruction">All thresholds must be derived from ISO 14971:2019 hazard analysis. Enter the hazard ID from your risk management file.</div>
+<table class="threshold-table">
+<thead><tr>
+  <th>Parameter</th>
+  <th>Symbol</th>
+  <th>Value</th>
+  <th>Clinical justification</th>
+  <th>ISO 14971 hazard ID</th>
+  <th>Source</th>
+</tr></thead>
+<tbody>
+<tr>
+  <td><input type="text" name="threshold-specification_0_parameter" value="Critical safety floor"></td>
+  <td><input type="text" name="threshold-specification_0_symbol" value="P_fail"></td>
+  <td><input type="text" name="threshold-specification_0_value" value=""></td>
+  <td><input type="text" name="threshold-specification_0_justification" value=""></td>
+  <td><input type="text" name="threshold-specification_0_hazard_id" value=""></td>
+  <td><input type="text" name="threshold-specification_0_source" value=""></td>
+</tr>
+<tr>
+  <td><input type="text" name="threshold-specification_1_parameter" value="Performance buffer — sensitivity"></td>
+  <td><input type="text" name="threshold-specification_1_symbol" value="R_G(sens)"></td>
+  <td><input type="text" name="threshold-specification_1_value" value=""></td>
+  <td><input type="text" name="threshold-specification_1_justification" value=""></td>
+  <td><input type="text" name="threshold-specification_1_hazard_id" value=""></td>
+  <td><input type="text" name="threshold-specification_1_source" value=""></td>
+</tr>
+<tr>
+  <td><input type="text" name="threshold-specification_2_parameter" value="Performance buffer — specificity"></td>
+  <td><input type="text" name="threshold-specification_2_symbol" value="R_G(spec)"></td>
+  <td><input type="text" name="threshold-specification_2_value" value=""></td>
+  <td><input type="text" name="threshold-specification_2_justification" value=""></td>
+  <td><input type="text" name="threshold-specification_2_hazard_id" value=""></td>
+  <td><input type="text" name="threshold-specification_2_source" value=""></td>
+</tr>
+<tr>
+  <td><input type="text" name="threshold-specification_3_parameter" value="Gold standard tolerance"></td>
+  <td><input type="text" name="threshold-specification_3_symbol" value="τ"></td>
+  <td><input type="text" name="threshold-specification_3_value" value=""></td>
+  <td><input type="text" name="threshold-specification_3_justification" value=""></td>
+  <td><input type="text" name="threshold-specification_3_hazard_id" value=""></td>
+  <td><input type="text" name="threshold-specification_3_source" value=""></td>
+</tr>
+<tr>
+  <td><input type="text" name="threshold-specification_4_parameter" value="Minor drift lower bound"></td>
+  <td><input type="text" name="threshold-specification_4_symbol" value="θ_minor,low"></td>
+  <td><input type="text" name="threshold-specification_4_value" value=""></td>
+  <td><input type="text" name="threshold-specification_4_justification" value=""></td>
+  <td><input type="text" name="threshold-specification_4_hazard_id" value=""></td>
+  <td><input type="text" name="threshold-specification_4_source" value=""></td>
+</tr>
+<tr>
+  <td><input type="text" name="threshold-specification_5_parameter" value="Minor drift upper bound"></td>
+  <td><input type="text" name="threshold-specification_5_symbol" value="θ_minor,high"></td>
+  <td><input type="text" name="threshold-specification_5_value" value=""></td>
+  <td><input type="text" name="threshold-specification_5_justification" value=""></td>
+  <td><input type="text" name="threshold-specification_5_hazard_id" value=""></td>
+  <td><input type="text" name="threshold-specification_5_source" value=""></td>
+</tr>
+<tr>
+  <td><input type="text" name="threshold-specification_6_parameter" value="Major drift threshold"></td>
+  <td><input type="text" name="threshold-specification_6_symbol" value="θ_major"></td>
+  <td><input type="text" name="threshold-specification_6_value" value=""></td>
+  <td><input type="text" name="threshold-specification_6_justification" value=""></td>
+  <td><input type="text" name="threshold-specification_6_hazard_id" value=""></td>
+  <td><input type="text" name="threshold-specification_6_source" value=""></td>
+</tr>
+<tr>
+  <td><input type="text" name="threshold-specification_7_parameter" value="PMS safety floor (released model)"></td>
+  <td><input type="text" name="threshold-specification_7_symbol" value="P_PMS"></td>
+  <td><input type="text" name="threshold-specification_7_value" value=""></td>
+  <td><input type="text" name="threshold-specification_7_justification" value=""></td>
+  <td><input type="text" name="threshold-specification_7_hazard_id" value=""></td>
+  <td><input type="text" name="threshold-specification_7_source" value=""></td>
+</tr>
+<tr>
+  <td><input type="text" name="threshold-specification_8_parameter" value="PMS regression margin"></td>
+  <td><input type="text" name="threshold-specification_8_symbol" value="δ"></td>
+  <td><input type="text" name="threshold-specification_8_value" value=""></td>
+  <td><input type="text" name="threshold-specification_8_justification" value=""></td>
+  <td><input type="text" name="threshold-specification_8_hazard_id" value=""></td>
+  <td><input type="text" name="threshold-specification_8_source" value=""></td>
+</tr>
+</tbody></table>
+</div>
+<div class="form-section">
+  <h2>MLcps configuration</h2>
+  <div class="section-source">Supplementary S2.4</div>
+  <div class="section-instruction">Define up to four metric-weight pairs for the composite performance score. Weights range from 0.5 (low priority) to 3.0 (critical).</div>
+<div class="form-group">
+  <label for="metric1_name">Metric 1 name</label>
+  <input type="text" id="metric1_name" name="metric1_name" placeholder="e.g. Sensitivity">
+</div>
+<div class="form-group">
+  <label for="metric1_weight">Metric 1 weight</label>
+  <div class="slider-group">
+    <input type="range" id="metric1_weight" name="metric1_weight" min="0.5" max="3" step="0.1" value="1" oninput="document.getElementById('metric1_weight-val').textContent=this.value">
+    <span class="slider-value" id="metric1_weight-val">1</span>
+  </div>
+</div>
+<div class="form-group">
+  <label for="metric2_name">Metric 2 name</label>
+  <input type="text" id="metric2_name" name="metric2_name" placeholder="e.g. ROC-AUC">
+</div>
+<div class="form-group">
+  <label for="metric2_weight">Metric 2 weight</label>
+  <div class="slider-group">
+    <input type="range" id="metric2_weight" name="metric2_weight" min="0.5" max="3" step="0.1" value="1" oninput="document.getElementById('metric2_weight-val').textContent=this.value">
+    <span class="slider-value" id="metric2_weight-val">1</span>
+  </div>
+</div>
+<div class="form-group">
+  <label for="metric3_name">Metric 3 name</label>
+  <input type="text" id="metric3_name" name="metric3_name" placeholder="e.g. Balanced Accuracy">
+</div>
+<div class="form-group">
+  <label for="metric3_weight">Metric 3 weight</label>
+  <div class="slider-group">
+    <input type="range" id="metric3_weight" name="metric3_weight" min="0.5" max="3" step="0.1" value="1" oninput="document.getElementById('metric3_weight-val').textContent=this.value">
+    <span class="slider-value" id="metric3_weight-val">1</span>
+  </div>
+</div>
+<div class="form-group">
+  <label for="metric4_name">Metric 4 name</label>
+  <input type="text" id="metric4_name" name="metric4_name" placeholder="e.g. Specificity">
+</div>
+<div class="form-group">
+  <label for="metric4_weight">Metric 4 weight</label>
+  <div class="slider-group">
+    <input type="range" id="metric4_weight" name="metric4_weight" min="0.5" max="3" step="0.1" value="1" oninput="document.getElementById('metric4_weight-val').textContent=this.value">
+    <span class="slider-value" id="metric4_weight-val">1</span>
+  </div>
+</div>
+<div class="form-group">
+  <label for="mlcps_derivation">Weight derivation method</label>
+  <select id="mlcps_derivation" name="mlcps_derivation">
+    <option value="">Select...</option>
+    <option value="Clinical risk assessment">Clinical risk assessment</option>
+    <option value="Literature review">Literature review</option>
+    <option value="Expert panel consensus">Expert panel consensus</option>
+    <option value="Regulatory requirement">Regulatory requirement</option>
+    <option value="Other">Other</option>
+  </select>
+</div>
+</div>
+<div class="form-section">
+  <h2>Drift detection configuration</h2>
+  <div class="section-source">Supplementary S2.5</div>
+<div class="form-group">
+  <label for="drift_method">Drift detection method *</label>
+  <select id="drift_method" name="drift_method" required>
+    <option value="">Select...</option>
+    <option value="KS + Bonferroni">KS + Bonferroni</option>
+    <option value="MMD">MMD</option>
+    <option value="PSI">PSI</option>
+    <option value="Performance comparison">Performance comparison</option>
+    <option value="Other">Other</option>
+  </select>
+</div>
+<div class="form-group">
+  <label for="drift_K">Number of features (K) *</label>
+  <input type="number" id="drift_K" name="drift_K" placeholder="e.g. 34" value="" step="any" required>
+</div>
+<div class="form-group">
+  <label for="drift_alpha">Significance level (α) *</label>
+  <input type="number" id="drift_alpha" name="drift_alpha" placeholder="" value="0.05" step="0.01" required>
+</div>
+<div class="form-group">
+  <label for="drift_alpha_prime">Corrected significance (α' = α/K)</label>
+  <input type="text" id="drift_alpha_prime" name="drift_alpha_prime" placeholder="">
+  <div class="help-text">Auto-calculated: α divided by K</div>
+</div>
+<div class="form-group">
+  <label for="drift_features">Feature list for drift monitoring</label>
+  <textarea id="drift_features" name="drift_features" placeholder="List all features monitored for drift"></textarea>
+</div>
+</div>
+<div class="form-section">
+  <h2>Active decision categories</h2>
+  <div class="section-source">Supplementary S2.6</div>
+  <div class="section-instruction">APPROVE and REJECT are always active. Optionally disable intermediate categories with clinical justification.</div>
+<div class="form-group">
+  <label for="cat_approve">APPROVE</label>
+  <div class="checkbox-item fixed-checked">
+    <input type="checkbox" id="cat_approve" checked disabled>
+    <label>APPROVE</label>
+  </div>
+</div>
+<div class="form-group">
+  <label for="cat_reject">REJECT</label>
+  <div class="checkbox-item fixed-checked">
+    <input type="checkbox" id="cat_reject" checked disabled>
+    <label>REJECT</label>
+  </div>
+</div>
+<div class="form-group">
+  <label for="cat_conditional">CONDITIONAL APPROVAL</label>
+  <select id="cat_conditional" name="cat_conditional">
+    <option value="">Select...</option>
+    <option value="Enabled" selected>Enabled</option>
+    <option value="Disabled">Disabled</option>
+  </select>
+</div>
+<div class="form-group">
+  <label for="cat_conditional_justification">Justification for disabling CONDITIONAL APPROVAL</label>
+  <textarea id="cat_conditional_justification" name="cat_conditional_justification" placeholder=""></textarea>
+  <div class="help-text">Required if CONDITIONAL APPROVAL is disabled</div>
+</div>
+<div class="form-group">
+  <label for="cat_review">CLINICAL REVIEW</label>
+  <select id="cat_review" name="cat_review">
+    <option value="">Select...</option>
+    <option value="Enabled" selected>Enabled</option>
+    <option value="Disabled">Disabled</option>
+  </select>
+</div>
+<div class="form-group">
+  <label for="cat_review_justification">Justification for disabling CLINICAL REVIEW</label>
+  <textarea id="cat_review_justification" name="cat_review_justification" placeholder=""></textarea>
+  <div class="help-text">Required if CLINICAL REVIEW is disabled</div>
+</div>
+</div>
+<div class="form-section">
+  <h2>Gold standard baseline</h2>
+  <div class="section-source">Supplementary S2.7</div>
+<div class="form-group">
+  <label for="gold_iteration">Gold standard iteration</label>
+  <input type="number" id="gold_iteration" name="gold_iteration" placeholder="" value="" step="any">
+</div>
+<div class="form-group">
+  <label for="gold_metrics">Gold standard metric values</label>
+  <textarea id="gold_metrics" name="gold_metrics" placeholder="Metric values at gold standard iteration"></textarea>
+</div>
+<div class="form-group">
+  <label for="gold_date">Gold standard date</label>
+  <input type="date" id="gold_date" name="gold_date">
+</div>
+<div class="form-group">
+  <label for="gold_dataset_id">Gold standard dataset ID</label>
+  <input type="text" id="gold_dataset_id" name="gold_dataset_id" placeholder="Hash or version tag of golden dataset">
+</div>
+</div>
+<div class="form-section">
+  <h2>Regulatory pathway mapping</h2>
+  <div class="section-source">Supplementary S2.8</div>
+  <div class="section-instruction">Map AEGIS configuration to PCCP components. Pre-populated with template text — customise for your device.</div>
+<div class="form-group">
+  <label for="pccp_component1">Description of Modifications (PCCP Component 1)</label>
+  <textarea id="pccp_component1" name="pccp_component1" placeholder="">The AEGIS framework governs iterative model updates through a structured loop: retrain on accumulated data (DARM), evaluate performance and drift (MMM), and apply rule-based decision logic (CDM). Each iteration produces a new model version with full traceability.</textarea>
+</div>
+<div class="form-group">
+  <label for="pccp_component2">Modification Protocol (PCCP Component 2)</label>
+  <textarea id="pccp_component2" name="pccp_component2" placeholder="">Pre-specified modification protocol: (1) Data accumulates unconditionally per DARM rule; (2) Model retrained on D_T,k+1; (3) Performance evaluated against golden dataset D_G; (4) CDM applies priority-ordered decision hierarchy; (5) Approved models released; rejected models trigger CAPA.</textarea>
+</div>
+<div class="form-group">
+  <label for="pccp_component3">Impact Assessment (PCCP Component 3)</label>
+  <textarea id="pccp_component3" name="pccp_component3" placeholder="">Impact assessment relies on threshold-based monitoring: performance regression is flagged when metrics fall below pre-specified limits derived from ISO 14971 hazard analysis. The CDM composite output (decision + alarm state) provides structured impact classification.</textarea>
+</div>
+</div>
+
+
+      <button type="button" class="btn-download" id="download-docx">
+        Download .docx
+      </button>
+
+      <div class="form-privacy">
+        All data stays in your browser. Nothing is sent to any server.
+      </div>
+    </form>
+  </div>
+
+  <script src="https://unpkg.com/docx@8/build/index.umd.js"></script>
+  <script src="../assets/js/forms-docx.js"></script>
+  <script>
+    document.getElementById('prefill-sepsis')?.addEventListener('click', function() {
+  var ex = {"device_name":"SepsisGuard v2.1","intended_use":"Early prediction of sepsis onset in adult ICU patients using continuous EHR monitoring","author_name":"Dr. A. Clinician","author_role":"Clinical Data Scientist","org":"Karolinska University Hospital","data_modality":"Tabular EHR","model_arch":"Random Forest, 300 trees","primary_metrics":"Sensitivity, Specificity, ROC-AUC, Balanced Accuracy","use_case":"Early prediction of sepsis onset in adult ICU patients using continuous EHR monitoring. Model produces hourly risk scores; clinician receives alert when score exceeds threshold.","golden_size":"4067","golden_desc":"PhysioNet Computing in Cardiology Challenge 2019, Hospital A subset. Adult ICU admissions with ≥8 hours of hourly vital signs and laboratory values.","split_strategy":"Random hold-out","split_detail":"80/20 split. Training D_T,0: 3,254 samples. Golden D_G: 813 samples. Drifting D_D,k: N=5,000 synthetic samples per iteration (generated with controlled corruption).","dedup_method":"Patient ID deduplication via SHA-256 hash across all splits","threshold-specification_0_value":"Sens. < 0.65","threshold-specification_1_value":"Sens. < 0.66","threshold-specification_2_value":"Spec. < 0.60","threshold-specification_3_value":"0.015 (sensitivity)","threshold-specification_4_value":"0.30","threshold-specification_5_value":"0.70","threshold-specification_6_value":"0.90","threshold-specification_7_value":"Sens. 0.65","threshold-specification_8_value":"0.020–0.030","metric1_name":"Sensitivity","metric1_weight":1.5,"metric2_name":"ROC-AUC","metric2_weight":1.3,"metric3_name":"Balanced Accuracy","metric3_weight":1.1,"metric4_name":"Specificity","metric4_weight":1,"mlcps_derivation":"Clinical risk assessment","drift_method":"KS + Bonferroni","drift_K":"34","drift_alpha":"0.05","drift_alpha_prime":"0.00147","drift_features":"HR, O2Sat, Temp, SBP, MAP, DBP, Resp, EtCO2, BaseExcess, HCO3, FiO2, pH, PaCO2, SaO2, AST, BUN, Alkalinephos, Calcium, Chloride, Creatinine, Bilirubin_direct, Glucose, Lactate, Magnesium, Phosphate, Potassium, Bilirubin_total, TroponinI, Hct, Hgb, PTT, WBC, Fibrinogen, Platelets","cat_conditional":"Enabled","cat_review":"Enabled","gold_iteration":"0","gold_metrics":"Sensitivity: 0.890, Specificity: 0.798, ROC-AUC: 0.920, Balanced Accuracy: 0.844, MLcps: 0.876","gold_dataset_id":"sha256:a3f7c2...golden_v1.0","pccp_component1":"The AEGIS framework governs iterative model updates through a structured loop: retrain on accumulated data (DARM), evaluate performance and drift (MMM), and apply rule-based decision logic (CDM). Each iteration produces a new model version with full traceability. For this sepsis prediction device, modifications include retraining on newly accumulated ICU patient data and recalibration of sensitivity thresholds."};
+  for (var id in ex) {
+    var el = document.getElementById(id) || document.querySelector('[name="'+id+'"]');
+    if (el) {
+      if (el.type === 'checkbox') { el.checked = true; }
+      else { el.value = ex[id]; }
+      if (el.type === 'range') { var valEl = document.getElementById(id+'-val'); if(valEl) valEl.textContent = ex[id]; }
+    }
+  }
+});
+document.getElementById('prefill-brats')?.addEventListener('click', function() {
+  var ex = {"device_name":"BraTSeg v1.0","intended_use":"Automated segmentation of brain tumours (glioma) from multi-modal MRI for surgical planning","author_name":"Dr. B. Radiologist","author_role":"Neuroradiology Fellow","org":"Karolinska University Hospital","data_modality":"Medical imaging (3D volumetric)","model_arch":"nnU-Net ResENC-M","primary_metrics":"Dice Similarity Coefficient (DSC)","use_case":"Automated segmentation of brain tumours (glioma) from multi-modal MRI (T1, T1ce, T2, FLAIR) for neurosurgical planning. Segmentation masks reviewed by neuroradiologist before clinical use.","golden_size":"1251","golden_desc":"BraTS 2023 training set. Adult glioma patients with pre-operative multi-modal MRI (T1, T1ce, T2, FLAIR) and expert segmentation masks.","split_strategy":"Random hold-out","split_detail":"80/20 split. Training: 1,001 cases. Golden: 250 cases. Drifting: BraTS 2024 validation set (219 cases) with progressive augmentation.","dedup_method":"Case ID deduplication; no patient overlap between BraTS 2023 and 2024 cohorts confirmed by challenge organisers","metric1_name":"DSC","metric1_weight":1,"metric2_weight":1,"metric3_weight":1,"metric4_weight":1,"mlcps_derivation":"Clinical risk assessment","drift_method":"Performance comparison","drift_K":"1","drift_alpha":"0.05","drift_alpha_prime":"0.05","drift_features":"Dice Similarity Coefficient (DSC)","cat_conditional":"Disabled","cat_conditional_justification":"Binary pass/fail segmentation quality metric (DSC) does not support a meaningful intermediate category. Clinical workflow requires definitive accept or reject of segmentation mask.","cat_review":"Disabled","cat_review_justification":"Segmentation review is standard clinical practice; a separate CLINICAL REVIEW category adds no decision value.","gold_iteration":"0","gold_metrics":"DSC: 0.912","gold_dataset_id":"brats2023_golden_v1.0"};
+  for (var id in ex) {
+    var el = document.getElementById(id) || document.querySelector('[name="'+id+'"]');
+    if (el) {
+      if (el.type === 'checkbox') { el.checked = true; }
+      else { el.value = ex[id]; }
+      if (el.type === 'range') { var valEl = document.getElementById(id+'-val'); if(valEl) valEl.textContent = ex[id]; }
+    }
+  }
+});
+
+document.getElementById('download-docx')?.addEventListener('click', function() {
+  if (!window.AEGISForms || !window.docx) { alert('Libraries not loaded yet. Please wait.'); return; }
+  var F = window.AEGISForms;
+  var docx = window.docx;
+
+  var headerValues = {
+    device_name: (document.getElementById('device_name') || {}).value || '',
+    intended_use: (document.getElementById('intended_use') || {}).value || '',
+    author_name: (document.getElementById('author_name') || {}).value || '',
+    author_role: (document.getElementById('author_role') || {}).value || '',
+    date: (document.getElementById('date') || {}).value || '',
+    org: (document.getElementById('org') || {}).value || ''
+  };
+
+  var children = [];
+  children = children.concat(F.buildTitle("AEGIS Domain Configuration", "S2"));
+
+  children = children.concat(F.buildHeader(headerValues));
+
+  // Section: Device information
+  children = children.concat(F.buildSectionHeading("Device information", "Common header"));
+  children.push(F.buildLabelValue("Device name", (document.getElementById('device_name') || {}).value || ''));
+  children.push(F.buildLabelValue("Intended use", (document.getElementById('intended_use') || {}).value || ''));
+  children.push(F.buildLabelValue("Author name", (document.getElementById('author_name') || {}).value || ''));
+  children.push(F.buildLabelValue("Author role", (document.getElementById('author_role') || {}).value || ''));
+  children.push(F.buildLabelValue("Date", (document.getElementById('date') || {}).value || ''));
+  children.push(F.buildLabelValue("Organisation", (document.getElementById('org') || {}).value || ''));
+
+  // Section: Deployment context
+  children = children.concat(F.buildSectionHeading("Deployment context", "Supplementary S2.1"));
+  children.push(F.buildLabelValue("Data modality", (document.getElementById('data_modality') || {}).value || ''));
+  children.push(F.buildLabelValue("Model architecture", (document.getElementById('model_arch') || {}).value || ''));
+  children.push(F.buildLabelValue("Primary performance metrics", (document.getElementById('primary_metrics') || {}).value || ''));
+  children.push(F.buildLabelValue("Clinical use case", (document.getElementById('use_case') || {}).value || ''));
+
+  // Section: Dataset configuration
+  children = children.concat(F.buildSectionHeading("Dataset configuration", "Supplementary S2.2"));
+  children.push(F.buildLabelValue("Golden dataset size (N)", (document.getElementById('golden_size') || {}).value || ''));
+  children.push(F.buildLabelValue("Golden dataset description", (document.getElementById('golden_desc') || {}).value || ''));
+  children.push(F.buildLabelValue("Split strategy", (document.getElementById('split_strategy') || {}).value || ''));
+  children.push(F.buildLabelValue("Split details", (document.getElementById('split_detail') || {}).value || ''));
+  children.push(F.buildLabelValue("Deduplication method", (document.getElementById('dedup_method') || {}).value || ''));
+
+  // Section: Threshold specification
+  children = children.concat(F.buildSectionHeading("Threshold specification", "Supplementary S2.3"));
+  var tableRows_threshold_specification = [];
+  for (var i = 0; i < 9; i++) {
+    var row = [];
+    row.push((document.querySelector('[name="threshold-specification_'+i+'_parameter"]') || {}).value || '');
+    row.push((document.querySelector('[name="threshold-specification_'+i+'_symbol"]') || {}).value || '');
+    row.push((document.querySelector('[name="threshold-specification_'+i+'_value"]') || {}).value || '');
+    row.push((document.querySelector('[name="threshold-specification_'+i+'_justification"]') || {}).value || '');
+    row.push((document.querySelector('[name="threshold-specification_'+i+'_hazard_id"]') || {}).value || '');
+    row.push((document.querySelector('[name="threshold-specification_'+i+'_source"]') || {}).value || '');
+    tableRows_threshold_specification.push(row);
+  }
+  children.push(F.buildTable(["Parameter","Symbol","Value","Clinical justification","ISO 14971 hazard ID","Source"], tableRows_threshold_specification));
+
+  // Section: MLcps configuration
+  children = children.concat(F.buildSectionHeading("MLcps configuration", "Supplementary S2.4"));
+  children.push(F.buildLabelValue("Metric 1 name", (document.getElementById('metric1_name') || {}).value || ''));
+  children.push(F.buildLabelValue("Metric 1 weight", (document.getElementById('metric1_weight') || {}).value || ''));
+  children.push(F.buildLabelValue("Metric 2 name", (document.getElementById('metric2_name') || {}).value || ''));
+  children.push(F.buildLabelValue("Metric 2 weight", (document.getElementById('metric2_weight') || {}).value || ''));
+  children.push(F.buildLabelValue("Metric 3 name", (document.getElementById('metric3_name') || {}).value || ''));
+  children.push(F.buildLabelValue("Metric 3 weight", (document.getElementById('metric3_weight') || {}).value || ''));
+  children.push(F.buildLabelValue("Metric 4 name", (document.getElementById('metric4_name') || {}).value || ''));
+  children.push(F.buildLabelValue("Metric 4 weight", (document.getElementById('metric4_weight') || {}).value || ''));
+  children.push(F.buildLabelValue("Weight derivation method", (document.getElementById('mlcps_derivation') || {}).value || ''));
+
+  // Section: Drift detection configuration
+  children = children.concat(F.buildSectionHeading("Drift detection configuration", "Supplementary S2.5"));
+  children.push(F.buildLabelValue("Drift detection method", (document.getElementById('drift_method') || {}).value || ''));
+  children.push(F.buildLabelValue("Number of features (K)", (document.getElementById('drift_K') || {}).value || ''));
+  children.push(F.buildLabelValue("Significance level (α)", (document.getElementById('drift_alpha') || {}).value || ''));
+  children.push(F.buildLabelValue("Corrected significance (α' = α/K)", (document.getElementById('drift_alpha_prime') || {}).value || ''));
+  children.push(F.buildLabelValue("Feature list for drift monitoring", (document.getElementById('drift_features') || {}).value || ''));
+
+  // Section: Active decision categories
+  children = children.concat(F.buildSectionHeading("Active decision categories", "Supplementary S2.6"));
+  children.push(F.buildLabelValue('APPROVE', '✓ (always active)'));
+  children.push(F.buildLabelValue('REJECT', '✓ (always active)'));
+  children.push(F.buildLabelValue("CONDITIONAL APPROVAL", (document.getElementById('cat_conditional') || {}).value || ''));
+  children.push(F.buildLabelValue("Justification for disabling CONDITIONAL APPROVAL", (document.getElementById('cat_conditional_justification') || {}).value || ''));
+  children.push(F.buildLabelValue("CLINICAL REVIEW", (document.getElementById('cat_review') || {}).value || ''));
+  children.push(F.buildLabelValue("Justification for disabling CLINICAL REVIEW", (document.getElementById('cat_review_justification') || {}).value || ''));
+
+  // Section: Gold standard baseline
+  children = children.concat(F.buildSectionHeading("Gold standard baseline", "Supplementary S2.7"));
+  children.push(F.buildLabelValue("Gold standard iteration", (document.getElementById('gold_iteration') || {}).value || ''));
+  children.push(F.buildLabelValue("Gold standard metric values", (document.getElementById('gold_metrics') || {}).value || ''));
+  children.push(F.buildLabelValue("Gold standard date", (document.getElementById('gold_date') || {}).value || ''));
+  children.push(F.buildLabelValue("Gold standard dataset ID", (document.getElementById('gold_dataset_id') || {}).value || ''));
+
+  // Section: Regulatory pathway mapping
+  children = children.concat(F.buildSectionHeading("Regulatory pathway mapping", "Supplementary S2.8"));
+  children.push(F.buildLabelValue("Description of Modifications (PCCP Component 1)", (document.getElementById('pccp_component1') || {}).value || ''));
+  children.push(F.buildLabelValue("Modification Protocol (PCCP Component 2)", (document.getElementById('pccp_component2') || {}).value || ''));
+  children.push(F.buildLabelValue("Impact Assessment (PCCP Component 3)", (document.getElementById('pccp_component3') || {}).value || ''));
+
+  // Version history
+  children = children.concat(F.buildSectionHeading('Version history'));
+  children.push(F.buildVersionHistory(headerValues.author_name, headerValues.date));
+
+  // Sign-off
+  children = children.concat(F.buildSectionHeading('Sign-off'));
+  children = children.concat(F.buildSignoff());
+
+  var doc = new docx.Document({
+    sections: [{
+      footers: F.buildFooterConfig(),
+      children: children
+    }],
+    styles: {
+      default: {
+        document: {
+          run: { font: 'Arial', size: 20, color: '000000' }
+        },
+        heading1: {
+          run: { font: 'Arial', size: 36, bold: true, color: '4F0433' }
+        },
+        heading2: {
+          run: { font: 'Arial', size: 28, bold: true, color: '870052' }
+        }
+      }
+    }
+  });
+
+  var filename = "AEGIS_S2_Config_{device_name}_{date}.docx";
+  filename = filename.replace('{device_name}', (headerValues.device_name || 'device').replace(/[^a-zA-Z0-9]/g, '_'));
+  filename = filename.replace('{date}', headerValues.date || new Date().toISOString().split('T')[0]);
+  filename = filename.replace('{iteration}', (document.getElementById('iteration') || {}).value || '0');
+  F.triggerDownload(doc, filename);
+});
+
+  </script>
+</body>
+</html>

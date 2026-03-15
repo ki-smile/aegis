@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Threshold traceability table — AEGIS Forms</title>
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <link rel="stylesheet" href="../assets/css/forms.css">
+  <script src="../assets/js/theme.js"></script>
+</head>
+<body>
+  <nav class="site-nav">
+    <div class="nav-logo">
+      <a href="../index.html">AEGIS</a>
+    </div>
+    <div class="nav-links">
+      <a href="../index.html">Home</a>
+      <a href="../guide/index.html">Guide</a>
+      <a href="index.html">Forms</a>
+      <a href="https://github.com/ki-smile/aegis" target="_blank" rel="noopener">GitHub</a>
+      <button class="theme-toggle" id="theme-toggle">☾ Dark</button>
+    </div>
+  </nav>
+
+  <div class="form-page">
+    <h1>Threshold traceability table</h1>
+    <div class="form-supplement">Supplement S2.3</div>
+    <p class="form-description">Standalone threshold traceability table for sharing separately from the full S2 configuration. All thresholds must reference ISO 14971:2019 hazard analysis.</p>
+
+    <div class="prefill-bar">
+  <button type="button" class="btn-prefill" id="prefill-sepsis">Load sepsis example</button>
+  <button type="button" class="btn-prefill" id="prefill-brats">Load BraTS example</button>
+</div>
+
+
+    <form id="s2-threshold-table" onsubmit="return false;">
+      <div class="form-section">
+  <h2>Device information</h2>
+  <div class="section-source">Common header</div>
+<div class="form-group">
+  <label for="device_name">Device name *</label>
+  <input type="text" id="device_name" name="device_name" placeholder="e.g. SepsisGuard v2.1" required>
+  <div class="help-text">Include version number</div>
+</div>
+<div class="form-group">
+  <label for="intended_use">Intended use *</label>
+  <textarea id="intended_use" name="intended_use" placeholder="Describe the intended clinical use of the device" required></textarea>
+  <div class="help-text">Reference IEC 62304 or IFU documentation</div>
+</div>
+<div class="form-group">
+  <label for="author_name">Author name *</label>
+  <input type="text" id="author_name" name="author_name" placeholder="e.g. Jane Doe" required>
+</div>
+<div class="form-group">
+  <label for="author_role">Author role *</label>
+  <input type="text" id="author_role" name="author_role" placeholder="e.g. ML Engineer" required>
+</div>
+<div class="form-group">
+  <label for="date">Date *</label>
+  <input type="date" id="date" name="date" required>
+</div>
+<div class="form-group">
+  <label for="org">Organisation *</label>
+  <input type="text" id="org" name="org" placeholder="e.g. Karolinska University Hospital" required>
+</div>
+</div>
+<div class="form-section">
+  <h2>Threshold specification</h2>
+  <div class="section-source">Supplementary S2.3</div>
+  <div class="section-instruction">All thresholds must be derived from ISO 14971:2019 hazard analysis. Enter the hazard ID from your risk management file.</div>
+<table class="threshold-table">
+<thead><tr>
+  <th>Parameter</th>
+  <th>Symbol</th>
+  <th>Value</th>
+  <th>Clinical justification</th>
+  <th>ISO 14971 hazard ID</th>
+  <th>Source</th>
+</tr></thead>
+<tbody>
+<tr>
+  <td><input type="text" name="threshold-table_0_parameter" value="Critical safety floor"></td>
+  <td><input type="text" name="threshold-table_0_symbol" value="P_fail"></td>
+  <td><input type="text" name="threshold-table_0_value" value=""></td>
+  <td><input type="text" name="threshold-table_0_justification" value=""></td>
+  <td><input type="text" name="threshold-table_0_hazard_id" value=""></td>
+  <td><input type="text" name="threshold-table_0_source" value=""></td>
+</tr>
+<tr>
+  <td><input type="text" name="threshold-table_1_parameter" value="Performance buffer — sensitivity"></td>
+  <td><input type="text" name="threshold-table_1_symbol" value="R_G(sens)"></td>
+  <td><input type="text" name="threshold-table_1_value" value=""></td>
+  <td><input type="text" name="threshold-table_1_justification" value=""></td>
+  <td><input type="text" name="threshold-table_1_hazard_id" value=""></td>
+  <td><input type="text" name="threshold-table_1_source" value=""></td>
+</tr>
+<tr>
+  <td><input type="text" name="threshold-table_2_parameter" value="Performance buffer — specificity"></td>
+  <td><input type="text" name="threshold-table_2_symbol" value="R_G(spec)"></td>
+  <td><input type="text" name="threshold-table_2_value" value=""></td>
+  <td><input type="text" name="threshold-table_2_justification" value=""></td>
+  <td><input type="text" name="threshold-table_2_hazard_id" value=""></td>
+  <td><input type="text" name="threshold-table_2_source" value=""></td>
+</tr>
+<tr>
+  <td><input type="text" name="threshold-table_3_parameter" value="Gold standard tolerance"></td>
+  <td><input type="text" name="threshold-table_3_symbol" value="τ"></td>
+  <td><input type="text" name="threshold-table_3_value" value=""></td>
+  <td><input type="text" name="threshold-table_3_justification" value=""></td>
+  <td><input type="text" name="threshold-table_3_hazard_id" value=""></td>
+  <td><input type="text" name="threshold-table_3_source" value=""></td>
+</tr>
+<tr>
+  <td><input type="text" name="threshold-table_4_parameter" value="Minor drift lower bound"></td>
+  <td><input type="text" name="threshold-table_4_symbol" value="θ_minor,low"></td>
+  <td><input type="text" name="threshold-table_4_value" value=""></td>
+  <td><input type="text" name="threshold-table_4_justification" value=""></td>
+  <td><input type="text" name="threshold-table_4_hazard_id" value=""></td>
+  <td><input type="text" name="threshold-table_4_source" value=""></td>
+</tr>
+<tr>
+  <td><input type="text" name="threshold-table_5_parameter" value="Minor drift upper bound"></td>
+  <td><input type="text" name="threshold-table_5_symbol" value="θ_minor,high"></td>
+  <td><input type="text" name="threshold-table_5_value" value=""></td>
+  <td><input type="text" name="threshold-table_5_justification" value=""></td>
+  <td><input type="text" name="threshold-table_5_hazard_id" value=""></td>
+  <td><input type="text" name="threshold-table_5_source" value=""></td>
+</tr>
+<tr>
+  <td><input type="text" name="threshold-table_6_parameter" value="Major drift threshold"></td>
+  <td><input type="text" name="threshold-table_6_symbol" value="θ_major"></td>
+  <td><input type="text" name="threshold-table_6_value" value=""></td>
+  <td><input type="text" name="threshold-table_6_justification" value=""></td>
+  <td><input type="text" name="threshold-table_6_hazard_id" value=""></td>
+  <td><input type="text" name="threshold-table_6_source" value=""></td>
+</tr>
+<tr>
+  <td><input type="text" name="threshold-table_7_parameter" value="PMS safety floor"></td>
+  <td><input type="text" name="threshold-table_7_symbol" value="P_PMS"></td>
+  <td><input type="text" name="threshold-table_7_value" value=""></td>
+  <td><input type="text" name="threshold-table_7_justification" value=""></td>
+  <td><input type="text" name="threshold-table_7_hazard_id" value=""></td>
+  <td><input type="text" name="threshold-table_7_source" value=""></td>
+</tr>
+<tr>
+  <td><input type="text" name="threshold-table_8_parameter" value="PMS regression margin"></td>
+  <td><input type="text" name="threshold-table_8_symbol" value="δ"></td>
+  <td><input type="text" name="threshold-table_8_value" value=""></td>
+  <td><input type="text" name="threshold-table_8_justification" value=""></td>
+  <td><input type="text" name="threshold-table_8_hazard_id" value=""></td>
+  <td><input type="text" name="threshold-table_8_source" value=""></td>
+</tr>
+</tbody></table>
+</div>
+
+
+      <button type="button" class="btn-download" id="download-docx">
+        Download .docx
+      </button>
+
+      <div class="form-privacy">
+        All data stays in your browser. Nothing is sent to any server.
+      </div>
+    </form>
+  </div>
+
+  <script src="https://unpkg.com/docx@8/build/index.umd.js"></script>
+  <script src="../assets/js/forms-docx.js"></script>
+  <script>
+    document.getElementById('prefill-sepsis')?.addEventListener('click', function() {
+  var ex = {"device_name":"SepsisGuard v2.1","intended_use":"Early prediction of sepsis onset in adult ICU patients using continuous EHR monitoring","author_name":"Dr. A. Clinician","author_role":"Clinical Data Scientist","org":"Karolinska University Hospital","threshold-table_0_value":"Sens. < 0.65","threshold-table_1_value":"Sens. < 0.66","threshold-table_2_value":"Spec. < 0.60","threshold-table_3_value":"0.015 (sensitivity)","threshold-table_4_value":"0.30","threshold-table_5_value":"0.70","threshold-table_6_value":"0.90","threshold-table_7_value":"Sens. 0.65","threshold-table_8_value":"0.020–0.030"};
+  for (var id in ex) {
+    var el = document.getElementById(id) || document.querySelector('[name="'+id+'"]');
+    if (el) {
+      if (el.type === 'checkbox') { el.checked = true; }
+      else { el.value = ex[id]; }
+      if (el.type === 'range') { var valEl = document.getElementById(id+'-val'); if(valEl) valEl.textContent = ex[id]; }
+    }
+  }
+});
+document.getElementById('prefill-brats')?.addEventListener('click', function() {
+  var ex = {"device_name":"BraTSeg v1.0","intended_use":"Automated segmentation of brain tumours (glioma) from multi-modal MRI for surgical planning","author_name":"Dr. B. Radiologist","author_role":"Neuroradiology Fellow","org":"Karolinska University Hospital"};
+  for (var id in ex) {
+    var el = document.getElementById(id) || document.querySelector('[name="'+id+'"]');
+    if (el) {
+      if (el.type === 'checkbox') { el.checked = true; }
+      else { el.value = ex[id]; }
+      if (el.type === 'range') { var valEl = document.getElementById(id+'-val'); if(valEl) valEl.textContent = ex[id]; }
+    }
+  }
+});
+
+document.getElementById('download-docx')?.addEventListener('click', function() {
+  if (!window.AEGISForms || !window.docx) { alert('Libraries not loaded yet. Please wait.'); return; }
+  var F = window.AEGISForms;
+  var docx = window.docx;
+
+  var headerValues = {
+    device_name: (document.getElementById('device_name') || {}).value || '',
+    intended_use: (document.getElementById('intended_use') || {}).value || '',
+    author_name: (document.getElementById('author_name') || {}).value || '',
+    author_role: (document.getElementById('author_role') || {}).value || '',
+    date: (document.getElementById('date') || {}).value || '',
+    org: (document.getElementById('org') || {}).value || ''
+  };
+
+  var children = [];
+  children = children.concat(F.buildTitle("AEGIS Threshold Traceability Table", "S2.3"));
+
+  children = children.concat(F.buildHeader(headerValues));
+
+  // Section: Device information
+  children = children.concat(F.buildSectionHeading("Device information", "Common header"));
+  children.push(F.buildLabelValue("Device name", (document.getElementById('device_name') || {}).value || ''));
+  children.push(F.buildLabelValue("Intended use", (document.getElementById('intended_use') || {}).value || ''));
+  children.push(F.buildLabelValue("Author name", (document.getElementById('author_name') || {}).value || ''));
+  children.push(F.buildLabelValue("Author role", (document.getElementById('author_role') || {}).value || ''));
+  children.push(F.buildLabelValue("Date", (document.getElementById('date') || {}).value || ''));
+  children.push(F.buildLabelValue("Organisation", (document.getElementById('org') || {}).value || ''));
+
+  // Section: Threshold specification
+  children = children.concat(F.buildSectionHeading("Threshold specification", "Supplementary S2.3"));
+  var tableRows_threshold_table = [];
+  for (var i = 0; i < 9; i++) {
+    var row = [];
+    row.push((document.querySelector('[name="threshold-table_'+i+'_parameter"]') || {}).value || '');
+    row.push((document.querySelector('[name="threshold-table_'+i+'_symbol"]') || {}).value || '');
+    row.push((document.querySelector('[name="threshold-table_'+i+'_value"]') || {}).value || '');
+    row.push((document.querySelector('[name="threshold-table_'+i+'_justification"]') || {}).value || '');
+    row.push((document.querySelector('[name="threshold-table_'+i+'_hazard_id"]') || {}).value || '');
+    row.push((document.querySelector('[name="threshold-table_'+i+'_source"]') || {}).value || '');
+    tableRows_threshold_table.push(row);
+  }
+  children.push(F.buildTable(["Parameter","Symbol","Value","Clinical justification","ISO 14971 hazard ID","Source"], tableRows_threshold_table));
+
+  // Version history
+  children = children.concat(F.buildSectionHeading('Version history'));
+  children.push(F.buildVersionHistory(headerValues.author_name, headerValues.date));
+
+  // Sign-off
+  children = children.concat(F.buildSectionHeading('Sign-off'));
+  children = children.concat(F.buildSignoff());
+
+  var doc = new docx.Document({
+    sections: [{
+      footers: F.buildFooterConfig(),
+      children: children
+    }],
+    styles: {
+      default: {
+        document: {
+          run: { font: 'Arial', size: 20, color: '000000' }
+        },
+        heading1: {
+          run: { font: 'Arial', size: 36, bold: true, color: '4F0433' }
+        },
+        heading2: {
+          run: { font: 'Arial', size: 28, bold: true, color: '870052' }
+        }
+      }
+    }
+  });
+
+  var filename = "AEGIS_S2.3_Thresholds_{device_name}_{date}.docx";
+  filename = filename.replace('{device_name}', (headerValues.device_name || 'device').replace(/[^a-zA-Z0-9]/g, '_'));
+  filename = filename.replace('{date}', headerValues.date || new Date().toISOString().split('T')[0]);
+  filename = filename.replace('{iteration}', (document.getElementById('iteration') || {}).value || '0');
+  F.triggerDownload(doc, filename);
+});
+
+  </script>
+</body>
+</html>

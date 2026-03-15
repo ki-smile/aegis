@@ -1,0 +1,22 @@
+cff-version: 1.2.0
+message: "If you use AEGIS, please cite it using the metadata below."
+title: "AEGIS: An Operational Infrastructure for Post-Market Governance of Adaptive Medical AI Under US and EU Regulations"
+authors:
+  - family-names: Afdideh
+    given-names: Fardin
+    affiliation: "Karolinska Institutet"
+  - family-names: Astaraki
+    given-names: Mehdi
+    affiliation: "Karolinska Institutet"
+  - family-names: Seoane
+    given-names: Fernando
+    affiliation: "Karolinska Institutet"
+  - family-names: Abtahi
+    given-names: Farhad
+    affiliation: "Karolinska Institutet"
+    email: farhad.abtahi@ki.se
+doi: "10.XXXX/PLACEHOLDER"
+url: "https://ki-smile.github.io/aegis"
+repository-code: "https://github.com/ki-smile/aegis"
+license: "LicenseRef-KI-SMAILE"
+year: 2026

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{TITLE}} — AEGIS Guide</title>
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <link rel="stylesheet" href="../assets/css/guide.css">
+  <script src="../assets/js/theme.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+</head>
+<body>
+  <div class="scroll-progress" id="scroll-progress"></div>
+
+  <nav class="site-nav">
+    <div class="nav-logo">
+      <a href="../index.html">AEGIS</a>
+    </div>
+    <div class="nav-links">
+      <a href="../index.html">Home</a>
+      <a href="index.html">Guide</a>
+      <a href="../forms/index.html">Forms</a>
+      <a href="https://github.com/ki-smile/aegis" target="_blank" rel="noopener">GitHub</a>
+      <button class="theme-toggle" id="theme-toggle">☾ Dark</button>
+    </div>
+  </nav>
+
+  <div class="guide-layout">
+    <aside class="guide-sidebar">
+      <nav>
+        <div class="sidebar-title">Implementation Guide</div>
+        {{SIDENAV}}
+      </nav>
+    </aside>
+
+    <main class="guide-content">
+      {{CONTENT}}
+
+      <div class="guide-nav-footer">
+        {{PREV_LINK}}
+        {{NEXT_LINK}}
+      </div>
+    </main>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+  <script>
+    // Scroll progress
+    window.addEventListener('scroll', function () {
+      var bar = document.getElementById('scroll-progress');
+      if (!bar) return;
+      var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+      var scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      bar.style.width = (scrollTop / scrollHeight * 100) + '%';
+    });
+  </script>
+</body>
+</html>

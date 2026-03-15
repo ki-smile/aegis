@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thresholds — AEGIS Guide</title>
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <link rel="stylesheet" href="../assets/css/guide.css">
+  <script src="../assets/js/theme.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+</head>
+<body>
+  <div class="scroll-progress" id="scroll-progress"></div>
+
+  <nav class="site-nav">
+    <div class="nav-logo">
+      <a href="../index.html">AEGIS</a>
+    </div>
+    <div class="nav-links">
+      <a href="../index.html">Home</a>
+      <a href="index.html">Guide</a>
+      <a href="../forms/index.html">Forms</a>
+      <a href="https://github.com/ki-smile/aegis" target="_blank" rel="noopener">GitHub</a>
+      <button class="theme-toggle" id="theme-toggle">☾ Dark</button>
+    </div>
+  </nav>
+
+  <div class="guide-layout">
+    <aside class="guide-sidebar">
+      <nav>
+        <div class="sidebar-title">Implementation Guide</div>
+        <a href="index.html">Overview</a>
+<a href="01-concepts.html">1. Core concepts</a>
+<a href="02-configure.html">2. Configuration</a>
+<a href="03-thresholds.html" class="active">3. Thresholds</a>
+<a href="04-cdm-logic.html">4. CDM logic</a>
+<a href="05-mlcps.html">5. MLcps</a>
+<a href="06-drift.html">6. Drift detection</a>
+<a href="07-audit-trail.html">7. Audit trail</a>
+<a href="08-pccp-mapping.html">8. PCCP mapping</a>
+<a href="09-eu-mapping.html">9. EU mapping</a>
+
+      </nav>
+    </aside>
+
+    <main class="guide-content">
+      <h1>Thresholds</h1>
+<p>Every threshold in AEGIS must be derived from a formal ISO 14971:2019 risk management process. This page explains each threshold type, its role in the decision hierarchy, and how to calibrate values for your specific domain.</p>
+<p><a href="../forms/s2-threshold-table.html">Download the Threshold Table Template</a></p>
+<blockquote>**Warning:** The threshold values shown in this guide are illustrative examples from the sepsis and BraTS case studies. **Do not use these values in production.** Each deployment must derive its own thresholds from a domain-specific hazard analysis conducted in accordance with ISO 14971:2019.</blockquote>
+<h2>ISO 14971:2019 requirements</h2>
+<p>ISO 14971:2019 is the international standard for application of risk management to medical devices. AEGIS requires that every threshold traces back to a specific hazard identified in your risk management file. For each threshold, you must document:</p>
+<ol>
+<li><strong>Hazard ID</strong> -- the unique identifier from your risk management file</li>
+<li><strong>Hazard description</strong> -- what patient harm could occur if the threshold is violated</li>
+<li><strong>Risk level</strong> -- severity and probability classification</li>
+<li><strong>Clinical justification</strong> -- why this specific value was chosen</li>
+<li><strong>Source</strong> -- literature, clinical expert input, or regulatory requirement</li>
+</ol>
+<h2>Threshold types</h2>
+<h3>P_fail -- Critical safety floor</h3>
+<p>The most important threshold in AEGIS. P_fail defines the absolute minimum acceptable performance for the safety-critical metric. Any metric falling below P_fail triggers an immediate P1 REJECT.</p>
+<pre><code>IF any_metric &lt; P_fail THEN → REJECT (P1, highest priority)
+</code></pre>
+<p>Calibration approach:</p>
+<ul>
+<li>Identify the metric most directly linked to patient safety</li>
+<li>Determine the performance level below which the device poses unacceptable risk</li>
+<li>Review published literature for minimum acceptable performance in your domain</li>
+<li>Consult clinical domain experts</li>
+</ul>
+<blockquote>**Sepsis example:** P_fail was set to sensitivity < 0.65. Below this level, the sepsis prediction model would miss more than 35% of sepsis cases, creating an unacceptable risk of delayed treatment. This value was derived from a hazard analysis that identified missed sepsis onset as the primary patient safety risk (severity: critical; probability: probable at sensitivity below 0.65). At iteration 10, sensitivity dropped to 0.428 -- far below P_fail -- triggering an immediate P1 REJECT.</blockquote>
+<h3>R_G -- Performance buffer</h3>
+<p>The R_G threshold defines a buffer zone above P_fail. Metrics in this zone are acceptable but declining, triggering CONDITIONAL APPROVAL rather than full APPROVE.</p>
+<pre><code>IF metric &gt;= P_fail AND metric &lt; R_G THEN → CONDITIONAL APPROVAL (P3)
+</code></pre>
+<p>The gap between P_fail and R_G should be large enough to provide early warning but small enough that the buffer zone represents genuinely borderline performance.</p>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>P_fail</th>
+<th>R_G</th>
+<th>Buffer width</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Sensitivity (Sepsis)</td>
+<td>0.65</td>
+<td>0.66</td>
+<td>0.01 (1 pp)</td>
+</tr>
+<tr>
+<td>Specificity (Sepsis)</td>
+<td>--</td>
+<td>0.60</td>
+<td>--</td>
+</tr>
+</tbody></table>
+<h3>tau -- Gold standard tolerance</h3>
+<p>tau defines the maximum acceptable deviation between the current iteration&#39;s performance and the gold standard baseline. It is used in P2 evaluation (major drift + performance degradation).</p>
+<pre><code class="language-python"># Gold standard comparison at each iteration
+deviation = gold_standard_metric - current_metric
+degraded = (deviation &gt; tau)
+</code></pre>
+<p>Calibration approach:</p>
+<ul>
+<li>Run the model multiple times on D_G to establish natural performance variability</li>
+<li>Set tau slightly above the observed standard deviation of metric values</li>
+<li>Consider the clinical significance of the deviation, not just statistical significance</li>
+</ul>
+<h3>Drift thresholds -- theta_minor and theta_major</h3>
+<p>Drift thresholds classify the severity of distribution shift detected between the golden and drifting datasets.</p>
+<table>
+<thead>
+<tr>
+<th>Threshold</th>
+<th>Symbol</th>
+<th>Range</th>
+<th>Interpretation</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Minor drift lower bound</td>
+<td>theta_minor,low</td>
+<td>0.0 -- 1.0</td>
+<td>Below this, drift is negligible</td>
+</tr>
+<tr>
+<td>Minor drift upper bound</td>
+<td>theta_minor,high</td>
+<td>0.0 -- 1.0</td>
+<td>Above this, drift is escalated</td>
+</tr>
+<tr>
+<td>Major drift</td>
+<td>theta_major</td>
+<td>0.0 -- 1.0</td>
+<td>Above this, drift is severe</td>
+</tr>
+</tbody></table>
+<p>The drift score is the proportion of features (out of K) with statistically significant KS test results after Bonferroni correction:</p>
+<pre><code>drift_score = (number of features with p &lt; alpha&#39;) / K
+</code></pre>
+<p>Calibration methodology for drift thresholds:</p>
+<ol>
+<li>Compute drift scores between temporal subsets of your own training data (baseline variability)</li>
+<li>Set theta_minor,low at the 75th percentile of baseline drift scores</li>
+<li>Set theta_minor,high at the 95th percentile</li>
+<li>Set theta_major conservatively (e.g., 0.90) -- this triggers A3 alarm</li>
+</ol>
+<blockquote>**Sepsis example:** With K = 34 clinical features and alpha = 0.05, the Bonferroni-corrected significance level was alpha' = 0.00147. The drift thresholds were set as:
+
+| Threshold | Value | Meaning |
+|-----------|-------|---------|
+| theta_minor,low | 0.30 | < 30% of features drifted -- negligible |
+| theta_minor,high | 0.70 | > 70% of features drifted -- escalate to major |
+| theta_major | 0.90 | > 90% of features drifted -- severe, triggers A3 |
+
+At iteration 10, the drift score reached 1.000 (all 34 features significantly shifted), far exceeding theta_major and triggering A3 alarm alongside the P1 REJECT.</blockquote>
+<h3>P_PMS -- Post-market surveillance safety floor</h3>
+<p>P_PMS applies to the <strong>currently released model</strong> (not the candidate model). It triggers alarm A1 if the deployed model&#39;s performance falls below an absolute floor.</p>
+<p>In many cases, P_PMS is set equal to P_fail, as the same safety rationale applies to both candidate and deployed models.</p>
+<h3>delta -- PMS regression margin</h3>
+<p>delta defines the maximum acceptable regression of the released model from its performance at the time of release. It triggers alarm A2.</p>
+<pre><code>regression = release_baseline_metric - current_released_metric
+IF regression &gt; delta THEN → A2 alarm
+</code></pre>
+<p>Calibration:</p>
+<ul>
+<li>Set delta based on the clinically meaningful difference for your metric</li>
+<li>A typical range is 0.020 to 0.030 for probability-based metrics</li>
+<li>Consider the natural variability of your metric on independent test sets</li>
+</ul>
+<h2>Complete threshold table (Sepsis)</h2>
+<p>This table reproduces Table VII from the manuscript:</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Symbol</th>
+<th>Value</th>
+<th>Clinical justification</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Critical safety floor</td>
+<td>P_fail</td>
+<td>Sens. &lt; 0.65</td>
+<td>Unacceptable miss rate below this level</td>
+</tr>
+<tr>
+<td>Performance buffer (sensitivity)</td>
+<td>R_G(sens)</td>
+<td>Sens. &lt; 0.66</td>
+<td>1 pp above P_fail; early warning zone</td>
+</tr>
+<tr>
+<td>Performance buffer (specificity)</td>
+<td>R_G(spec)</td>
+<td>Spec. &lt; 0.60</td>
+<td>Minimum acceptable specificity for ICU</td>
+</tr>
+<tr>
+<td>Gold standard tolerance</td>
+<td>tau</td>
+<td>0.015</td>
+<td>Derived from model variability on D_G</td>
+</tr>
+<tr>
+<td>Minor drift lower bound</td>
+<td>theta_minor,low</td>
+<td>0.30</td>
+<td>Below this, drift negligible</td>
+</tr>
+<tr>
+<td>Minor drift upper bound</td>
+<td>theta_minor,high</td>
+<td>0.70</td>
+<td>Above this, escalate to major</td>
+</tr>
+<tr>
+<td>Major drift threshold</td>
+<td>theta_major</td>
+<td>0.90</td>
+<td>Severe shift; triggers A3</td>
+</tr>
+<tr>
+<td>PMS safety floor</td>
+<td>P_PMS</td>
+<td>Sens. 0.65</td>
+<td>Aligned with P_fail</td>
+</tr>
+<tr>
+<td>PMS regression margin</td>
+<td>delta</td>
+<td>0.020--0.030</td>
+<td>Clinically meaningful regression</td>
+</tr>
+</tbody></table>
+<h2>Threshold dependencies</h2>
+<p>The thresholds interact with each other through the CDM priority hierarchy. It is essential that they are internally consistent:</p>
+<pre><code>P_fail &lt; R_G         (buffer zone must exist above safety floor)
+tau &gt; 0              (zero tolerance is impractical)
+theta_minor,low &lt; theta_minor,high &lt; theta_major
+P_PMS &lt;= P_fail      (PMS floor should not be above iterative floor)
+</code></pre>
+<p>Violating these constraints will produce incoherent CDM behaviour.</p>
+<h2>Documenting thresholds</h2>
+<p>For each threshold, complete a row in the <a href="../forms/s2-threshold-table.html">S2 Threshold Table</a> with all six columns:</p>
+<ol>
+<li>Parameter name</li>
+<li>Symbol</li>
+<li>Value</li>
+<li>Clinical justification</li>
+<li>ISO 14971 hazard ID</li>
+<li>Source (literature, expert panel, regulatory requirement)</li>
+</ol>
+<h3>Source</h3>
+<p>Manuscript Section II-B-3 (threshold definitions and CDM integration), Tables VI--VII (decision hierarchy and sepsis threshold values). Supplementary S2.3 (standalone threshold specification template). ISO 14971:2019 requirements are referenced throughout Section II-A.</p>
+
+
+      <div class="guide-nav-footer">
+        <a href="02-configure.html">← Previous</a>
+        <a href="04-cdm-logic.html">Next →</a>
+      </div>
+    </main>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+  <script>
+    // Scroll progress
+    window.addEventListener('scroll', function () {
+      var bar = document.getElementById('scroll-progress');
+      if (!bar) return;
+      var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+      var scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      bar.style.width = (scrollTop / scrollHeight * 100) + '%';
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EU regulatory mapping — AEGIS Guide</title>
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <link rel="stylesheet" href="../assets/css/guide.css">
+  <script src="../assets/js/theme.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+</head>
+<body>
+  <div class="scroll-progress" id="scroll-progress"></div>
+
+  <nav class="site-nav">
+    <div class="nav-logo">
+      <a href="../index.html">AEGIS</a>
+    </div>
+    <div class="nav-links">
+      <a href="../index.html">Home</a>
+      <a href="index.html">Guide</a>
+      <a href="../forms/index.html">Forms</a>
+      <a href="https://github.com/ki-smile/aegis" target="_blank" rel="noopener">GitHub</a>
+      <button class="theme-toggle" id="theme-toggle">☾ Dark</button>
+    </div>
+  </nav>
+
+  <div class="guide-layout">
+    <aside class="guide-sidebar">
+      <nav>
+        <div class="sidebar-title">Implementation Guide</div>
+        <a href="index.html">Overview</a>
+<a href="01-concepts.html">1. Core concepts</a>
+<a href="02-configure.html">2. Configuration</a>
+<a href="03-thresholds.html">3. Thresholds</a>
+<a href="04-cdm-logic.html">4. CDM logic</a>
+<a href="05-mlcps.html">5. MLcps</a>
+<a href="06-drift.html">6. Drift detection</a>
+<a href="07-audit-trail.html">7. Audit trail</a>
+<a href="08-pccp-mapping.html">8. PCCP mapping</a>
+<a href="09-eu-mapping.html" class="active">9. EU mapping</a>
+
+      </nav>
+    </aside>
+
+    <main class="guide-content">
+      <h1>EU regulatory mapping</h1>
+<p>AEGIS is designed for dual-jurisdiction compliance, supporting both US FDA and EU regulatory frameworks. This page maps AEGIS elements to the EU AI Act, EU MDR, and relevant MDCG guidance documents. Together with the <a href="08-pccp-mapping.html">PCCP mapping</a> page, it provides the complete regulatory alignment picture.</p>
+<h2>Regulatory landscape overview</h2>
+<p>Medical AI systems marketed in the EU must comply with three overlapping regulatory instruments:</p>
+<table>
+<thead>
+<tr>
+<th>Regulation</th>
+<th>Scope</th>
+<th>Key requirements for adaptive AI</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>EU MDR (2017/745)</strong></td>
+<td>Medical device safety and performance</td>
+<td>Post-market surveillance, PSUR, vigilance reporting</td>
+</tr>
+<tr>
+<td><strong>EU AI Act (2024/1689)</strong></td>
+<td>AI-specific requirements for high-risk systems</td>
+<td>Risk management, data governance, transparency, human oversight</td>
+</tr>
+<tr>
+<td><strong>MDCG guidance</strong></td>
+<td>Interpretive guidance for MDR/IVDR</td>
+<td>Technical documentation, clinical evaluation, PCCP-equivalent procedures</td>
+</tr>
+</tbody></table>
+<p>AEGIS addresses requirements from all three instruments through its modular architecture.</p>
+<h2>AI Act Article 43(4) -- Substantial modification</h2>
+<p>Article 43(4) of the AI Act defines when a high-risk AI system has undergone a &quot;substantial modification&quot; requiring re-assessment. AEGIS helps determine whether an iterative update constitutes a substantial modification:</p>
+<table>
+<thead>
+<tr>
+<th>AI Act criterion</th>
+<th>AEGIS mapping</th>
+<th>Assessment</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Change affecting compliance</td>
+<td>CDM decision + alarm state</td>
+<td>REJECT or ALARM indicates potential compliance impact</td>
+</tr>
+<tr>
+<td>Change to intended purpose</td>
+<td>Fixed in AEGIS configuration</td>
+<td>AEGIS does not permit changes to intended use</td>
+</tr>
+<tr>
+<td>Change affecting performance</td>
+<td>MMM metrics vs gold standard</td>
+<td>Quantified by tau tolerance and MLcps trend</td>
+</tr>
+</tbody></table>
+<p>AEGIS&#39;s position is that pre-specified iterative updates within the AEGIS governance framework do <strong>not</strong> constitute substantial modifications when:</p>
+<ol>
+<li>The modification protocol is pre-specified (CDM hierarchy)</li>
+<li>The impact assessment methodology is pre-defined (MMM evaluation)</li>
+<li>All updates remain within predetermined performance boundaries</li>
+<li>The intended purpose is unchanged</li>
+</ol>
+<p>When the CDM produces REJECT, the candidate model is not deployed, so no substantial modification occurs. When ALARM fires on the released model, this may signal a need for regulatory reporting under MDR vigilance rules rather than a new conformity assessment.</p>
+<blockquote>**Sepsis example:** Across 11 iterations, the sepsis prediction model underwent iterative retraining. Iterations 0--6 produced APPROVE or CLINICAL REVIEW decisions, all within the predetermined performance boundaries. Under Article 43(4), these iterations would not constitute substantial modifications because the modification protocol was pre-specified, the impact was assessed against locked thresholds, and the intended purpose remained unchanged. Iterations 9--10 (REJECT and REJECT+ALARM) did not result in deployment of modified models, so no substantial modification to the marketed device occurred -- instead, the governance framework prevented a potentially harmful modification from reaching clinical use.</blockquote>
+<h2>Technical documentation requirements</h2>
+<p>The AI Act requires high-risk AI systems to maintain comprehensive technical documentation. AEGIS outputs map to these requirements:</p>
+<table>
+<thead>
+<tr>
+<th>AI Act requirement (Annex IV)</th>
+<th>AEGIS deliverable</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Description of the AI system</td>
+<td>S2 Configuration form (deployment context, model architecture)</td>
+</tr>
+<tr>
+<td>Risk management system</td>
+<td>ISO 14971 threshold traceability + CDM decision hierarchy</td>
+</tr>
+<tr>
+<td>Data governance</td>
+<td>DARM dataset management (D_T, D_G, D_D splits and accumulation rule)</td>
+</tr>
+<tr>
+<td>Performance metrics</td>
+<td>MMM outputs (primary metrics, MLcps, drift score)</td>
+</tr>
+<tr>
+<td>Human oversight measures</td>
+<td>CLINICAL REVIEW category + operator ID in audit trail</td>
+</tr>
+<tr>
+<td>Accuracy, robustness, cybersecurity</td>
+<td>Gold standard comparison, drift detection, dataset hashing</td>
+</tr>
+<tr>
+<td>Logging capabilities</td>
+<td>11-field audit trail (see <a href="07-audit-trail.html">Audit trail</a>)</td>
+</tr>
+<tr>
+<td>Post-market monitoring</td>
+<td>PMS alarm channel (A1, A2, A3)</td>
+</tr>
+</tbody></table>
+<h2>EU MDR Article 83 and the ALARM signal</h2>
+<p>EU MDR Article 83 requires manufacturers of implantable and Class III devices to report on safety and performance through Periodic Safety Update Reports (PSURs). For other classes, post-market surveillance plans must define monitoring and reporting procedures.</p>
+<p>The AEGIS alarm channel maps directly to MDR vigilance obligations:</p>
+<table>
+<thead>
+<tr>
+<th>AEGIS alarm</th>
+<th>MDR relevance</th>
+<th>Potential reporting obligation</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>A1: PMS safety floor breach</td>
+<td>Serious incident if harm occurs</td>
+<td>MDR Art. 87 vigilance report</td>
+</tr>
+<tr>
+<td>A2: Performance regression</td>
+<td>Trend reporting in PSUR</td>
+<td>MDR Art. 86 trend analysis</td>
+</tr>
+<tr>
+<td>A3: Major drift</td>
+<td>Field safety concern</td>
+<td>MDR Art. 83 PMS action</td>
+</tr>
+</tbody></table>
+<h3>ALARM as an early warning system</h3>
+<p>The ALARM channel provides an earlier signal than traditional PMS approaches because it monitors the released model proactively against pre-specified thresholds rather than waiting for adverse event reports:</p>
+<pre><code>Traditional PMS:  Adverse event occurs → Report → Investigate → Act
+AEGIS ALARM:      Metric threshold breached → Immediate alert → Investigate → Act
+</code></pre>
+<p>This proactive approach aligns with the EU regulatory philosophy of risk prevention rather than reactive harm mitigation.</p>
+<blockquote>**Sepsis example:** At iteration 10, alarm A3 fired because the drift score reached 1.000 (exceeding theta_major = 0.90). In an EU MDR context, this would trigger a review under the post-market surveillance plan to determine whether the detected distribution shift constitutes a field safety concern. If the drift affected the currently deployed model's ability to correctly predict sepsis in the patient population, this could escalate to a field safety corrective action (FSCA) under MDR Art. 87. The AEGIS audit trail would provide the documentary evidence needed for the competent authority notification.</blockquote>
+<h2>MDCG 2025-6 key points</h2>
+<p>MDCG 2025-6 provides guidance on the clinical evaluation and post-market clinical follow-up for AI/ML medical devices. Key points relevant to AEGIS implementers:</p>
+<table>
+<thead>
+<tr>
+<th>MDCG 2025-6 topic</th>
+<th>AEGIS alignment</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Continuous learning lifecycle</td>
+<td>AEGIS iterative governance loop (DARM-MMM-CDM)</td>
+</tr>
+<tr>
+<td>Performance monitoring plan</td>
+<td>MMM metric tracking + PMS alarm conditions</td>
+</tr>
+<tr>
+<td>Clinical evidence requirements</td>
+<td>Gold standard evaluation on locked dataset D_G</td>
+</tr>
+<tr>
+<td>Change management</td>
+<td>CDM decision hierarchy as pre-specified change protocol</td>
+</tr>
+<tr>
+<td>Bias and fairness monitoring</td>
+<td>MMM fairness metrics (configurable per domain)</td>
+</tr>
+<tr>
+<td>Transparency</td>
+<td>Audit trail with all 11 required fields</td>
+</tr>
+</tbody></table>
+<p>MDCG guidance emphasises that AI/ML devices require a &quot;living&quot; clinical evaluation plan that accounts for post-market performance changes. AEGIS provides the infrastructure for this through its iterative evaluation loop and structured audit trail.</p>
+<h2>PSUR reporting</h2>
+<p>For devices requiring PSURs under MDR Article 86, AEGIS outputs provide structured data for the safety and performance sections:</p>
+<h3>PSUR content from AEGIS</h3>
+<table>
+<thead>
+<tr>
+<th>PSUR section</th>
+<th>AEGIS data source</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Device description and intended purpose</td>
+<td>S2 configuration form</td>
+</tr>
+<tr>
+<td>Summary of performance data</td>
+<td>MLcps trend across iterations; per-metric summary table</td>
+</tr>
+<tr>
+<td>Benefit-risk determination</td>
+<td>CDM decision history; proportion of APPROVE vs other categories</td>
+</tr>
+<tr>
+<td>Volume of data processed</td>
+<td>D_D,k sizes per iteration from audit trail</td>
+</tr>
+<tr>
+<td>Complaints and vigilance</td>
+<td>CAPA records linked to REJECT and ALARM events</td>
+</tr>
+<tr>
+<td>Conclusions and actions</td>
+<td>Trend analysis of decision categories and alarm frequency</td>
+</tr>
+</tbody></table>
+<h2>Risk management philosophy</h2>
+<p>Table I of the manuscript maps AEGIS to the broader regulatory risk management philosophy:</p>
+<table>
+<thead>
+<tr>
+<th>Framework</th>
+<th>Risk management approach</th>
+<th>AEGIS implementation</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ISO 14971:2019</td>
+<td>Hazard identification, risk estimation, risk control</td>
+<td>All thresholds traced to specific hazards</td>
+</tr>
+<tr>
+<td>EU MDR</td>
+<td>Essential requirements for safety and performance</td>
+<td>CDM ensures minimum performance standards</td>
+</tr>
+<tr>
+<td>AI Act</td>
+<td>Risk-based classification and management</td>
+<td>Tier-1 and Tier-2 thresholds as risk controls</td>
+</tr>
+<tr>
+<td>FDA PCCP</td>
+<td>Pre-specified change control</td>
+<td>CDM as predetermined modification protocol</td>
+</tr>
+</tbody></table>
+<p>AEGIS implements risk management as a continuous, automated process rather than a point-in-time assessment. Every iteration evaluates the model against the complete risk control framework, ensuring that risk management is not a one-time activity but an ongoing operational practice.</p>
+<h2>Dual-jurisdiction considerations</h2>
+<p>When operating in both US and EU markets, be aware of key differences:</p>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>US (FDA)</th>
+<th>EU (MDR + AI Act)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Change control mechanism</td>
+<td>PCCP (pre-specified)</td>
+<td>No exact equivalent; closest is MDCG change management guidance</td>
+</tr>
+<tr>
+<td>Reporting obligations</td>
+<td>MDR (21 CFR Part 803)</td>
+<td>Art. 87 vigilance + Art. 86 PSUR</td>
+</tr>
+<tr>
+<td>AI-specific requirements</td>
+<td>Evolving FDA guidance</td>
+<td>AI Act Annex IV requirements</td>
+</tr>
+<tr>
+<td>Audit trail requirements</td>
+<td>21 CFR Part 11 (electronic records)</td>
+<td>AI Act Art. 12 (logging)</td>
+</tr>
+<tr>
+<td>Human oversight</td>
+<td>Clinical review processes</td>
+<td>AI Act Art. 14 (human oversight)</td>
+</tr>
+</tbody></table>
+<p>AEGIS addresses both jurisdictions through its modular design: the same CDM logic, audit trail, and threshold framework satisfy requirements from both regulatory systems.</p>
+<blockquote>**Caveat:** Regulatory landscapes for AI in healthcare are evolving rapidly. The mappings in this guide reflect the state of regulations as of early 2026. Confirm all regulatory interpretations with qualified regulatory counsel in both jurisdictions before relying on these mappings for submission or compliance purposes.</blockquote>
+<h3>Source</h3>
+<p>Manuscript Section II-A (regulatory context and Table I mapping six frameworks), Section IV-F (dual-jurisdiction regulatory mapping), and Table I (regulatory framework comparison). EU AI Act Article 43(4) substantial modification criteria. EU MDR Articles 83, 86, and 87. MDCG 2025-6 guidance on AI/ML clinical evaluation. Supplementary S2.8 provides the regulatory pathway mapping configuration.</p>
+
+
+      <div class="guide-nav-footer">
+        <a href="08-pccp-mapping.html">← Previous</a>
+        
+      </div>
+    </main>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+  <script>
+    // Scroll progress
+    window.addEventListener('scroll', function () {
+      var bar = document.getElementById('scroll-progress');
+      if (!bar) return;
+      var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+      var scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      bar.style.width = (scrollTop / scrollHeight * 100) + '%';
+    });
+  </script>
+</body>
+</html>

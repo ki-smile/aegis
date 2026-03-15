@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Configuration — AEGIS Guide</title>
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <link rel="stylesheet" href="../assets/css/guide.css">
+  <script src="../assets/js/theme.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+</head>
+<body>
+  <div class="scroll-progress" id="scroll-progress"></div>
+
+  <nav class="site-nav">
+    <div class="nav-logo">
+      <a href="../index.html">AEGIS</a>
+    </div>
+    <div class="nav-links">
+      <a href="../index.html">Home</a>
+      <a href="index.html">Guide</a>
+      <a href="../forms/index.html">Forms</a>
+      <a href="https://github.com/ki-smile/aegis" target="_blank" rel="noopener">GitHub</a>
+      <button class="theme-toggle" id="theme-toggle">☾ Dark</button>
+    </div>
+  </nav>
+
+  <div class="guide-layout">
+    <aside class="guide-sidebar">
+      <nav>
+        <div class="sidebar-title">Implementation Guide</div>
+        <a href="index.html">Overview</a>
+<a href="01-concepts.html">1. Core concepts</a>
+<a href="02-configure.html" class="active">2. Configuration</a>
+<a href="03-thresholds.html">3. Thresholds</a>
+<a href="04-cdm-logic.html">4. CDM logic</a>
+<a href="05-mlcps.html">5. MLcps</a>
+<a href="06-drift.html">6. Drift detection</a>
+<a href="07-audit-trail.html">7. Audit trail</a>
+<a href="08-pccp-mapping.html">8. PCCP mapping</a>
+<a href="09-eu-mapping.html">9. EU mapping</a>
+
+      </nav>
+    </aside>
+
+    <main class="guide-content">
+      <h1>Configuration</h1>
+<p>Instantiating AEGIS for a specific domain requires populating a set of configuration parameters that define the deployment context, dataset structure, performance metrics, thresholds, and decision categories. This page walks through each parameter group with worked examples.</p>
+<p><a href="../forms/s2-config.html">Download the S2 Configuration Template</a></p>
+<h2>Instantiation parameters overview</h2>
+<p>Table IV in the manuscript defines the complete set of parameters required to instantiate AEGIS. They are grouped into seven sections:</p>
+<table>
+<thead>
+<tr>
+<th>Section</th>
+<th>Parameters</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>S2.1 Deployment context</td>
+<td>Data modality, model architecture, primary metrics, clinical use case</td>
+<td>Establish the operational context</td>
+</tr>
+<tr>
+<td>S2.2 Dataset configuration</td>
+<td>Golden size, split strategy, deduplication method</td>
+<td>Define the DARM data structure</td>
+</tr>
+<tr>
+<td>S2.3 Thresholds</td>
+<td>P_fail, R_G, tau, theta_*, P_PMS, delta</td>
+<td>Set safety boundaries (see <a href="03-thresholds.html">Thresholds</a>)</td>
+</tr>
+<tr>
+<td>S2.4 MLcps</td>
+<td>Metric-weight pairs, derivation method</td>
+<td>Configure composite scoring (see <a href="05-mlcps.html">MLcps</a>)</td>
+</tr>
+<tr>
+<td>S2.5 Drift detection</td>
+<td>Method, K, alpha, feature list</td>
+<td>Configure drift monitoring (see <a href="06-drift.html">Drift detection</a>)</td>
+</tr>
+<tr>
+<td>S2.6 Active categories</td>
+<td>Enable/disable intermediate categories</td>
+<td>Tailor decision hierarchy</td>
+</tr>
+<tr>
+<td>S2.7 Gold standard</td>
+<td>Iteration, metric values, dataset ID</td>
+<td>Lock the performance baseline</td>
+</tr>
+</tbody></table>
+<h2>S2.1 -- Deployment context</h2>
+<p>The deployment context section captures the fundamental characteristics of your AI/ML system.</p>
+<h3>Data modality</h3>
+<p>Select the primary data type your model processes:</p>
+<table>
+<thead>
+<tr>
+<th>Modality</th>
+<th>Example systems</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Tabular EHR</td>
+<td>Sepsis prediction, readmission risk</td>
+</tr>
+<tr>
+<td>Medical imaging (2D)</td>
+<td>Chest X-ray classification, retinal screening</td>
+</tr>
+<tr>
+<td>Medical imaging (3D volumetric)</td>
+<td>Brain tumour segmentation, cardiac MRI</td>
+</tr>
+<tr>
+<td>Time series</td>
+<td>ECG interpretation, continuous glucose monitoring</td>
+</tr>
+<tr>
+<td>Genomics / omics</td>
+<td>Variant classification, gene expression</td>
+</tr>
+<tr>
+<td>Natural language / clinical notes</td>
+<td>Clinical NLP, radiology report parsing</td>
+</tr>
+<tr>
+<td>Multi-modal</td>
+<td>Combined imaging + EHR systems</td>
+</tr>
+</tbody></table>
+<blockquote>**Sepsis example:** The sepsis prediction system uses **Tabular EHR** data modality. The model is a Random Forest with 300 trees, processing 34 clinical features (vital signs and laboratory values) collected hourly from ICU patients. Primary metrics are sensitivity, specificity, ROC-AUC, and balanced accuracy. The clinical use case is early prediction of sepsis onset in adult ICU patients, where the model produces hourly risk scores and clinicians receive alerts when the score exceeds a threshold.</blockquote>
+<h3>Model architecture</h3>
+<p>Document the model type with sufficient detail for reproducibility. Include:</p>
+<ul>
+<li>Algorithm family (e.g., Random Forest, neural network, gradient boosting)</li>
+<li>Key hyperparameters (e.g., number of trees, depth, learning rate)</li>
+<li>Pre-processing pipeline details relevant to performance</li>
+</ul>
+<h3>Primary metrics</h3>
+<p>List all metrics that will be tracked by MMM. These should include:</p>
+<ul>
+<li>At least one <strong>safety-critical metric</strong> (e.g., sensitivity for a screening tool)</li>
+<li>Metrics that map to the clinical requirements of your intended use</li>
+<li>The metric(s) used for the critical safety floor P_fail</li>
+</ul>
+<h2>S2.2 -- Dataset configuration</h2>
+<h3>Golden dataset</h3>
+<p>The golden dataset D_G is the cornerstone of AEGIS evaluation. It must be:</p>
+<ol>
+<li><strong>Representative</strong> of the target population</li>
+<li><strong>Locked</strong> before the first deployment (immutable)</li>
+<li><strong>Hashed</strong> for integrity verification (SHA-256 recommended)</li>
+<li><strong>Documented</strong> with inclusion/exclusion criteria, source, and time period</li>
+</ol>
+<pre><code class="language-python">import hashlib
+import pandas as pd
+
+def hash_golden_dataset(df: pd.DataFrame) -&gt; str:
+    &quot;&quot;&quot;Generate SHA-256 hash of golden dataset for integrity verification.&quot;&quot;&quot;
+    content = df.to_csv(index=False).encode(&#39;utf-8&#39;)
+    return hashlib.sha256(content).hexdigest()
+
+# Lock and record
+golden_hash = hash_golden_dataset(D_G)
+print(f&quot;Golden dataset hash: sha256:{golden_hash[:12]}...golden_v1.0&quot;)
+</code></pre>
+<h3>Split strategy</h3>
+<p>AEGIS supports several split strategies. The choice depends on the clinical context:</p>
+<table>
+<thead>
+<tr>
+<th>Strategy</th>
+<th>When to use</th>
+<th>Caveat</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Random hold-out</td>
+<td>Homogeneous single-site data</td>
+<td>Risk of temporal leakage</td>
+</tr>
+<tr>
+<td>Temporal split</td>
+<td>Longitudinal data with time dependency</td>
+<td>Requires sufficient time span</td>
+</tr>
+<tr>
+<td>Site-based split</td>
+<td>Multi-centre deployments</td>
+<td>Tests generalisability</td>
+</tr>
+<tr>
+<td>Stratified random</td>
+<td>Class-imbalanced datasets</td>
+<td>Maintains prevalence ratios</td>
+</tr>
+</tbody></table>
+<blockquote>**Sepsis example:** A random 80/20 hold-out split was used. D_T,0 = 3,254 samples and D_G = 813 samples from PhysioNet Hospital A. The drifting dataset D_D,k consisted of 5,000 synthetic samples per iteration generated with controlled corruption. Patient ID deduplication was performed via SHA-256 hashing across all splits to ensure no patient appeared in more than one partition.</blockquote>
+<h3>Deduplication</h3>
+<p>Patient-level deduplication across all dataset splits is mandatory. A single patient appearing in both D_G and D_T,k will invalidate the governance loop by introducing data leakage.</p>
+<h2>S2.6 -- Active decision categories</h2>
+<p>APPROVE and REJECT are always active. The two intermediate categories (CONDITIONAL APPROVAL and CLINICAL REVIEW) can be disabled with documented clinical justification.</p>
+<h3>Four-category configuration (default)</h3>
+<pre><code>REJECT ← P1, P2
+CONDITIONAL APPROVAL ← P3
+CLINICAL REVIEW ← P3.5 (minor drift, borderline)
+APPROVE ← P4
+</code></pre>
+<h3>Two-category configuration</h3>
+<p>Some domains may not support meaningful intermediate states. For example, in binary segmentation quality assessment, the output mask is either clinically acceptable or not.</p>
+<pre><code>REJECT ← P1, P2, P3
+(CONDITIONAL APPROVAL — disabled)
+(CLINICAL REVIEW — disabled)
+APPROVE ← P4
+</code></pre>
+<p>When disabling categories, document the clinical justification in the S2 configuration form. Regulatory reviewers will need to understand why intermediate governance states were not implemented.</p>
+<blockquote>**Sepsis example:** The sepsis case study used all four active categories plus ALARM, exercising all five decision outputs across 11 iterations. CONDITIONAL APPROVAL was triggered at iterations 7 and 8 when sensitivity dropped into the buffer zone (below R_G = 0.66 but above P_fail = 0.65). CLINICAL REVIEW was triggered at iteration 5 when minor drift was detected. In contrast, the BraTS brain tumour segmentation study disabled both intermediate categories with the justification that the binary DSC metric does not support a meaningful buffer zone.</blockquote>
+<h2>S2.7 -- Gold standard baseline</h2>
+<p>The gold standard baseline is established at the first iteration that receives APPROVE. Record:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Iteration</td>
+<td>The iteration number</td>
+<td>0</td>
+</tr>
+<tr>
+<td>Metric values</td>
+<td>All primary metrics at that iteration</td>
+<td>Sens: 0.890, Spec: 0.798, AUC: 0.920</td>
+</tr>
+<tr>
+<td>Date</td>
+<td>When the baseline was locked</td>
+<td>2026-01-15</td>
+</tr>
+<tr>
+<td>Dataset ID</td>
+<td>Hash or version tag of D_G</td>
+<td>sha256:a3f7c2...golden_v1.0</td>
+</tr>
+</tbody></table>
+<p>Once the gold standard is set, it must not be modified without a formal change control process. Any change to the gold standard effectively resets the governance baseline and should be treated as a significant modification.</p>
+<h2>Configuration checklist</h2>
+<p>Before proceeding to threshold configuration, verify:</p>
+<ul>
+<li><input disabled="" type="checkbox"> Data modality and model architecture documented</li>
+<li><input disabled="" type="checkbox"> Primary metrics selected and clinically justified</li>
+<li><input disabled="" type="checkbox"> Golden dataset locked, hashed, and described</li>
+<li><input disabled="" type="checkbox"> Split strategy documented with rationale</li>
+<li><input disabled="" type="checkbox"> Patient-level deduplication confirmed</li>
+<li><input disabled="" type="checkbox"> Active decision categories selected with justification</li>
+<li><input disabled="" type="checkbox"> Gold standard baseline recorded (or planned for iteration 0)</li>
+</ul>
+<h3>Source</h3>
+<p>Manuscript Section II-D, Table IV. Instantiation parameters are formally defined in Table IV, with the sepsis column providing worked example values. BraTS configuration appears in Section IV-D. Dataset management follows DARM specification in Section II-B-1. Active category configuration is described in Supplementary S2.6.</p>
+
+
+      <div class="guide-nav-footer">
+        <a href="01-concepts.html">← Previous</a>
+        <a href="03-thresholds.html">Next →</a>
+      </div>
+    </main>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+  <script>
+    // Scroll progress
+    window.addEventListener('scroll', function () {
+      var bar = document.getElementById('scroll-progress');
+      if (!bar) return;
+      var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+      var scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      bar.style.width = (scrollTop / scrollHeight * 100) + '%';
+    });
+  </script>
+</body>
+</html>

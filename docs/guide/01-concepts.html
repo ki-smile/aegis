@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Core concepts — AEGIS Guide</title>
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <link rel="stylesheet" href="../assets/css/guide.css">
+  <script src="../assets/js/theme.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+</head>
+<body>
+  <div class="scroll-progress" id="scroll-progress"></div>
+
+  <nav class="site-nav">
+    <div class="nav-logo">
+      <a href="../index.html">AEGIS</a>
+    </div>
+    <div class="nav-links">
+      <a href="../index.html">Home</a>
+      <a href="index.html">Guide</a>
+      <a href="../forms/index.html">Forms</a>
+      <a href="https://github.com/ki-smile/aegis" target="_blank" rel="noopener">GitHub</a>
+      <button class="theme-toggle" id="theme-toggle">☾ Dark</button>
+    </div>
+  </nav>
+
+  <div class="guide-layout">
+    <aside class="guide-sidebar">
+      <nav>
+        <div class="sidebar-title">Implementation Guide</div>
+        <a href="index.html">Overview</a>
+<a href="01-concepts.html" class="active">1. Core concepts</a>
+<a href="02-configure.html">2. Configuration</a>
+<a href="03-thresholds.html">3. Thresholds</a>
+<a href="04-cdm-logic.html">4. CDM logic</a>
+<a href="05-mlcps.html">5. MLcps</a>
+<a href="06-drift.html">6. Drift detection</a>
+<a href="07-audit-trail.html">7. Audit trail</a>
+<a href="08-pccp-mapping.html">8. PCCP mapping</a>
+<a href="09-eu-mapping.html">9. EU mapping</a>
+
+      </nav>
+    </aside>
+
+    <main class="guide-content">
+      <h1>Core concepts</h1>
+<p>This page defines the foundational terminology and architectural principles of AEGIS. All subsequent guide pages assume familiarity with these concepts.</p>
+<h2>The three modules</h2>
+<h3>DARM -- Dataset and Review Management</h3>
+<p>DARM manages the lifecycle of three dataset splits that feed the iterative governance loop:</p>
+<table>
+<thead>
+<tr>
+<th>Dataset</th>
+<th>Symbol</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Training</strong></td>
+<td>D_T,k</td>
+<td>Accumulated training data at iteration k</td>
+</tr>
+<tr>
+<td><strong>Golden</strong></td>
+<td>D_G</td>
+<td>Fixed, locked reference dataset for consistent evaluation</td>
+</tr>
+<tr>
+<td><strong>Drifting</strong></td>
+<td>D_D,k</td>
+<td>Newly arrived data at iteration k (real-world or synthetic)</td>
+</tr>
+</tbody></table>
+<p>The data accumulation rule is unconditional:</p>
+<pre><code>D_T,k+1 = D_T,k ∪ D_D,k
+</code></pre>
+<p>This means new data always enters the training pool regardless of the CDM decision. The model is always retrained on the full accumulated dataset.</p>
+<blockquote>**Sepsis example:** In the sepsis case study, the golden dataset D_G consisted of 813 samples (20% hold-out) from PhysioNet Hospital A. The drifting dataset D_D,k contained 5,000 synthetic samples per iteration, generated with controlled corruption levels ranging from 0% (clean) to 80% label flip with Gaussian noise. The training set grew from 3,254 samples at k=0 to 53,254 at k=10.</blockquote>
+<h3>MMM -- Model Monitoring Metrics</h3>
+<p>MMM computes all performance, drift, and fairness metrics for the current iteration. It operates on three outputs:</p>
+<ol>
+<li><strong>Primary performance metrics</strong> evaluated on D_G (e.g., sensitivity, specificity, ROC-AUC)</li>
+<li><strong>MLcps</strong> -- a composite performance score combining weighted metrics into a single polar-coordinate value</li>
+<li><strong>Drift score</strong> -- the proportion of features exhibiting statistically significant distribution shift between D_G and D_D,k</li>
+</ol>
+<h3>CDM -- Clinical Decision Module</h3>
+<p>The CDM is a deterministic, rule-based decision engine. It takes the outputs of MMM and produces a composite result:</p>
+<pre><code>CDM output = (Decision Category, Alarm State)
+</code></pre>
+<p>The decision and alarm channels are <strong>independent</strong>. This means APPROVE + ALARM is a valid output -- the model passed all performance thresholds, but a post-market safety condition was triggered.</p>
+<h2>Decision categories</h2>
+<p>AEGIS defines five decision categories arranged in a priority hierarchy:</p>
+<table>
+<thead>
+<tr>
+<th>Priority</th>
+<th>Category</th>
+<th>Badge</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>P1</td>
+<td>REJECT</td>
+<td><code>badge-reject</code></td>
+<td>Critical safety floor violated</td>
+</tr>
+<tr>
+<td>P2</td>
+<td>REJECT</td>
+<td><code>badge-reject</code></td>
+<td>Major drift with performance degradation</td>
+</tr>
+<tr>
+<td>P3</td>
+<td>CONDITIONAL APPROVAL</td>
+<td><code>badge-cond</code></td>
+<td>Performance in buffer zone</td>
+</tr>
+<tr>
+<td>P3.5</td>
+<td>CLINICAL REVIEW</td>
+<td><code>badge-review</code></td>
+<td>Minor drift or borderline metrics requiring human assessment</td>
+</tr>
+<tr>
+<td>P4</td>
+<td>APPROVE</td>
+<td><code>badge-approve</code></td>
+<td>All checks passed</td>
+</tr>
+</tbody></table>
+<p>The three alarm conditions (A1, A2, A3) operate independently alongside any decision:</p>
+<table>
+<thead>
+<tr>
+<th>Alarm</th>
+<th>Condition</th>
+<th>Trigger</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>A1</td>
+<td>Released model &lt; P_PMS</td>
+<td>Post-market safety floor breach</td>
+</tr>
+<tr>
+<td>A2</td>
+<td>Released model regressed &gt; delta from baseline</td>
+<td>Performance regression</td>
+</tr>
+<tr>
+<td>A3</td>
+<td>Drift score &gt; theta_major</td>
+<td>Severe covariate drift</td>
+</tr>
+</tbody></table>
+<h2>Gold standard</h2>
+<p>The gold standard is the performance baseline established at the first APPROVE decision (typically iteration 0). All subsequent iterations are compared against this baseline via the gold standard tolerance tau.</p>
+<pre><code class="language-python"># Gold standard comparison
+deviation = gold_metric - current_metric
+within_tolerance = (deviation &lt;= tau)
+</code></pre>
+<p>The gold standard is locked once set and should never be updated without a formal change control process. The dataset ID (hash or version tag) must be recorded.</p>
+<blockquote>**Sepsis example:** The gold standard was set at iteration 0 with sensitivity = 0.890, specificity = 0.798, ROC-AUC = 0.920, balanced accuracy = 0.844, and MLcps = 0.876. The gold standard tolerance was tau = 0.015 for sensitivity. Throughout iterations 1-6, all metrics remained within tolerance of this baseline.</blockquote>
+<h2>Two-tier threshold architecture</h2>
+<p>AEGIS employs two tiers of thresholds, each serving a distinct safety function:</p>
+<h3>Tier 1: Iterative governance thresholds</h3>
+<p>These apply to the <strong>candidate model</strong> at each retraining iteration:</p>
+<table>
+<thead>
+<tr>
+<th>Threshold</th>
+<th>Symbol</th>
+<th>Function</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Critical safety floor</td>
+<td>P_fail</td>
+<td>Absolute minimum performance -- violation triggers immediate REJECT</td>
+</tr>
+<tr>
+<td>Performance buffer</td>
+<td>R_G</td>
+<td>Zone between P_fail and full approval -- triggers CONDITIONAL APPROVAL</td>
+</tr>
+<tr>
+<td>Gold standard tolerance</td>
+<td>tau</td>
+<td>Maximum acceptable deviation from gold standard baseline</td>
+</tr>
+<tr>
+<td>Minor drift bounds</td>
+<td>theta_minor,low / theta_minor,high</td>
+<td>Drift severity classification</td>
+</tr>
+<tr>
+<td>Major drift threshold</td>
+<td>theta_major</td>
+<td>Severe drift -- triggers REJECT at P2 if combined with degradation</td>
+</tr>
+</tbody></table>
+<h3>Tier 2: Post-market surveillance (PMS) thresholds</h3>
+<p>These apply to the <strong>currently released model</strong> and trigger alarms independently:</p>
+<table>
+<thead>
+<tr>
+<th>Threshold</th>
+<th>Symbol</th>
+<th>Function</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>PMS safety floor</td>
+<td>P_PMS</td>
+<td>Minimum acceptable performance for the deployed model</td>
+</tr>
+<tr>
+<td>Regression margin</td>
+<td>delta</td>
+<td>Maximum regression from performance at time of release</td>
+</tr>
+</tbody></table>
+<h2>Composite decision output</h2>
+<p>The CDM produces a composite output that combines the decision category with the alarm state. This composite nature is critical for regulatory mapping:</p>
+<pre><code>Output = {
+    decision:          &quot;APPROVE&quot; | &quot;CONDITIONAL APPROVAL&quot; | &quot;CLINICAL REVIEW&quot; | &quot;REJECT&quot;,
+    alarm:             true | false,
+    alarm_conditions:  [&quot;A1&quot;, &quot;A2&quot;, &quot;A3&quot;],  // subset that fired
+    details:           { priority, trigger }
+}
+</code></pre>
+<p>The REJECT + ALARM composite state is particularly important: it indicates both that the candidate model failed iterative governance AND that the deployed model has triggered a post-market safety concern. This state demands immediate corrective action (CAPA).</p>
+<h2>Configurability principle</h2>
+<p>AEGIS is domain-agnostic by design. Every threshold value, metric selection, weight configuration, and active category is a configurable parameter. The framework specification defines the <strong>structure and logic</strong>; the implementer defines the <strong>values</strong>.</p>
+<p>This is why the <a href="../forms/s2-config.html">S2 Configuration Template</a> exists -- it captures all instantiation parameters for a specific deployment.</p>
+<h2>Notation table</h2>
+<p>The following symbols are used throughout this guide and the manuscript:</p>
+<table>
+<thead>
+<tr>
+<th>Symbol</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>k</td>
+<td>Iteration index</td>
+</tr>
+<tr>
+<td>D_T,k</td>
+<td>Training dataset at iteration k</td>
+</tr>
+<tr>
+<td>D_G</td>
+<td>Golden (reference) dataset</td>
+</tr>
+<tr>
+<td>D_D,k</td>
+<td>Drifting (new) dataset at iteration k</td>
+</tr>
+<tr>
+<td>P_fail</td>
+<td>Critical safety floor threshold</td>
+</tr>
+<tr>
+<td>R_G</td>
+<td>Performance buffer threshold (gold standard region)</td>
+</tr>
+<tr>
+<td>tau</td>
+<td>Gold standard tolerance</td>
+</tr>
+<tr>
+<td>theta_minor,low</td>
+<td>Minor drift lower bound</td>
+</tr>
+<tr>
+<td>theta_minor,high</td>
+<td>Minor drift upper bound</td>
+</tr>
+<tr>
+<td>theta_major</td>
+<td>Major drift threshold</td>
+</tr>
+<tr>
+<td>P_PMS</td>
+<td>PMS safety floor for released model</td>
+</tr>
+<tr>
+<td>delta</td>
+<td>PMS regression margin</td>
+</tr>
+<tr>
+<td>MLcps</td>
+<td>Multi-criteria Likert composite performance score</td>
+</tr>
+<tr>
+<td>K</td>
+<td>Number of features monitored for drift</td>
+</tr>
+<tr>
+<td>alpha</td>
+<td>Significance level for drift test</td>
+</tr>
+<tr>
+<td>alpha&#39;</td>
+<td>Bonferroni-corrected significance (alpha / K)</td>
+</tr>
+</tbody></table>
+<h3>Source</h3>
+<p>Manuscript Section II-B. Module definitions appear in Section II-B-1 (DARM), II-B-2 (MMM), and II-B-3 (CDM). The notation table corresponds to Table XIII in the manuscript. The two-tier threshold architecture is formally defined in Section II-B-3. Decision categories and alarm conditions are specified in Tables III and VI.</p>
+
+
+      <div class="guide-nav-footer">
+        <a href="index.html">← Previous</a>
+        <a href="02-configure.html">Next →</a>
+      </div>
+    </main>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+  <script>
+    // Scroll progress
+    window.addEventListener('scroll', function () {
+      var bar = document.getElementById('scroll-progress');
+      if (!bar) return;
+      var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+      var scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      bar.style.width = (scrollTop / scrollHeight * 100) + '%';
+    });
+  </script>
+</body>
+</html>

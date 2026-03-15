@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PCCP mapping — AEGIS Guide</title>
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <link rel="stylesheet" href="../assets/css/guide.css">
+  <script src="../assets/js/theme.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+</head>
+<body>
+  <div class="scroll-progress" id="scroll-progress"></div>
+
+  <nav class="site-nav">
+    <div class="nav-logo">
+      <a href="../index.html">AEGIS</a>
+    </div>
+    <div class="nav-links">
+      <a href="../index.html">Home</a>
+      <a href="index.html">Guide</a>
+      <a href="../forms/index.html">Forms</a>
+      <a href="https://github.com/ki-smile/aegis" target="_blank" rel="noopener">GitHub</a>
+      <button class="theme-toggle" id="theme-toggle">☾ Dark</button>
+    </div>
+  </nav>
+
+  <div class="guide-layout">
+    <aside class="guide-sidebar">
+      <nav>
+        <div class="sidebar-title">Implementation Guide</div>
+        <a href="index.html">Overview</a>
+<a href="01-concepts.html">1. Core concepts</a>
+<a href="02-configure.html">2. Configuration</a>
+<a href="03-thresholds.html">3. Thresholds</a>
+<a href="04-cdm-logic.html">4. CDM logic</a>
+<a href="05-mlcps.html">5. MLcps</a>
+<a href="06-drift.html">6. Drift detection</a>
+<a href="07-audit-trail.html">7. Audit trail</a>
+<a href="08-pccp-mapping.html" class="active">8. PCCP mapping</a>
+<a href="09-eu-mapping.html">9. EU mapping</a>
+
+      </nav>
+    </aside>
+
+    <main class="guide-content">
+      <h1>PCCP mapping</h1>
+<p>The FDA&#39;s Predetermined Change Control Plan (PCCP) is the primary US regulatory pathway for adaptive AI/ML medical devices. AEGIS is designed to align with PCCP requirements by providing pre-specified modification descriptions, protocols, and impact assessments. This page maps the three PCCP components to AEGIS framework elements.</p>
+<h2>What is PCCP?</h2>
+<p>A PCCP is a plan submitted as part of a marketing submission (510(k), De Novo, or PMA) that describes anticipated modifications to an AI/ML device and the methodology for implementing and assessing those modifications without requiring a new submission for each change.</p>
+<p>The PCCP has three required components:</p>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>PCCP requirement</th>
+<th>AEGIS mapping</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Component 1</strong></td>
+<td>Description of Modifications</td>
+<td>DARM data accumulation rule + model retraining specification</td>
+</tr>
+<tr>
+<td><strong>Component 2</strong></td>
+<td>Modification Protocol</td>
+<td>CDM priority-ordered decision hierarchy + threshold specification</td>
+</tr>
+<tr>
+<td><strong>Component 3</strong></td>
+<td>Impact Assessment</td>
+<td>MMM performance evaluation + gold standard comparison + alarm channel</td>
+</tr>
+</tbody></table>
+<h2>Component 1: Description of Modifications</h2>
+<p>PCCP Component 1 requires a clear description of what modifications the device will undergo and the scope of those modifications.</p>
+<p>In AEGIS, the modifications are pre-specified and deterministic:</p>
+<pre><code>At each iteration k:
+1. Data accumulation:   D_T,k+1 = D_T,k ∪ D_D,k  (unconditional)
+2. Model retraining:    M_k+1 = train(D_T,k+1)     (same architecture)
+3. Evaluation:          metrics_k+1 = evaluate(M_k+1, D_G)
+</code></pre>
+<p>The scope of modifications is bounded by the AEGIS configuration:</p>
+<table>
+<thead>
+<tr>
+<th>Modification aspect</th>
+<th>Pre-specified boundary</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Training data</td>
+<td>Only data meeting DARM inclusion criteria</td>
+</tr>
+<tr>
+<td>Model architecture</td>
+<td>Fixed (same algorithm and hyperparameters)</td>
+</tr>
+<tr>
+<td>Feature set</td>
+<td>Fixed (same input features)</td>
+</tr>
+<tr>
+<td>Intended use</td>
+<td>Unchanged</td>
+</tr>
+<tr>
+<td>Performance evaluation</td>
+<td>Same metrics, same golden dataset</td>
+</tr>
+</tbody></table>
+<blockquote>**Sepsis example:** For the sepsis prediction device, Component 1 would describe: "The device undergoes iterative retraining using newly accumulated ICU patient data. At each iteration, the Random Forest classifier (300 trees, fixed hyperparameters) is retrained on the union of all previously accumulated training data and newly collected patient records. The model architecture, feature set (34 clinical features), and intended use (early sepsis onset prediction in adult ICU patients) remain unchanged. The only modification is the expansion of the training dataset."</blockquote>
+<h2>Component 2: Modification Protocol</h2>
+<p>PCCP Component 2 requires a pre-specified protocol for implementing modifications, including the decision criteria for accepting or rejecting changes.</p>
+<p>AEGIS maps directly to this requirement through its CDM decision hierarchy:</p>
+<table>
+<thead>
+<tr>
+<th>CDM element</th>
+<th>PCCP Component 2 mapping</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>P1: Critical safety floor (P_fail)</td>
+<td>Automatic rejection criterion -- modification rejected if safety is compromised</td>
+</tr>
+<tr>
+<td>P2: Major drift + degradation</td>
+<td>Rejection criterion for distribution shift scenarios</td>
+</tr>
+<tr>
+<td>P3: Performance buffer (R_G)</td>
+<td>Conditional acceptance with heightened monitoring</td>
+</tr>
+<tr>
+<td>P4: Full compliance</td>
+<td>Acceptance criterion -- modification approved for deployment</td>
+</tr>
+<tr>
+<td>A1--A3: Alarm conditions</td>
+<td>Independent safety monitoring of the deployed device</td>
+</tr>
+</tbody></table>
+<p>The protocol is fully deterministic and pre-specified before the first iteration. No human judgement is required for P1, P2, P3, or P4 decisions (though CLINICAL REVIEW at P3.5, if enabled, does involve human assessment).</p>
+<h3>Four categories as predetermined pathways</h3>
+<p>Each AEGIS decision category maps to a predetermined pathway within the PCCP:</p>
+<table>
+<thead>
+<tr>
+<th>Decision category</th>
+<th>PCCP pathway</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>APPROVE</td>
+<td>Modification accepted</td>
+<td>Deploy updated model; log results; continue monitoring</td>
+</tr>
+<tr>
+<td>CONDITIONAL APPROVAL</td>
+<td>Modification accepted with conditions</td>
+<td>Deploy with heightened monitoring; schedule early re-evaluation</td>
+</tr>
+<tr>
+<td>CLINICAL REVIEW</td>
+<td>Modification requires human assessment</td>
+<td>Pause deployment; clinical expert reviews metrics and context</td>
+</tr>
+<tr>
+<td>REJECT</td>
+<td>Modification rejected</td>
+<td>Do not deploy; initiate root cause analysis; CAPA if warranted</td>
+</tr>
+</tbody></table>
+<h2>Component 3: Impact Assessment</h2>
+<p>PCCP Component 3 requires a pre-specified methodology for assessing the impact of each modification on device safety and effectiveness.</p>
+<p>AEGIS provides this through MMM:</p>
+<table>
+<thead>
+<tr>
+<th>Impact assessment element</th>
+<th>AEGIS mechanism</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Performance evaluation</td>
+<td>All primary metrics evaluated on locked golden dataset D_G</td>
+</tr>
+<tr>
+<td>Baseline comparison</td>
+<td>Gold standard comparison with tolerance tau</td>
+</tr>
+<tr>
+<td>Composite scoring</td>
+<td>MLcps trend tracking across iterations</td>
+</tr>
+<tr>
+<td>Distribution monitoring</td>
+<td>Drift detection with Bonferroni-corrected KS test</td>
+</tr>
+<tr>
+<td>Safety monitoring</td>
+<td>PMS alarm conditions (A1, A2, A3) on released model</td>
+</tr>
+</tbody></table>
+<p>The impact assessment is quantitative, reproducible, and pre-specified -- meeting the PCCP requirement for objective evaluation criteria.</p>
+<h2>REJECT + ALARM composite state</h2>
+<p>The REJECT + ALARM composite state is particularly important for PCCP documentation because it represents the most severe outcome:</p>
+<pre><code>REJECT + ALARM means:
+├── Candidate model REJECTED (failed iterative governance)
+│   └── Trigger: P1 (safety floor) or P2 (drift + degradation)
+└── Released model ALARMED (failed post-market surveillance)
+    └── Trigger: A1 (PMS floor) or A2 (regression) or A3 (major drift)
+</code></pre>
+<p>This state demands:</p>
+<ol>
+<li><strong>Immediate CAPA initiation</strong> -- the corrective action process must begin</li>
+<li><strong>Regulatory notification assessment</strong> -- evaluate whether the event meets FDA MDR or EU MDR Art. 87 reporting thresholds</li>
+<li><strong>Deployment freeze</strong> -- no new model versions deployed until root cause is resolved</li>
+<li><strong>Documentation</strong> -- full audit trail entry with CAPA reference</li>
+</ol>
+<blockquote>**Sepsis example:** At iteration 10, the framework produced REJECT (P1, sensitivity 0.428 < P_fail 0.65) + ALARM (A3, drift_score 1.000 > theta_major 0.90). In a PCCP context, this would be documented as: "The predetermined modification protocol rejected the candidate model due to critical safety floor violation (Component 2). The impact assessment identified severe covariate drift across all 34 monitored features (Component 3). A CAPA was initiated to investigate the root cause of the catastrophic data quality degradation."</blockquote>
+<h2>Preparing the PCCP appendix</h2>
+<p>When preparing your PCCP submission, use the following structure:</p>
+<table>
+<thead>
+<tr>
+<th>Section</th>
+<th>Content source</th>
+<th>AEGIS reference</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1. Device description</td>
+<td>Clinical use case from S2.1</td>
+<td>Configuration form</td>
+</tr>
+<tr>
+<td>2. Description of modifications</td>
+<td>DARM data accumulation + retraining spec</td>
+<td>This page, Component 1</td>
+</tr>
+<tr>
+<td>3. Modification protocol</td>
+<td>CDM hierarchy + all thresholds</td>
+<td><a href="03-thresholds.html">Thresholds</a>, <a href="04-cdm-logic.html">CDM logic</a></td>
+</tr>
+<tr>
+<td>4. Impact assessment plan</td>
+<td>MMM metrics + drift + gold standard</td>
+<td><a href="05-mlcps.html">MLcps</a>, <a href="06-drift.html">Drift</a></td>
+</tr>
+<tr>
+<td>5. Performance monitoring</td>
+<td>PMS alarm conditions + audit trail</td>
+<td><a href="07-audit-trail.html">Audit trail</a></td>
+</tr>
+<tr>
+<td>6. Threshold justification</td>
+<td>ISO 14971 traceability</td>
+<td><a href="03-thresholds.html">Thresholds</a></td>
+</tr>
+<tr>
+<td>7. CAPA procedures</td>
+<td>CAPA form and escalation pathways</td>
+<td><a href="../forms/capa.html">CAPA form</a></td>
+</tr>
+</tbody></table>
+<blockquote>**Caveat:** This mapping provides a technical framework for PCCP preparation. Confirm all regulatory interpretations with qualified regulatory counsel before submission. PCCP requirements may evolve as FDA guidance is updated.</blockquote>
+<h3>Source</h3>
+<p>Manuscript Section IV-F (regulatory pathway mapping) and Table XI (PCCP component alignment). The three-component PCCP structure follows FDA guidance on predetermined change control plans for AI/ML devices. Supplementary S2.8 provides the configuration template for regulatory pathway mapping. Supplementary S3.5 provides additional PCCP preparation guidance.</p>
+
+
+      <div class="guide-nav-footer">
+        <a href="07-audit-trail.html">← Previous</a>
+        <a href="09-eu-mapping.html">Next →</a>
+      </div>
+    </main>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+  <script>
+    // Scroll progress
+    window.addEventListener('scroll', function () {
+      var bar = document.getElementById('scroll-progress');
+      if (!bar) return;
+      var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+      var scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      bar.style.width = (scrollTop / scrollHeight * 100) + '%';
+    });
+  </script>
+</body>
+</html>

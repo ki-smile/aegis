@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Implementation readiness checklist — AEGIS Forms</title>
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <link rel="stylesheet" href="../assets/css/forms.css">
+  <script src="../assets/js/theme.js"></script>
+</head>
+<body>
+  <nav class="site-nav">
+    <div class="nav-logo">
+      <a href="../index.html">AEGIS</a>
+    </div>
+    <div class="nav-links">
+      <a href="../index.html">Home</a>
+      <a href="../guide/index.html">Guide</a>
+      <a href="index.html">Forms</a>
+      <a href="https://github.com/ki-smile/aegis" target="_blank" rel="noopener">GitHub</a>
+      <button class="theme-toggle" id="theme-toggle">☾ Dark</button>
+    </div>
+  </nav>
+
+  <div class="form-page">
+    <h1>Implementation readiness checklist</h1>
+    <div class="form-supplement">Supplement S1</div>
+    <p class="form-description">Verify that all AEGIS components are configured before first deployment. Covers DARM, MMM, CDM, regulatory documentation, and CAPA integration.</p>
+
+    <div class="prefill-bar">
+  <button type="button" class="btn-prefill" id="prefill-sepsis">Load sepsis example</button>
+  <button type="button" class="btn-prefill" id="prefill-brats">Load BraTS example</button>
+</div>
+
+
+    <form id="s1-checklist" onsubmit="return false;">
+      <div class="form-section">
+  <h2>Device information</h2>
+  <div class="section-source">Common header</div>
+<div class="form-group">
+  <label for="device_name">Device name *</label>
+  <input type="text" id="device_name" name="device_name" placeholder="e.g. SepsisGuard v2.1" required>
+  <div class="help-text">Include version number</div>
+</div>
+<div class="form-group">
+  <label for="intended_use">Intended use *</label>
+  <textarea id="intended_use" name="intended_use" placeholder="Describe the intended clinical use of the device" required></textarea>
+  <div class="help-text">Reference IEC 62304 or IFU documentation</div>
+</div>
+<div class="form-group">
+  <label for="author_name">Author name *</label>
+  <input type="text" id="author_name" name="author_name" placeholder="e.g. Jane Doe" required>
+</div>
+<div class="form-group">
+  <label for="author_role">Author role *</label>
+  <input type="text" id="author_role" name="author_role" placeholder="e.g. ML Engineer" required>
+</div>
+<div class="form-group">
+  <label for="date">Date *</label>
+  <input type="date" id="date" name="date" required>
+</div>
+<div class="form-group">
+  <label for="org">Organisation *</label>
+  <input type="text" id="org" name="org" placeholder="e.g. Karolinska University Hospital" required>
+</div>
+</div>
+<div class="form-section">
+  <h2>Regulatory context</h2>
+  <div class="section-source">Supplementary S1.1</div>
+<div class="form-group">
+  <label for="risk_class">Risk classification *</label>
+  <select id="risk_class" name="risk_class" required>
+    <option value="">Select...</option>
+    <option value="Class I">Class I</option>
+    <option value="Class IIa">Class IIa</option>
+    <option value="Class IIb">Class IIb</option>
+    <option value="Class III-PMA">Class III-PMA</option>
+  </select>
+</div>
+<div class="form-group">
+  <label for="reg_pathway">Regulatory pathway *</label>
+  <select id="reg_pathway" name="reg_pathway" required>
+    <option value="">Select...</option>
+    <option value="510(k)">510(k)</option>
+    <option value="De Novo">De Novo</option>
+    <option value="PMA">PMA</option>
+    <option value="CE-MDR">CE-MDR</option>
+    <option value="AI Act high-risk">AI Act high-risk</option>
+    <option value="Other">Other</option>
+  </select>
+</div>
+<div class="form-group">
+  <label for="pccp_planned">PCCP planned *</label>
+  <select id="pccp_planned" name="pccp_planned" required>
+    <option value="">Select...</option>
+    <option value="Yes">Yes</option>
+    <option value="No">No</option>
+    <option value="Under discussion">Under discussion</option>
+  </select>
+</div>
+</div>
+<div class="form-section">
+  <h2>DARM configuration</h2>
+  <div class="section-source">Supplementary S1.2</div>
+<div class="checkbox-item">
+  <input type="checkbox" id="darm_splits" name="darm_splits">
+  <label for="darm_splits">Three dataset splits defined (Training D_T,k, Golden D_G, Drifting D_D,k)</label>
+</div>
+<div class="checkbox-item">
+  <input type="checkbox" id="darm_golden_locked" name="darm_golden_locked">
+  <label for="darm_golden_locked">Golden dataset locked, hashed, and documented before first deployment</label>
+</div>
+<div class="checkbox-item">
+  <input type="checkbox" id="darm_dedup" name="darm_dedup">
+  <label for="darm_dedup">Patient/sample deduplication across splits confirmed</label>
+</div>
+<div class="checkbox-item">
+  <input type="checkbox" id="darm_label_gov" name="darm_label_gov">
+  <label for="darm_label_gov">Label governance process documented (adjudication criteria, reviewer IDs)</label>
+</div>
+<div class="checkbox-item">
+  <input type="checkbox" id="darm_versioning" name="darm_versioning">
+  <label for="darm_versioning">Dataset versioning and provenance metadata system in place</label>
+</div>
+<div class="checkbox-item">
+  <input type="checkbox" id="darm_accumulation" name="darm_accumulation">
+  <label for="darm_accumulation">Data accumulation rule documented: D_T,k+1 = D_T,k ∪ D_D,k (unconditional)</label>
+</div>
+</div>
+<div class="form-section">
+  <h2>MMM configuration</h2>
+  <div class="section-source">Supplementary S1.3</div>
+<div class="checkbox-item">
+  <input type="checkbox" id="mmm_metrics" name="mmm_metrics">
+  <label for="mmm_metrics">Primary metrics selected and clinically justified</label>
+</div>
+<div class="checkbox-item">
+  <input type="checkbox" id="mmm_mlcps" name="mmm_mlcps">
+  <label for="mmm_mlcps">MLcps weights defined and traced to risk assessment</label>
+</div>
+<div class="checkbox-item">
+  <input type="checkbox" id="mmm_drift" name="mmm_drift">
+  <label for="mmm_drift">Drift detection method selected with feature set specified</label>
+</div>
+<div class="checkbox-item">
+  <input type="checkbox" id="mmm_fairness" name="mmm_fairness">
+  <label for="mmm_fairness">Fairness metrics defined across relevant subgroups</label>
+</div>
+<div class="checkbox-item">
+  <input type="checkbox" id="mmm_kpi" name="mmm_kpi">
+  <label for="mmm_kpi">KPI historical database structure defined</label>
+</div>
+</div>
+<div class="form-section">
+  <h2>CDM configuration</h2>
+  <div class="section-source">Supplementary S1.4</div>
+<div class="checkbox-item">
+  <input type="checkbox" id="cdm_categories" name="cdm_categories">
+  <label for="cdm_categories">Active decision categories defined and clinically justified</label>
+</div>
+<div class="checkbox-item">
+  <input type="checkbox" id="cdm_thresholds" name="cdm_thresholds">
+  <label for="cdm_thresholds">All thresholds derived from ISO 14971:2019 hazard analysis with hazard IDs</label>
+</div>
+<div class="checkbox-item">
+  <input type="checkbox" id="cdm_polarity" name="cdm_polarity">
+  <label for="cdm_polarity">CDM condition polarity convention documented</label>
+</div>
+<div class="checkbox-item">
+  <input type="checkbox" id="cdm_pseudocode" name="cdm_pseudocode">
+  <label for="cdm_pseudocode">CDM pseudo-code reviewed and implementation verified (Suppl. S3.3)</label>
+</div>
+<div class="checkbox-item">
+  <input type="checkbox" id="cdm_logging" name="cdm_logging">
+  <label for="cdm_logging">Logging requirements confirmed (all fields listed in guide/07-audit-trail.html)</label>
+</div>
+<div class="checkbox-item">
+  <input type="checkbox" id="cdm_gold_standard" name="cdm_gold_standard">
+  <label for="cdm_gold_standard">Gold standard baseline locked at first APPROVE with version tag</label>
+</div>
+</div>
+<div class="form-section">
+  <h2>Regulatory documentation</h2>
+  <div class="section-source">Supplementary S1.5</div>
+<div class="checkbox-item">
+  <input type="checkbox" id="reg_s2_complete" name="reg_s2_complete">
+  <label for="reg_s2_complete">S2 configuration template completed</label>
+</div>
+<div class="checkbox-item">
+  <input type="checkbox" id="reg_pccp_drafted" name="reg_pccp_drafted">
+  <label for="reg_pccp_drafted">PCCP / technical documentation sections drafted</label>
+</div>
+<div class="checkbox-item">
+  <input type="checkbox" id="reg_gold_documented" name="reg_gold_documented">
+  <label for="reg_gold_documented">Gold standard baseline documented with metric values and dataset ID</label>
+</div>
+<div class="checkbox-item">
+  <input type="checkbox" id="reg_capa_defined" name="reg_capa_defined">
+  <label for="reg_capa_defined">CAPA / vigilance escalation pathway defined</label>
+</div>
+</div>
+<div class="form-section">
+  <h2>CAPA and PMS integration</h2>
+  <div class="section-source">Supplementary S1.6</div>
+<div class="checkbox-item">
+  <input type="checkbox" id="pms_capa_triggers" name="pms_capa_triggers">
+  <label for="pms_capa_triggers">CAPA triggers defined for each decision category</label>
+</div>
+<div class="checkbox-item">
+  <input type="checkbox" id="pms_contacts" name="pms_contacts">
+  <label for="pms_contacts">Regulatory escalation contacts identified</label>
+</div>
+<div class="checkbox-item">
+  <input type="checkbox" id="pms_thresholds" name="pms_thresholds">
+  <label for="pms_thresholds">MDR Art. 83 / FDA PMS reporting thresholds documented</label>
+</div>
+<div class="checkbox-item">
+  <input type="checkbox" id="pms_psur" name="pms_psur">
+  <label for="pms_psur">PSUR schedule established</label>
+</div>
+</div>
+
+
+      <button type="button" class="btn-download" id="download-docx">
+        Download .docx
+      </button>
+
+      <div class="form-privacy">
+        All data stays in your browser. Nothing is sent to any server.
+      </div>
+    </form>
+  </div>
+
+  <script src="https://unpkg.com/docx@8/build/index.umd.js"></script>
+  <script src="../assets/js/forms-docx.js"></script>
+  <script>
+    document.getElementById('prefill-sepsis')?.addEventListener('click', function() {
+  var ex = {"device_name":"SepsisGuard v2.1","intended_use":"Early prediction of sepsis onset in adult ICU patients using continuous EHR monitoring","author_name":"Dr. A. Clinician","author_role":"Clinical Data Scientist","org":"Karolinska University Hospital","risk_class":"Class IIa","reg_pathway":"De Novo","pccp_planned":"Yes"};
+  for (var id in ex) {
+    var el = document.getElementById(id) || document.querySelector('[name="'+id+'"]');
+    if (el) {
+      if (el.type === 'checkbox') { el.checked = true; }
+      else { el.value = ex[id]; }
+      if (el.type === 'range') { var valEl = document.getElementById(id+'-val'); if(valEl) valEl.textContent = ex[id]; }
+    }
+  }
+});
+document.getElementById('prefill-brats')?.addEventListener('click', function() {
+  var ex = {"device_name":"BraTSeg v1.0","intended_use":"Automated segmentation of brain tumours (glioma) from multi-modal MRI for surgical planning","author_name":"Dr. B. Radiologist","author_role":"Neuroradiology Fellow","org":"Karolinska University Hospital","risk_class":"Class IIb","reg_pathway":"CE-MDR","pccp_planned":"Yes"};
+  for (var id in ex) {
+    var el = document.getElementById(id) || document.querySelector('[name="'+id+'"]');
+    if (el) {
+      if (el.type === 'checkbox') { el.checked = true; }
+      else { el.value = ex[id]; }
+      if (el.type === 'range') { var valEl = document.getElementById(id+'-val'); if(valEl) valEl.textContent = ex[id]; }
+    }
+  }
+});
+
+document.getElementById('download-docx')?.addEventListener('click', function() {
+  if (!window.AEGISForms || !window.docx) { alert('Libraries not loaded yet. Please wait.'); return; }
+  var F = window.AEGISForms;
+  var docx = window.docx;
+
+  var headerValues = {
+    device_name: (document.getElementById('device_name') || {}).value || '',
+    intended_use: (document.getElementById('intended_use') || {}).value || '',
+    author_name: (document.getElementById('author_name') || {}).value || '',
+    author_role: (document.getElementById('author_role') || {}).value || '',
+    date: (document.getElementById('date') || {}).value || '',
+    org: (document.getElementById('org') || {}).value || ''
+  };
+
+  var children = [];
+  children = children.concat(F.buildTitle("AEGIS Implementation Readiness Checklist", "S1"));
+
+  children = children.concat(F.buildHeader(headerValues));
+
+  // Section: Device information
+  children = children.concat(F.buildSectionHeading("Device information", "Common header"));
+  children.push(F.buildLabelValue("Device name", (document.getElementById('device_name') || {}).value || ''));
+  children.push(F.buildLabelValue("Intended use", (document.getElementById('intended_use') || {}).value || ''));
+  children.push(F.buildLabelValue("Author name", (document.getElementById('author_name') || {}).value || ''));
+  children.push(F.buildLabelValue("Author role", (document.getElementById('author_role') || {}).value || ''));
+  children.push(F.buildLabelValue("Date", (document.getElementById('date') || {}).value || ''));
+  children.push(F.buildLabelValue("Organisation", (document.getElementById('org') || {}).value || ''));
+
+  // Section: Regulatory context
+  children = children.concat(F.buildSectionHeading("Regulatory context", "Supplementary S1.1"));
+  children.push(F.buildLabelValue("Risk classification", (document.getElementById('risk_class') || {}).value || ''));
+  children.push(F.buildLabelValue("Regulatory pathway", (document.getElementById('reg_pathway') || {}).value || ''));
+  children.push(F.buildLabelValue("PCCP planned", (document.getElementById('pccp_planned') || {}).value || ''));
+
+  // Section: DARM configuration
+  children = children.concat(F.buildSectionHeading("DARM configuration", "Supplementary S1.2"));
+  var items_darm_configuration = [{"id":"darm_splits","label":"Three dataset splits defined (Training D_T,k, Golden D_G, Drifting D_D,k)"},{"id":"darm_golden_locked","label":"Golden dataset locked, hashed, and documented before first deployment"},{"id":"darm_dedup","label":"Patient/sample deduplication across splits confirmed"},{"id":"darm_label_gov","label":"Label governance process documented (adjudication criteria, reviewer IDs)"},{"id":"darm_versioning","label":"Dataset versioning and provenance metadata system in place"},{"id":"darm_accumulation","label":"Data accumulation rule documented: D_T,k+1 = D_T,k ∪ D_D,k (unconditional)"}];
+  var checked_darm_configuration = items_darm_configuration.filter(function(i) { var el = document.getElementById(i.id); return el && el.checked; }).map(function(i) { return i.id; });
+  children = children.concat(F.buildCheckboxList(items_darm_configuration, checked_darm_configuration));
+
+  // Section: MMM configuration
+  children = children.concat(F.buildSectionHeading("MMM configuration", "Supplementary S1.3"));
+  var items_mmm_configuration = [{"id":"mmm_metrics","label":"Primary metrics selected and clinically justified"},{"id":"mmm_mlcps","label":"MLcps weights defined and traced to risk assessment"},{"id":"mmm_drift","label":"Drift detection method selected with feature set specified"},{"id":"mmm_fairness","label":"Fairness metrics defined across relevant subgroups"},{"id":"mmm_kpi","label":"KPI historical database structure defined"}];
+  var checked_mmm_configuration = items_mmm_configuration.filter(function(i) { var el = document.getElementById(i.id); return el && el.checked; }).map(function(i) { return i.id; });
+  children = children.concat(F.buildCheckboxList(items_mmm_configuration, checked_mmm_configuration));
+
+  // Section: CDM configuration
+  children = children.concat(F.buildSectionHeading("CDM configuration", "Supplementary S1.4"));
+  var items_cdm_configuration = [{"id":"cdm_categories","label":"Active decision categories defined and clinically justified"},{"id":"cdm_thresholds","label":"All thresholds derived from ISO 14971:2019 hazard analysis with hazard IDs"},{"id":"cdm_polarity","label":"CDM condition polarity convention documented"},{"id":"cdm_pseudocode","label":"CDM pseudo-code reviewed and implementation verified (Suppl. S3.3)"},{"id":"cdm_logging","label":"Logging requirements confirmed (all fields listed in guide/07-audit-trail.html)"},{"id":"cdm_gold_standard","label":"Gold standard baseline locked at first APPROVE with version tag"}];
+  var checked_cdm_configuration = items_cdm_configuration.filter(function(i) { var el = document.getElementById(i.id); return el && el.checked; }).map(function(i) { return i.id; });
+  children = children.concat(F.buildCheckboxList(items_cdm_configuration, checked_cdm_configuration));
+
+  // Section: Regulatory documentation
+  children = children.concat(F.buildSectionHeading("Regulatory documentation", "Supplementary S1.5"));
+  var items_regulatory_documentation = [{"id":"reg_s2_complete","label":"S2 configuration template completed"},{"id":"reg_pccp_drafted","label":"PCCP / technical documentation sections drafted"},{"id":"reg_gold_documented","label":"Gold standard baseline documented with metric values and dataset ID"},{"id":"reg_capa_defined","label":"CAPA / vigilance escalation pathway defined"}];
+  var checked_regulatory_documentation = items_regulatory_documentation.filter(function(i) { var el = document.getElementById(i.id); return el && el.checked; }).map(function(i) { return i.id; });
+  children = children.concat(F.buildCheckboxList(items_regulatory_documentation, checked_regulatory_documentation));
+
+  // Section: CAPA and PMS integration
+  children = children.concat(F.buildSectionHeading("CAPA and PMS integration", "Supplementary S1.6"));
+  var items_capa_pms = [{"id":"pms_capa_triggers","label":"CAPA triggers defined for each decision category"},{"id":"pms_contacts","label":"Regulatory escalation contacts identified"},{"id":"pms_thresholds","label":"MDR Art. 83 / FDA PMS reporting thresholds documented"},{"id":"pms_psur","label":"PSUR schedule established"}];
+  var checked_capa_pms = items_capa_pms.filter(function(i) { var el = document.getElementById(i.id); return el && el.checked; }).map(function(i) { return i.id; });
+  children = children.concat(F.buildCheckboxList(items_capa_pms, checked_capa_pms));
+
+  // Version history
+  children = children.concat(F.buildSectionHeading('Version history'));
+  children.push(F.buildVersionHistory(headerValues.author_name, headerValues.date));
+
+  // Sign-off
+  children = children.concat(F.buildSectionHeading('Sign-off'));
+  children = children.concat(F.buildSignoff());
+
+  var doc = new docx.Document({
+    sections: [{
+      footers: F.buildFooterConfig(),
+      children: children
+    }],
+    styles: {
+      default: {
+        document: {
+          run: { font: 'Arial', size: 20, color: '000000' }
+        },
+        heading1: {
+          run: { font: 'Arial', size: 36, bold: true, color: '4F0433' }
+        },
+        heading2: {
+          run: { font: 'Arial', size: 28, bold: true, color: '870052' }
+        }
+      }
+    }
+  });
+
+  var filename = "AEGIS_S1_Checklist_{device_name}_{date}.docx";
+  filename = filename.replace('{device_name}', (headerValues.device_name || 'device').replace(/[^a-zA-Z0-9]/g, '_'));
+  filename = filename.replace('{date}', headerValues.date || new Date().toISOString().split('T')[0]);
+  filename = filename.replace('{iteration}', (document.getElementById('iteration') || {}).value || '0');
+  F.triggerDownload(doc, filename);
+});
+
+  </script>
+</body>
+</html>

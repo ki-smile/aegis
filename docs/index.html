@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AEGIS — Adaptive Medical AI Governance</title>
+  <link rel="stylesheet" href="assets/css/main.css">
+  <script src="assets/js/theme.js"></script>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="site-nav">
+    <div class="nav-logo">
+      <a href="index.html" style="color: inherit; text-decoration: none;">AEGIS</a>
+    </div>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="guide/index.html">Guide</a>
+      <a href="forms/index.html">Forms</a>
+      <a href="https://github.com/ki-smile/aegis" target="_blank" rel="noopener">GitHub</a>
+      <button class="theme-toggle" id="theme-toggle">☾ Dark</button>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero" id="hero">
+    <div class="section-inner">
+      <h1>AEGIS</h1>
+      <p class="subtitle">An Operational Infrastructure for Post-Market Governance of Adaptive Medical AI Under US and EU Regulations</p>
+      <div class="hero-ctas">
+        <a href="guide/index.html" class="btn-primary">Read the guide</a>
+        <a href="forms/index.html" class="btn-secondary">Fill templates</a>
+        <a href="#results" class="btn-secondary">View results</a>
+      </div>
+      <div class="hero-badges">
+        <span class="badge badge-approve" data-tooltip="All metrics pass all thresholds. FDA: within PCCP bounds. EU: compliant per AI Act Art. 43(4).">APPROVE</span>
+        <span class="badge badge-cond" data-tooltip="Performance in buffer zone (above P_fail, below R_G). FDA: PCCP modification protocol triggered. EU: enhanced monitoring.">CONDITIONAL</span>
+        <span class="badge badge-review" data-tooltip="Minor drift detected. Clinician review required before release. FDA: predetermined change assessment. EU: risk management update.">REVIEW</span>
+        <span class="badge badge-alarm" data-tooltip="PMS alarm triggered (A1/A2/A3). Independent of decision. FDA: MDR reporting assessment. EU: MDR Art. 87 vigilance.">ALARM</span>
+        <span class="badge badge-reject" data-tooltip="Critical safety floor breached or major drift with degradation. FDA: outside PCCP bounds. EU: corrective action required.">REJECT</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Problem -->
+  <section class="section section-white" id="problem">
+    <div class="section-inner">
+      <h2 class="section-title">The adaptive AI governance gap</h2>
+      <p class="section-subtitle">Medical AI systems that learn from new data need structured post-market oversight — not just initial approval.</p>
+      <div class="grid-3">
+        <div class="card-stat">
+          <div class="stat-number">5</div>
+          <div class="stat-label">Decision categories with regulatory traceability</div>
+        </div>
+        <div class="card-stat">
+          <div class="stat-number">3</div>
+          <div class="stat-label">Modules: DARM, MMM, CDM</div>
+        </div>
+        <div class="card-stat">
+          <div class="stat-number">2</div>
+          <div class="stat-label">Regulatory frameworks: FDA PCCP &amp; EU MDR/AI Act</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Architecture -->
+  <section class="section section-orange" id="architecture">
+    <div class="section-inner">
+      <h2 class="section-title">Three-module architecture</h2>
+      <p class="section-subtitle">DARM manages data, MMM monitors performance and drift, CDM makes structured decisions.</p>
+
+      <!-- Inline SVG Architecture Diagram -->
+      <svg viewBox="0 0 800 280" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:800px;margin:0 auto 2rem;display:block;" aria-label="AEGIS architecture diagram: DARM to MMM to CDM pipeline">
+        <!-- DARM node -->
+        <rect id="node-darm" x="30" y="80" width="200" height="120" rx="12" fill="#4DB5BC" opacity="0.15"/>
+        <text x="130" y="125" text-anchor="middle" font-family="DM Sans, sans-serif" font-weight="500" font-size="18" fill="#002C34">DARM</text>
+        <text x="130" y="150" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="12" fill="#002C34">Dataset &amp; Review</text>
+        <text x="130" y="170" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="12" fill="#002C34">Management</text>
+
+        <!-- Arrow 1: DARM → MMM -->
+        <g id="arrow-1" opacity="0.15">
+          <line x1="230" y1="140" x2="280" y2="140" stroke="#870052" stroke-width="3"/>
+          <polygon points="280,133 295,140 280,147" fill="#870052"/>
+        </g>
+
+        <!-- MMM node -->
+        <rect id="node-mmm" x="300" y="80" width="200" height="120" rx="12" fill="#FFC66D" opacity="0.15"/>
+        <text x="400" y="125" text-anchor="middle" font-family="DM Sans, sans-serif" font-weight="500" font-size="18" fill="#4F0433">MMM</text>
+        <text x="400" y="150" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="12" fill="#4F0433">Model Monitoring</text>
+        <text x="400" y="170" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="12" fill="#4F0433">Metrics</text>
+
+        <!-- Arrow 2: MMM → CDM -->
+        <g id="arrow-2" opacity="0.15">
+          <line x1="500" y1="140" x2="550" y2="140" stroke="#870052" stroke-width="3"/>
+          <polygon points="550,133 565,140 550,147" fill="#870052"/>
+        </g>
+
+        <!-- CDM node -->
+        <rect id="node-cdm" x="570" y="80" width="200" height="120" rx="12" fill="#54B986" opacity="0.15"/>
+        <text x="670" y="125" text-anchor="middle" font-family="DM Sans, sans-serif" font-weight="500" font-size="18" fill="#094334">CDM</text>
+        <text x="670" y="150" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="12" fill="#094334">Clinical Decision</text>
+        <text x="670" y="170" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="12" fill="#094334">Module</text>
+
+        <!-- Arrow 3: CDM → Decision -->
+        <g id="arrow-3" opacity="0.15">
+          <line x1="670" y1="200" x2="670" y2="240" stroke="#870052" stroke-width="3"/>
+          <polygon points="663,240 670,255 677,240" fill="#870052"/>
+        </g>
+
+        <!-- Decision badge -->
+        <rect id="decision-badge" x="615" y="255" width="110" height="22" rx="11" fill="#54B986" opacity="0.15"/>
+        <text x="670" y="270" text-anchor="middle" font-family="DM Sans, sans-serif" font-weight="500" font-size="11" fill="#094334">DECISION</text>
+
+        <!-- Feedback arrow -->
+        <g id="feedback-arrow" opacity="0.15">
+          <path d="M 615 265 Q 400 310 130 200" stroke="#B84145" stroke-width="2" stroke-dasharray="6,4" fill="none"/>
+          <polygon points="133,196 125,205 138,204" fill="#B84145"/>
+          <text x="370" y="300" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="11" fill="#B84145">feedback loop</text>
+        </g>
+      </svg>
+
+      <div class="grid-3">
+        <div class="card-module">
+          <h3>DARM</h3>
+          <p>Dataset and Review Management. Manages training (D<sub>T,k</sub>), golden (D<sub>G</sub>), and drifting (D<sub>D,k</sub>) datasets with unconditional accumulation.</p>
+        </div>
+        <div class="card-module">
+          <h3>MMM</h3>
+          <p>Model Monitoring Metrics. Computes MLcps composite score, drift detection via Bonferroni-corrected KS test, and fairness metrics.</p>
+        </div>
+        <div class="card-module">
+          <h3>CDM</h3>
+          <p>Clinical Decision Module. Priority-ordered decision hierarchy (P1–P4) with independent PMS alarm channel (A1–A3).</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Decision Taxonomy -->
+  <section class="section section-white" id="taxonomy">
+    <div class="section-inner">
+      <h2 class="section-title">Decision taxonomy</h2>
+      <p class="section-subtitle">Five decision categories with composite output — APPROVE + ALARM is not contradictory.</p>
+
+      <div style="display:flex; gap:0.75rem; flex-wrap:wrap; margin-bottom:2rem;">
+        <span class="badge badge-approve" data-tooltip="P4: All metrics pass all checks">APPROVE</span>
+        <span class="badge badge-cond" data-tooltip="P3: Metric below R_G buffer but above P_fail">CONDITIONAL APPROVAL</span>
+        <span class="badge badge-review" data-tooltip="Minor drift detected; clinician review required">CLINICAL REVIEW</span>
+        <span class="badge badge-alarm" data-tooltip="Independent PMS alarm: A1 (safety floor), A2 (regression), or A3 (major drift)">ALARM</span>
+        <span class="badge badge-reject" data-tooltip="P1: Below P_fail, or P2: Major drift + degradation">REJECT</span>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Priority</th>
+            <th>Condition</th>
+            <th>Decision</th>
+            <th>Regulatory action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>P1 (highest)</td>
+            <td>Any metric &lt; P<sub>fail</sub></td>
+            <td><span class="badge badge-reject">REJECT</span></td>
+            <td>Suspend model; initiate CAPA</td>
+          </tr>
+          <tr>
+            <td>P2</td>
+            <td>Major drift + degradation</td>
+            <td><span class="badge badge-reject">REJECT</span></td>
+            <td>Suspend model; investigate drift source</td>
+          </tr>
+          <tr>
+            <td>P3</td>
+            <td>Metric below R<sub>G</sub> buffer</td>
+            <td><span class="badge badge-cond">CONDITIONAL</span></td>
+            <td>Enhanced monitoring; PCCP modification protocol</td>
+          </tr>
+          <tr>
+            <td>P4 (lowest)</td>
+            <td>All checks pass</td>
+            <td><span class="badge badge-approve">APPROVE</span></td>
+            <td>Release model; routine PMS</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Documentation Overview -->
+  <section class="section section-blue" id="docs">
+    <div class="section-inner">
+      <h2 class="section-title">Get started</h2>
+      <p class="section-subtitle">Three paths to implementing AEGIS in your organisation.</p>
+
+      <div class="step-card">
+        <div class="step-number">1</div>
+        <div class="step-content">
+          <h3>Read the guide</h3>
+          <p>9 chapters covering concepts, configuration, thresholds, CDM logic, drift detection, audit trail, and regulatory mapping.</p>
+          <a href="guide/index.html" class="btn-ghost">Start reading →</a>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-number">2</div>
+        <div class="step-content">
+          <h3>Fill the templates</h3>
+          <p>Interactive forms with pre-fill examples (sepsis, brain tumour). Download completed documents as .docx — all data stays in your browser.</p>
+          <a href="forms/index.html" class="btn-ghost">Open forms →</a>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-number">3</div>
+        <div class="step-content">
+          <h3>Run the examples</h3>
+          <p>Jupyter notebook with 11 iterations of adaptive AI governance on the PhysioNet Sepsis Challenge dataset. All 5 decision categories exercised.</p>
+          <a href="https://github.com/ki-smile/aegis/tree/main/examples" class="btn-ghost">View examples →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Results -->
+  <section class="section section-orange" id="results">
+    <div class="section-inner">
+      <h2 class="section-title">Experimental results</h2>
+      <p class="section-subtitle">Performance trajectories across iterative governance cycles.</p>
+
+      <div style="display:flex; gap:0.75rem; margin-bottom:1.5rem;">
+        <button class="btn-primary active" id="toggle-sepsis" style="font-size:0.9rem; padding:0.5rem 1rem;">Sepsis (Table VIII)</button>
+        <button class="btn-secondary" id="toggle-brats" style="font-size:0.9rem; padding:0.5rem 1rem; color:var(--color-text-primary); border-color:var(--color-border);">BraTS (Table IX)</button>
+      </div>
+
+      <div style="position:relative; height:400px; max-width:100%;">
+        <canvas id="results-chart"></canvas>
+      </div>
+    </div>
+  </section>
+
+  <!-- Examples -->
+  <section class="section section-dark" id="examples">
+    <div class="section-inner">
+      <h2 class="section-title" style="color:var(--color-text-on-dark);">Example implementations</h2>
+      <p class="section-subtitle" style="color:rgba(255,255,255,0.7);">Two complete case studies demonstrating AEGIS across different clinical domains.</p>
+      <div class="grid-2">
+        <div class="card" style="background:rgba(255,255,255,0.08); border-color:rgba(255,255,255,0.15);">
+          <h3 style="color:var(--color-text-on-dark);">Sepsis prediction</h3>
+          <p style="color:rgba(255,255,255,0.8);">PhysioNet Challenge 2019. Random Forest classifier. 11 iterations with progressive data corruption. All 5 decision categories exercised.</p>
+          <p style="margin-top:0.75rem;"><a href="https://github.com/ki-smile/aegis/tree/main/examples/sepsis" style="color:var(--ki-orange);">View notebook →</a></p>
+        </div>
+        <div class="card" style="background:rgba(255,255,255,0.08); border-color:rgba(255,255,255,0.15);">
+          <h3 style="color:var(--color-text-on-dark);">Brain tumour segmentation</h3>
+          <p style="color:rgba(255,255,255,0.8);">BraTS 2023/24. nnU-Net ResENC-M. 13 iterations with binary APPROVE/REJECT governance (intermediate categories disabled).</p>
+          <p style="margin-top:0.75rem;"><a href="https://github.com/ki-smile/aegis/tree/main/examples/brain_tumor" style="color:var(--ki-orange);">View example →</a></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Citation -->
+  <section class="section section-dark" id="cite">
+    <div class="section-inner">
+      <h2 class="section-title" style="color:var(--color-text-on-dark);">Citation</h2>
+      <p style="color:rgba(255,255,255,0.7); margin-bottom:1rem;">If you use AEGIS, please cite:</p>
+      <pre class="code-block" id="bibtex-block" style="position:relative;">@article{afdideh2026aegis,
+  title   = {AEGIS: An Operational Infrastructure for Post-Market
+             Governance of Adaptive Medical AI Under US and EU Regulations},
+  author  = {Afdideh, Fardin and Astaraki, Mehdi and Seoane, Fernando
+             and Abtahi, Farhad},
+  year    = {2026},
+  journal = {},
+  doi     = {10.XXXX/PLACEHOLDER},
+  url     = {https://ki-smile.github.io/aegis}
+}</pre>
+      <button class="btn-primary" id="copy-bibtex" style="margin-top:1rem;">Copy BibTeX</button>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <p>&copy; 2026 SMAILE (Stockholm Medical Artificial Intelligence and Learning Environments), Karolinska Institutet. All rights reserved.</p>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+  <script src="assets/js/diagrams.js"></script>
+  <script src="assets/js/results-chart.js"></script>
+  <script>
+    // Copy BibTeX
+    document.getElementById('copy-bibtex')?.addEventListener('click', function () {
+      var text = document.getElementById('bibtex-block')?.textContent || '';
+      navigator.clipboard.writeText(text).then(function () {
+        var btn = document.getElementById('copy-bibtex');
+        btn.textContent = 'Copied!';
+        setTimeout(function () { btn.textContent = 'Copy BibTeX'; }, 2000);
+      });
+    });
+  </script>
+</body>
+</html>

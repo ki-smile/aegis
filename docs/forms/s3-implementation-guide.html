@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Step-by-step deployment workflow — AEGIS Forms</title>
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <link rel="stylesheet" href="../assets/css/forms.css">
+  <script src="../assets/js/theme.js"></script>
+</head>
+<body>
+  <nav class="site-nav">
+    <div class="nav-logo">
+      <a href="../index.html">AEGIS</a>
+    </div>
+    <div class="nav-links">
+      <a href="../index.html">Home</a>
+      <a href="../guide/index.html">Guide</a>
+      <a href="index.html">Forms</a>
+      <a href="https://github.com/ki-smile/aegis" target="_blank" rel="noopener">GitHub</a>
+      <button class="theme-toggle" id="theme-toggle">☾ Dark</button>
+    </div>
+  </nav>
+
+  <div class="form-page">
+    <h1>Step-by-step deployment workflow</h1>
+    <div class="form-supplement">Supplement S3</div>
+    <p class="form-description">Eight-step deployment workflow covering clinical context assessment through regulatory submission. Each step includes actions, deliverables, and links to relevant guide pages and templates.</p>
+
+    
+
+    <form id="s3-implementation-guide" onsubmit="return false;">
+      <div class="form-section">
+  <h2>Step 1 — Assess clinical context</h2>
+  <div class="section-source">Supplementary S3.1</div>
+<ul>
+  <li>Identify the clinical domain, patient population, and intended use</li>
+  <li>Determine regulatory jurisdiction (US FDA / EU MDR / both)</li>
+  <li>Classify device risk (Class I, IIa, IIb, III-PMA)</li>
+  <li>Document intended use statement per IEC 62304</li>
+</ul>
+</div>
+<div class="form-section">
+  <h2>Step 2 — ISO 14971 hazard analysis</h2>
+  <div class="section-source">Supplementary S3.1</div>
+<ul>
+  <li>Conduct hazard analysis per ISO 14971:2019</li>
+  <li>Identify hazardous situations related to model performance degradation</li>
+  <li>Assign hazard IDs to each identified risk</li>
+  <li>Derive all AEGIS thresholds from the hazard analysis (P_fail, R_G, τ, θ, P_PMS, δ)</li>
+  <li>Document clinical justification for each threshold value</li>
+</ul>
+</div>
+<div class="form-section">
+  <h2>Step 3 — Configure DARM</h2>
+  <div class="section-source">Supplementary S3.2</div>
+<ul>
+  <li>Define three dataset splits: Training D_T,k, Golden D_G, Drifting D_D,k</li>
+  <li>Lock and hash the golden dataset before first deployment</li>
+  <li>Verify patient/sample deduplication across all splits</li>
+  <li>Document the data accumulation rule: D_T,k+1 = D_T,k ∪ D_D,k</li>
+  <li>Establish dataset versioning and provenance metadata</li>
+  <li>Document label governance process</li>
+</ul>
+</div>
+<div class="form-section">
+  <h2>Step 4 — Configure MMM</h2>
+  <div class="section-source">Supplementary S3.3</div>
+<ul>
+  <li>Select primary performance metrics with clinical justification</li>
+  <li>Configure MLcps weights (0.5–3.0 per metric)</li>
+  <li>Select drift detection method and specify feature set</li>
+  <li>Define fairness metrics and relevant subgroups</li>
+  <li>Set up KPI historical database</li>
+</ul>
+</div>
+<div class="form-section">
+  <h2>Step 5 — Implement CDM</h2>
+  <div class="section-source">Supplementary S3.3</div>
+<ul>
+  <li>Implement decision hierarchy (P1–P4) from reference pseudocode</li>
+  <li>Implement alarm conditions (A1–A3)</li>
+  <li>Decide which intermediate categories to activate (CONDITIONAL APPROVAL, CLINICAL REVIEW)</li>
+  <li>Document polarity convention for all conditions</li>
+  <li>Implement iteration logging with all 11 required fields</li>
+</ul>
+</div>
+<div class="form-section">
+  <h2>Step 6 — Run iteration 0</h2>
+  <div class="section-source">Supplementary S3.4</div>
+<ul>
+  <li>Train initial model on D_T,0</li>
+  <li>Evaluate on golden dataset D_G</li>
+  <li>Record baseline metrics as gold standard</li>
+  <li>Verify CDM returns APPROVE for baseline performance</li>
+  <li>Lock gold standard with version tag and dataset hash</li>
+  <li>Document all metrics in audit trail</li>
+</ul>
+</div>
+<div class="form-section">
+  <h2>Step 7 — Enter iterative loop</h2>
+  <div class="section-source">Supplementary S3.5</div>
+<ul>
+  <li>For each iteration k ≥ 1:</li>
+  <li>  Accumulate drifting data: D_T,k+1 = D_T,k ∪ D_D,k</li>
+  <li>  Retrain model on D_T,k+1</li>
+  <li>  Evaluate on D_G (performance) and D_D,k (drift)</li>
+  <li>  Run CDM evaluation</li>
+  <li>  Log all fields to audit trail</li>
+  <li>  If REJECT or ALARM: initiate CAPA workflow</li>
+  <li>  If APPROVE: release model with version tag</li>
+</ul>
+</div>
+<div class="form-section">
+  <h2>Step 8 — Document for submission</h2>
+  <div class="section-source">Supplementary S3.6–S3.7</div>
+<ul>
+  <li>Complete S2 configuration template with all deployment parameters</li>
+  <li>Map AEGIS configuration to PCCP components (if FDA pathway)</li>
+  <li>Map to EU MDR / AI Act requirements (if CE pathway)</li>
+  <li>Compile audit trail history</li>
+  <li>Prepare CAPA records for any REJECT/ALARM events</li>
+  <li>Submit documentation per regulatory pathway</li>
+</ul>
+</div>
+
+
+      <button type="button" class="btn-download" id="download-docx">
+        Download .docx
+      </button>
+
+      <div class="form-privacy">
+        All data stays in your browser. Nothing is sent to any server.
+      </div>
+    </form>
+  </div>
+
+  <script src="https://unpkg.com/docx@8/build/index.umd.js"></script>
+  <script src="../assets/js/forms-docx.js"></script>
+  <script>
+    
+document.getElementById('download-docx')?.addEventListener('click', function() {
+  if (!window.AEGISForms || !window.docx) { alert('Libraries not loaded yet. Please wait.'); return; }
+  var F = window.AEGISForms;
+  var docx = window.docx;
+
+  var headerValues = {
+    device_name: (document.getElementById('device_name') || {}).value || '',
+    intended_use: (document.getElementById('intended_use') || {}).value || '',
+    author_name: (document.getElementById('author_name') || {}).value || '',
+    author_role: (document.getElementById('author_role') || {}).value || '',
+    date: (document.getElementById('date') || {}).value || '',
+    org: (document.getElementById('org') || {}).value || ''
+  };
+
+  var children = [];
+  children = children.concat(F.buildTitle("AEGIS Implementation Guide", "S3"));
+
+
+  // Section: Step 1 — Assess clinical context
+  children = children.concat(F.buildSectionHeading("Step 1 — Assess clinical context", "Supplementary S3.1"));
+  children.push(new docx.Paragraph({ children: [new docx.TextRun('• Identify the clinical domain, patient population, and intended use')], spacing: { after: 80 } }));
+  children.push(new docx.Paragraph({ children: [new docx.TextRun('• Determine regulatory jurisdiction (US FDA / EU MDR / both)')], spacing: { after: 80 } }));
+  children.push(new docx.Paragraph({ children: [new docx.TextRun('• Classify device risk (Class I, IIa, IIb, III-PMA)')], spacing: { after: 80 } }));
+  children.push(new docx.Paragraph({ children: [new docx.TextRun('• Document intended use statement per IEC 62304')], spacing: { after: 80 } }));
+
+  // Section: Step 2 — ISO 14971 hazard analysis
+  children = children.concat(F.buildSectionHeading("Step 2 — ISO 14971 hazard analysis", "Supplementary S3.1"));
+  children.push(new docx.Paragraph({ children: [new docx.TextRun('• Conduct hazard analysis per ISO 14971:2019')], spacing: { after: 80 } }));
+  children.push(new docx.Paragraph({ children: [new docx.TextRun('• Identify hazardous situations related to model performance degradation')], spacing: { after: 80 } }));
+  children.push(new docx.Paragraph({ children: [new docx.TextRun('• Assign hazard IDs to each identified risk')], spacing: { after: 80 } }));
+  children.push(new docx.Paragraph({ children: [new docx.TextRun('• Derive all AEGIS thresholds from the hazard analysis (P_fail, R_G, τ, θ, P_PMS, δ)')], spacing: { after: 80 } }));
+  children.push(new docx.Paragraph({ children: [new docx.TextRun('• Document clinical justification for each threshold value')], spacing: { after: 80 } }));
+
+  // Section: Step 3 — Configure DARM
+  children = children.concat(F.buildSectionHeading("Step 3 — Configure DARM", "Supplementary S3.2"));
+  children.push(new docx.Paragraph({ children: [new docx.TextRun('• Define three dataset splits: Training D_T,k, Golden D_G, Drifting D_D,k')], spacing: { after: 80 } }));
+  children.push(new docx.Paragraph({ children: [new docx.TextRun('• Lock and hash the golden dataset before first deployment')], spacing: { after: 80 } }));
+  children.push(new docx.Paragraph({ children: [new docx.TextRun('• Verify patient/sample deduplication across all splits')], spacing: { after: 80 } }));
+  children.push(new docx.Paragraph({ children: [new docx.TextRun('• Document the data accumulation rule: D_T,k+1 = D_T,k ∪ D_D,k')], spacing: { after: 80 } }));
+  children.push(new docx.Paragraph({ children: [new docx.TextRun('• Establish dataset versioning and provenance metadata')], spacing: { after: 80 } }));
+  children.push(new docx.Paragraph({ children: [new docx.TextRun('• Document label governance process')], spacing: { after: 80 } }));
+
+  // Section: Step 4 — Configure MMM
+  children = children.concat(F.buildSectionHeading("Step 4 — Configure MMM", "Supplementary S3.3"));
+  children.push(new docx.Paragraph({ children: [new docx.TextRun('• Select primary performance metrics with clinical justification')], spacing: { after: 80 } }));
+  children.push(new docx.Paragraph({ children: [new docx.TextRun('• Configure MLcps weights (0.5–3.0 per metric)')], spacing: { after: 80 } }));
+  children.push(new docx.Paragraph({ children: [new docx.TextRun('• Select drift detection method and specify feature set')], spacing: { after: 80 } }));
+  children.push(new docx.Paragraph({ children: [new docx.TextRun('• Define fairness metrics and relevant subgroups')], spacing: { after: 80 } }));
+  children.push(new docx.Paragraph({ children: [new docx.TextRun('• Set up KPI historical database')], spacing: { after: 80 } }));
+
+  // Section: Step 5 — Implement CDM
+  children = children.concat(F.buildSectionHeading("Step 5 — Implement CDM", "Supplementary S3.3"));
+  children.push(new docx.Paragraph({ children: [new docx.TextRun('• Implement decision hierarchy (P1–P4) from reference pseudocode')], spacing: { after: 80 } }));
+  children.push(new docx.Paragraph({ children: [new docx.TextRun('• Implement alarm conditions (A1–A3)')], spacing: { after: 80 } }));
+  children.push(new docx.Paragraph({ children: [new docx.TextRun('• Decide which intermediate categories to activate (CONDITIONAL APPROVAL, CLINICAL REVIEW)')], spacing: { after: 80 } }));
+  children.push(new docx.Paragraph({ children: [new docx.TextRun('• Document polarity convention for all conditions')], spacing: { after: 80 } }));
+  children.push(new docx.Paragraph({ children: [new docx.TextRun('• Implement iteration logging with all 11 required fields')], spacing: { after: 80 } }));
+
+  // Section: Step 6 — Run iteration 0
+  children = children.concat(F.buildSectionHeading("Step 6 — Run iteration 0", "Supplementary S3.4"));
+  children.push(new docx.Paragraph({ children: [new docx.TextRun('• Train initial model on D_T,0')], spacing: { after: 80 } }));
+  children.push(new docx.Paragraph({ children: [new docx.TextRun('• Evaluate on golden dataset D_G')], spacing: { after: 80 } }));
+  children.push(new docx.Paragraph({ children: [new docx.TextRun('• Record baseline metrics as gold standard')], spacing: { after: 80 } }));
+  children.push(new docx.Paragraph({ children: [new docx.TextRun('• Verify CDM returns APPROVE for baseline performance')], spacing: { after: 80 } }));
+  children.push(new docx.Paragraph({ children: [new docx.TextRun('• Lock gold standard with version tag and dataset hash')], spacing: { after: 80 } }));
+  children.push(new docx.Paragraph({ children: [new docx.TextRun('• Document all metrics in audit trail')], spacing: { after: 80 } }));
+
+  // Section: Step 7 — Enter iterative loop
+  children = children.concat(F.buildSectionHeading("Step 7 — Enter iterative loop", "Supplementary S3.5"));
+  children.push(new docx.Paragraph({ children: [new docx.TextRun('• For each iteration k ≥ 1:')], spacing: { after: 80 } }));
+  children.push(new docx.Paragraph({ children: [new docx.TextRun('•   Accumulate drifting data: D_T,k+1 = D_T,k ∪ D_D,k')], spacing: { after: 80 } }));
+  children.push(new docx.Paragraph({ children: [new docx.TextRun('•   Retrain model on D_T,k+1')], spacing: { after: 80 } }));
+  children.push(new docx.Paragraph({ children: [new docx.TextRun('•   Evaluate on D_G (performance) and D_D,k (drift)')], spacing: { after: 80 } }));
+  children.push(new docx.Paragraph({ children: [new docx.TextRun('•   Run CDM evaluation')], spacing: { after: 80 } }));
+  children.push(new docx.Paragraph({ children: [new docx.TextRun('•   Log all fields to audit trail')], spacing: { after: 80 } }));
+  children.push(new docx.Paragraph({ children: [new docx.TextRun('•   If REJECT or ALARM: initiate CAPA workflow')], spacing: { after: 80 } }));
+  children.push(new docx.Paragraph({ children: [new docx.TextRun('•   If APPROVE: release model with version tag')], spacing: { after: 80 } }));
+
+  // Section: Step 8 — Document for submission
+  children = children.concat(F.buildSectionHeading("Step 8 — Document for submission", "Supplementary S3.6–S3.7"));
+  children.push(new docx.Paragraph({ children: [new docx.TextRun('• Complete S2 configuration template with all deployment parameters')], spacing: { after: 80 } }));
+  children.push(new docx.Paragraph({ children: [new docx.TextRun('• Map AEGIS configuration to PCCP components (if FDA pathway)')], spacing: { after: 80 } }));
+  children.push(new docx.Paragraph({ children: [new docx.TextRun('• Map to EU MDR / AI Act requirements (if CE pathway)')], spacing: { after: 80 } }));
+  children.push(new docx.Paragraph({ children: [new docx.TextRun('• Compile audit trail history')], spacing: { after: 80 } }));
+  children.push(new docx.Paragraph({ children: [new docx.TextRun('• Prepare CAPA records for any REJECT/ALARM events')], spacing: { after: 80 } }));
+  children.push(new docx.Paragraph({ children: [new docx.TextRun('• Submit documentation per regulatory pathway')], spacing: { after: 80 } }));
+
+  // Sign-off
+  children = children.concat(F.buildSectionHeading('Sign-off'));
+  children = children.concat(F.buildSignoff());
+
+  var doc = new docx.Document({
+    sections: [{
+      footers: F.buildFooterConfig(),
+      children: children
+    }],
+    styles: {
+      default: {
+        document: {
+          run: { font: 'Arial', size: 20, color: '000000' }
+        },
+        heading1: {
+          run: { font: 'Arial', size: 36, bold: true, color: '4F0433' }
+        },
+        heading2: {
+          run: { font: 'Arial', size: 28, bold: true, color: '870052' }
+        }
+      }
+    }
+  });
+
+  var filename = "AEGIS_Implementation_Guide_{date}.docx";
+  filename = filename.replace('{device_name}', (headerValues.device_name || 'device').replace(/[^a-zA-Z0-9]/g, '_'));
+  filename = filename.replace('{date}', headerValues.date || new Date().toISOString().split('T')[0]);
+  filename = filename.replace('{iteration}', (document.getElementById('iteration') || {}).value || '0');
+  F.triggerDownload(doc, filename);
+});
+
+  </script>
+</body>
+</html>

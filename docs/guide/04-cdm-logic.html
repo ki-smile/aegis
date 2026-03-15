@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CDM logic — AEGIS Guide</title>
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <link rel="stylesheet" href="../assets/css/guide.css">
+  <script src="../assets/js/theme.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+</head>
+<body>
+  <div class="scroll-progress" id="scroll-progress"></div>
+
+  <nav class="site-nav">
+    <div class="nav-logo">
+      <a href="../index.html">AEGIS</a>
+    </div>
+    <div class="nav-links">
+      <a href="../index.html">Home</a>
+      <a href="index.html">Guide</a>
+      <a href="../forms/index.html">Forms</a>
+      <a href="https://github.com/ki-smile/aegis" target="_blank" rel="noopener">GitHub</a>
+      <button class="theme-toggle" id="theme-toggle">☾ Dark</button>
+    </div>
+  </nav>
+
+  <div class="guide-layout">
+    <aside class="guide-sidebar">
+      <nav>
+        <div class="sidebar-title">Implementation Guide</div>
+        <a href="index.html">Overview</a>
+<a href="01-concepts.html">1. Core concepts</a>
+<a href="02-configure.html">2. Configuration</a>
+<a href="03-thresholds.html">3. Thresholds</a>
+<a href="04-cdm-logic.html" class="active">4. CDM logic</a>
+<a href="05-mlcps.html">5. MLcps</a>
+<a href="06-drift.html">6. Drift detection</a>
+<a href="07-audit-trail.html">7. Audit trail</a>
+<a href="08-pccp-mapping.html">8. PCCP mapping</a>
+<a href="09-eu-mapping.html">9. EU mapping</a>
+
+      </nav>
+    </aside>
+
+    <main class="guide-content">
+      <h1>CDM logic</h1>
+<p>The Clinical Decision Module (CDM) is the deterministic decision engine at the core of AEGIS. It takes performance metrics, drift scores, and gold standard comparisons as input and produces a composite output: a decision category and an independent alarm state.</p>
+<p><a href="../forms/s3-cdm-pseudocode.html">View the CDM Pseudocode Reference</a></p>
+<h2>Ternary operator</h2>
+<p>AEGIS uses a ternary evaluation operator (Eq. 1 from the manuscript) that maps each metric to one of three states:</p>
+<pre><code>T(metric, threshold_lower, threshold_upper) =
+    FAIL    if metric &lt; threshold_lower
+    BUFFER  if threshold_lower &lt;= metric &lt; threshold_upper
+    PASS    if metric &gt;= threshold_upper
+</code></pre>
+<p>This ternary logic underpins the CDM&#39;s ability to distinguish between outright failure (REJECT), borderline performance (CONDITIONAL APPROVAL), and full compliance (APPROVE).</p>
+<h2>Condition polarity</h2>
+<p>AEGIS uses a <strong>lower-is-worse</strong> polarity convention for all metrics by default. This means:</p>
+<ul>
+<li>Sensitivity of 0.60 &lt; P_fail of 0.65 triggers REJECT (lower is worse)</li>
+<li>Drift score of 0.95 &gt; theta_major of 0.90 triggers alarm (higher is worse for drift)</li>
+</ul>
+<p>For metrics where <strong>higher is worse</strong> (e.g., false positive rate, calibration error), you must invert the comparison before entering the CDM. Document the polarity convention for each metric in your S2 configuration.</p>
+<pre><code class="language-python"># Example: inverting a higher-is-worse metric
+def normalise_polarity(value, higher_is_worse=False):
+    &quot;&quot;&quot;Convert metric to lower-is-worse convention.&quot;&quot;&quot;
+    if higher_is_worse:
+        return 1.0 - value
+    return value
+</code></pre>
+<h2>Priority-ordered decision hierarchy</h2>
+<p>The CDM evaluates conditions in strict priority order. The first condition that fires determines the decision. Lower-priority conditions are never evaluated once a higher-priority condition matches.</p>
+<table>
+<thead>
+<tr>
+<th>Priority</th>
+<th>Label</th>
+<th>Condition</th>
+<th>Decision</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>P1 (highest)</td>
+<td>Critical safety</td>
+<td>Any metric &lt; P_fail</td>
+<td>REJECT</td>
+</tr>
+<tr>
+<td>P2</td>
+<td>Major drift</td>
+<td>drift_score &gt; theta_major AND performance degradation (&gt; tau from gold standard)</td>
+<td>REJECT</td>
+</tr>
+<tr>
+<td>P3</td>
+<td>Buffer zone</td>
+<td>Any metric below R_G buffer</td>
+<td>CONDITIONAL APPROVAL</td>
+</tr>
+<tr>
+<td>P3.5</td>
+<td>Minor drift / borderline</td>
+<td>Minor drift detected OR borderline metrics requiring human judgement</td>
+<td>CLINICAL REVIEW</td>
+</tr>
+<tr>
+<td>P4 (lowest)</td>
+<td>Full compliance</td>
+<td>All metrics pass all checks</td>
+<td>APPROVE</td>
+</tr>
+</tbody></table>
+<p>The priority ordering ensures that safety-critical failures are always caught first, regardless of other conditions.</p>
+<blockquote>**Sepsis example:** At iteration 7, sensitivity dropped to 0.653 -- above P_fail (0.65) but below R_G(sensitivity) (0.66). The CDM evaluated as follows:
+
+- P1: sensitivity 0.653 >= P_fail 0.65 -- **not triggered**
+- P2: drift_score 0.441 < theta_major 0.90 -- **not triggered**
+- P3: sensitivity 0.653 < R_G(sensitivity) 0.66 -- **TRIGGERED**
+
+Result: CONDITIONAL APPROVAL with details `{priority: P3, trigger: "sensitivity = 0.653 < R_G = 0.66"}`. The model was flagged for heightened monitoring but not withdrawn.</blockquote>
+<h2>Alarm conditions (A1--A3)</h2>
+<p>Alarm conditions operate on an <strong>independent channel</strong> from the decision hierarchy. They are evaluated for every iteration regardless of the decision outcome.</p>
+<table>
+<thead>
+<tr>
+<th>Alarm</th>
+<th>Condition</th>
+<th>What it monitors</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>A1</td>
+<td>Released model metric &lt; P_PMS</td>
+<td>Currently deployed model&#39;s absolute performance</td>
+</tr>
+<tr>
+<td>A2</td>
+<td>Released model regressed &gt; delta from release baseline</td>
+<td>Deployed model&#39;s performance trend</td>
+</tr>
+<tr>
+<td>A3</td>
+<td>drift_score &gt; theta_major</td>
+<td>Severity of covariate drift</td>
+</tr>
+</tbody></table>
+<p>Key framing: <strong>APPROVE + ALARM is not contradictory.</strong> This combination means:</p>
+<ul>
+<li>The candidate model (being evaluated) passed all checks and can be approved</li>
+<li>BUT the currently released model has triggered a post-market safety concern</li>
+</ul>
+<p>This dual-channel design ensures that PMS obligations are never masked by a successful iteration.</p>
+<h2>Composite output</h2>
+<p>The CDM returns a structured object containing both channels:</p>
+<pre><code class="language-python">{
+    &quot;decision&quot;: &quot;APPROVE&quot;,              # from priority hierarchy
+    &quot;alarm&quot;: True,                       # from alarm channel
+    &quot;alarm_conditions&quot;: [&quot;A3&quot;],          # which alarms fired
+    &quot;details&quot;: {
+        &quot;priority&quot;: &quot;P4&quot;,
+        &quot;trigger&quot;: &quot;All metrics pass all checks&quot;
+    }
+}
+</code></pre>
+<p>The composite output feeds directly into:</p>
+<ol>
+<li>The audit trail (see <a href="07-audit-trail.html">Audit trail</a>)</li>
+<li>PCCP regulatory documentation (see <a href="08-pccp-mapping.html">PCCP mapping</a>)</li>
+<li>CAPA initiation (if REJECT or ALARM)</li>
+</ol>
+<h2>Pseudocode</h2>
+<p>The complete reference implementation follows the priority-ordered evaluation pattern:</p>
+<pre><code class="language-python">def cdm_evaluate(metrics, thresholds, drift_score, gold_standard, config):
+    &quot;&quot;&quot;
+    Clinical Decision Module -- priority-ordered evaluation.
+
+    Parameters
+    ----------
+    metrics : dict          Current iteration metrics
+    thresholds : dict       All threshold values from S2 configuration
+    drift_score : float     Proportion of features with significant drift
+    gold_standard : dict    Gold standard baseline metrics
+    config : dict           Active categories and configuration
+
+    Returns
+    -------
+    dict  {&#39;decision&#39;, &#39;alarm&#39;, &#39;alarm_conditions&#39;, &#39;details&#39;}
+    &quot;&quot;&quot;
+    # Alarm channel -- always evaluated
+    alarm_conditions = _check_alarm(metrics, thresholds, config)
+
+    # P1: Critical safety floor
+    for metric_name, value in metrics.items():
+        pfail_key = f&#39;P_fail_{metric_name}&#39;
+        if pfail_key in thresholds and value &lt; thresholds[pfail_key]:
+            return {
+                &#39;decision&#39;: &#39;REJECT&#39;,
+                &#39;alarm&#39;: len(alarm_conditions) &gt; 0,
+                &#39;alarm_conditions&#39;: alarm_conditions,
+                &#39;details&#39;: {
+                    &#39;priority&#39;: &#39;P1&#39;,
+                    &#39;trigger&#39;: f&#39;{metric_name} = {value:.3f} &lt; P_fail = {thresholds[pfail_key]}&#39;
+                }
+            }
+
+    # P2: Major drift + performance degradation
+    if drift_score &gt; thresholds.get(&#39;theta_major&#39;, 0.90):
+        degraded = any(
+            metrics[m] &lt; gold_standard[m] - thresholds.get(&#39;tau&#39;, 0.015)
+            for m in metrics if m in gold_standard
+        )
+        if degraded:
+            return {
+                &#39;decision&#39;: &#39;REJECT&#39;,
+                &#39;alarm&#39;: len(alarm_conditions) &gt; 0,
+                &#39;alarm_conditions&#39;: alarm_conditions,
+                &#39;details&#39;: {
+                    &#39;priority&#39;: &#39;P2&#39;,
+                    &#39;trigger&#39;: f&#39;drift = {drift_score:.3f} &gt; theta_major with degradation&#39;
+                }
+            }
+
+    # P3: Performance buffer zone
+    if config.get(&#39;conditional_approval_enabled&#39;, True):
+        for metric_name, value in metrics.items():
+            rg_key = f&#39;R_G_{metric_name}&#39;
+            if rg_key in thresholds and value &lt; thresholds[rg_key]:
+                return {
+                    &#39;decision&#39;: &#39;CONDITIONAL APPROVAL&#39;,
+                    &#39;alarm&#39;: len(alarm_conditions) &gt; 0,
+                    &#39;alarm_conditions&#39;: alarm_conditions,
+                    &#39;details&#39;: {
+                        &#39;priority&#39;: &#39;P3&#39;,
+                        &#39;trigger&#39;: f&#39;{metric_name} = {value:.3f} &lt; R_G = {thresholds[rg_key]}&#39;
+                    }
+                }
+
+    # P4: All checks passed
+    return {
+        &#39;decision&#39;: &#39;APPROVE&#39;,
+        &#39;alarm&#39;: len(alarm_conditions) &gt; 0,
+        &#39;alarm_conditions&#39;: alarm_conditions,
+        &#39;details&#39;: {&#39;priority&#39;: &#39;P4&#39;, &#39;trigger&#39;: &#39;All metrics pass all checks&#39;}
+    }
+</code></pre>
+<h2>Alarm evaluation function</h2>
+<pre><code class="language-python">def _check_alarm(metrics, thresholds, config):
+    &quot;&quot;&quot;Check PMS alarm conditions independently of decision hierarchy.&quot;&quot;&quot;
+    alarms = []
+
+    # A1: Released model below PMS safety floor
+    released = config.get(&#39;released_metrics&#39;, {})
+    for metric_name, value in released.items():
+        pms_key = f&#39;P_PMS_{metric_name}&#39;
+        if pms_key in thresholds and value &lt; thresholds[pms_key]:
+            alarms.append({
+                &#39;id&#39;: &#39;A1&#39;,
+                &#39;detail&#39;: f&#39;Released {metric_name} = {value:.3f} &lt; P_PMS&#39;
+            })
+
+    # A2: Released model regression from release baseline
+    release_baseline = config.get(&#39;release_baseline&#39;, {})
+    delta = thresholds.get(&#39;delta&#39;, 0.025)
+    for metric_name, value in released.items():
+        if metric_name in release_baseline:
+            regression = release_baseline[metric_name] - value
+            if regression &gt; delta:
+                alarms.append({
+                    &#39;id&#39;: &#39;A2&#39;,
+                    &#39;detail&#39;: f&#39;Regression {regression:.3f} &gt; delta = {delta}&#39;
+                })
+
+    # A3: Severe covariate drift
+    drift_score = config.get(&#39;current_drift_score&#39;, 0.0)
+    if drift_score &gt; thresholds.get(&#39;theta_major&#39;, 0.90):
+        alarms.append({
+            &#39;id&#39;: &#39;A3&#39;,
+            &#39;detail&#39;: f&#39;Drift {drift_score:.3f} &gt; theta_major&#39;
+        })
+
+    return alarms
+</code></pre>
+<h2>Logging specification</h2>
+<p>Every CDM evaluation must be logged. The required fields are documented in <a href="07-audit-trail.html">Audit trail</a>. At minimum, each log entry must record:</p>
+<ul>
+<li>The decision category and priority level</li>
+<li>All alarm conditions that fired</li>
+<li>The specific metric values and thresholds that triggered the decision</li>
+<li>A timestamp (ISO 8601)</li>
+<li>The iteration number</li>
+</ul>
+<blockquote>**Sepsis example:** At iteration 10, the CDM produced the most severe composite output observed in the experiment: REJECT (P1) + ALARM (A3). Sensitivity had dropped to 0.428 (far below P_fail = 0.65) due to catastrophic label corruption (80% positive flip, 30% negative flip) combined with Gaussian noise. Simultaneously, the drift score reached 1.000, exceeding theta_major = 0.90 and firing alarm A3. This composite REJECT + ALARM state triggered immediate CAPA initiation.</blockquote>
+<h3>Source</h3>
+<p>Manuscript Section II-B-3 (CDM specification), Tables III and VI (decision categories and priority hierarchy). The ternary operator is defined as Equation 1. Alarm conditions are specified in Table VI Part B. The reference Python implementation is reproduced from Supplementary S3.3.</p>
+
+
+      <div class="guide-nav-footer">
+        <a href="03-thresholds.html">← Previous</a>
+        <a href="05-mlcps.html">Next →</a>
+      </div>
+    </main>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+  <script>
+    // Scroll progress
+    window.addEventListener('scroll', function () {
+      var bar = document.getElementById('scroll-progress');
+      if (!bar) return;
+      var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+      var scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      bar.style.width = (scrollTop / scrollHeight * 100) + '%';
+    });
+  </script>
+</body>
+</html>

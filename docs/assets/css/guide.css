@@ -1,0 +1,205 @@
+/* ===== Guide Layout ===== */
+.guide-layout {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  min-height: calc(100vh - 60px);
+}
+
+@media (max-width: 768px) {
+  .guide-layout {
+    grid-template-columns: 1fr;
+  }
+  .guide-sidebar {
+    display: none;
+  }
+}
+
+/* ===== Sidebar ===== */
+.guide-sidebar {
+  background: var(--color-bg-card);
+  border-right: 1px solid var(--color-border);
+  padding: 2rem 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  transition: background var(--transition-base);
+}
+.guide-sidebar nav {
+  padding: 0 1.25rem;
+}
+.guide-sidebar .sidebar-title {
+  font-size: 0.7rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-text-muted);
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 0.5rem;
+}
+.guide-sidebar a {
+  display: block;
+  padding: 0.6rem 0.75rem;
+  border-radius: 8px;
+  color: var(--color-text-primary);
+  font-size: 0.9rem;
+  transition: all var(--transition-fast);
+  margin-bottom: 2px;
+}
+.guide-sidebar a:hover {
+  background: var(--color-border);
+  text-decoration: none;
+  transform: translateX(4px);
+}
+.guide-sidebar a.active {
+  background: var(--ki-plum);
+  color: var(--color-text-on-dark);
+  box-shadow: 0 4px 12px rgba(135, 0, 82, 0.2);
+}
+[data-theme="dark"] .guide-sidebar a.active {
+  background: var(--ki-orange);
+  color: var(--ki-dark-plum);
+  box-shadow: 0 4px 12px rgba(255, 135, 111, 0.2);
+}
+
+/* ===== Guide Content ===== */
+.guide-content {
+  padding: 4rem 5rem;
+  max-width: 900px;
+}
+.guide-content h1 {
+  margin-bottom: 0.5rem;
+}
+.guide-content h2 {
+  margin-top: 3.5rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--color-border);
+}
+.guide-content h3 {
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+}
+.guide-content p {
+  margin-bottom: 1.25rem;
+}
+.guide-content ul, .guide-content ol {
+  margin-bottom: 1.25rem;
+  padding-left: 1.5rem;
+}
+.guide-content li {
+  margin-bottom: 0.5rem;
+}
+.guide-content pre {
+  margin: 1.5rem 0;
+}
+.guide-content table {
+  margin: 2rem 0;
+}
+.guide-source {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  margin-bottom: 2rem;
+}
+
+/* ===== Callouts ===== */
+.callout-sepsis, .callout-warning {
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  margin: 2.5rem 0;
+  font-size: 0.95rem;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+}
+
+.callout-sepsis {
+  background: var(--ki-light-blue);
+  border-left: 6px solid var(--ki-blue);
+}
+[data-theme="dark"] .callout-sepsis {
+  background: rgba(77, 181, 188, 0.1);
+  border-left-color: var(--ki-blue);
+}
+.callout-sepsis strong {
+  color: var(--ki-dark-blue);
+}
+[data-theme="dark"] .callout-sepsis strong {
+  color: var(--ki-blue-light);
+}
+
+.callout-warning {
+  background: var(--ki-yellow-light);
+  border-left: 6px solid var(--ki-dark-yellow);
+}
+[data-theme="dark"] .callout-warning {
+  background: rgba(245, 154, 0, 0.1);
+  border-left-color: var(--ki-dark-yellow);
+}
+
+/* ===== Scroll Progress ===== */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 0%;
+  height: 3px;
+  background: var(--ki-orange);
+  z-index: 1000;
+  transition: width 0.1s linear;
+}
+
+/* ===== Step Cards ===== */
+.step-card {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+  padding: 1.75rem;
+  background: var(--color-bg-section-alt);
+  border-radius: 16px;
+  border: 1px solid var(--color-border);
+  margin-bottom: 1.5rem;
+  transition: transform var(--transition-base), box-shadow var(--transition-base), border-color var(--transition-base);
+}
+.step-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.05);
+  border-color: var(--color-accent);
+}
+.step-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  border-radius: 50%;
+  background: var(--ki-plum);
+  color: var(--color-text-on-dark);
+  font-weight: 500;
+  font-size: 1.15rem;
+  box-shadow: 0 4px 10px rgba(135, 0, 82, 0.2);
+}
+[data-theme="dark"] .step-number {
+  background: var(--ki-orange);
+  color: var(--ki-dark-plum);
+  box-shadow: 0 4px 10px rgba(255, 135, 111, 0.2);
+}
+.step-content h3 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+}
+.step-content p {
+  font-size: 0.95rem;
+  color: var(--color-text-muted);
+}
+
+/* ===== Guide Page Navigation ===== */
+.guide-nav-footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--color-border);
+}
+.guide-nav-footer a {
+  font-weight: 500;
+}

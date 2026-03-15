@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AEGIS Implementation Guide — AEGIS Guide</title>
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <link rel="stylesheet" href="../assets/css/guide.css">
+  <script src="../assets/js/theme.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+</head>
+<body>
+  <div class="scroll-progress" id="scroll-progress"></div>
+
+  <nav class="site-nav">
+    <div class="nav-logo">
+      <a href="../index.html">AEGIS</a>
+    </div>
+    <div class="nav-links">
+      <a href="../index.html">Home</a>
+      <a href="index.html">Guide</a>
+      <a href="../forms/index.html">Forms</a>
+      <a href="https://github.com/ki-smile/aegis" target="_blank" rel="noopener">GitHub</a>
+      <button class="theme-toggle" id="theme-toggle">☾ Dark</button>
+    </div>
+  </nav>
+
+  <div class="guide-layout">
+    <aside class="guide-sidebar">
+      <nav>
+        <div class="sidebar-title">Implementation Guide</div>
+        <a href="index.html" class="active">Overview</a>
+<a href="01-concepts.html">1. Core concepts</a>
+<a href="02-configure.html">2. Configuration</a>
+<a href="03-thresholds.html">3. Thresholds</a>
+<a href="04-cdm-logic.html">4. CDM logic</a>
+<a href="05-mlcps.html">5. MLcps</a>
+<a href="06-drift.html">6. Drift detection</a>
+<a href="07-audit-trail.html">7. Audit trail</a>
+<a href="08-pccp-mapping.html">8. PCCP mapping</a>
+<a href="09-eu-mapping.html">9. EU mapping</a>
+
+      </nav>
+    </aside>
+
+    <main class="guide-content">
+      <h1>AEGIS Implementation Guide</h1>
+<h2>What is AEGIS?</h2>
+<p>AEGIS (An Operational Infrastructure for Post-Market Governance of Adaptive Medical AI) is a modular, rule-based framework for governing medical AI systems that undergo iterative learning after initial market authorisation. It provides a structured pipeline for continuous monitoring, performance evaluation, and regulatory-compliant decision-making throughout the post-market lifecycle of adaptive AI/ML-enabled medical devices.</p>
+<p>AEGIS is <strong>not</strong> a machine learning library, a training framework, or a model architecture. It is an operational governance layer that sits on top of any ML pipeline and provides:</p>
+<ul>
+<li>Structured dataset management across training, golden, and drifting splits</li>
+<li>Composite performance scoring with clinically weighted metrics</li>
+<li>Covariate and concept drift detection with statistical rigour</li>
+<li>A deterministic, auditable decision engine with priority-ordered logic</li>
+<li>Full traceability to ISO 14971:2019, FDA PCCP, and EU MDR/AI Act requirements</li>
+</ul>
+<blockquote>**Sepsis example:** In the sepsis prediction case study, AEGIS governed 11 iterations (k = 0 through k = 10) of a Random Forest classifier trained on PhysioNet ICU data. The framework autonomously approved, conditionally approved, flagged for clinical review, or rejected each retrained model version — exercising all five decision categories across the experiment. At iteration 10, a catastrophic data corruption event triggered simultaneous REJECT + ALARM, demonstrating the framework's safety boundaries under extreme conditions.</blockquote>
+<h2>When to use AEGIS</h2>
+<p>AEGIS is designed for medical AI systems that meet <strong>all three</strong> of the following criteria:</p>
+<table>
+<thead>
+<tr>
+<th>Criterion</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Adaptive</strong></td>
+<td>The model is retrained or fine-tuned on new data after deployment</td>
+</tr>
+<tr>
+<td><strong>Regulated</strong></td>
+<td>The device falls under FDA 21 CFR Part 11, EU MDR, or the EU AI Act</td>
+</tr>
+<tr>
+<td><strong>Continuous</strong></td>
+<td>Post-market surveillance requires ongoing performance monitoring</td>
+</tr>
+</tbody></table>
+<p>If your system is a locked (non-learning) model, AEGIS still provides value for post-market surveillance (PMS) via the alarm channel, but the full iterative governance loop will not apply.</p>
+<h2>Three-module pipeline</h2>
+<p>AEGIS operates through three sequential modules executed at each iteration:</p>
+<pre><code>Iteration k
+┌──────────┐     ┌──────────┐     ┌──────────┐
+│   DARM   │ ──&gt; │   MMM    │ ──&gt; │   CDM    │
+│ Dataset  │     │ Model    │     │ Clinical │
+│ &amp; Review │     │ Monitor  │     │ Decision │
+│ Mgmt     │     │ Metrics  │     │ Module   │
+└──────────┘     └──────────┘     └──────────┘
+     │                                  │
+     │    ┌────────────────────────┐    │
+     └────│  Feedback: D_T,k+1    │&lt;───┘
+          │  = D_T,k ∪ D_D,k     │
+          └────────────────────────┘
+</code></pre>
+<h2>Reading order</h2>
+<p>This guide is structured as a sequential implementation walkthrough. Each page builds on the previous one. We recommend reading in order:</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Page</th>
+<th>What you will learn</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td><a href="01-concepts.html">Core concepts</a></td>
+<td>DARM, MMM, CDM definitions; gold standard; notation</td>
+</tr>
+<tr>
+<td>2</td>
+<td><a href="02-configure.html">Configuration</a></td>
+<td>How to instantiate AEGIS for your domain</td>
+</tr>
+<tr>
+<td>3</td>
+<td><a href="03-thresholds.html">Thresholds</a></td>
+<td>ISO 14971 threshold derivation and calibration</td>
+</tr>
+<tr>
+<td>4</td>
+<td><a href="04-cdm-logic.html">CDM logic</a></td>
+<td>Decision hierarchy, alarm conditions, pseudocode</td>
+</tr>
+<tr>
+<td>5</td>
+<td><a href="05-mlcps.html">MLcps</a></td>
+<td>Composite performance scoring mechanics</td>
+</tr>
+<tr>
+<td>6</td>
+<td><a href="06-drift.html">Drift detection</a></td>
+<td>Covariate and concept drift methodology</td>
+</tr>
+<tr>
+<td>7</td>
+<td><a href="07-audit-trail.html">Audit trail</a></td>
+<td>Logging requirements and JSON format</td>
+</tr>
+<tr>
+<td>8</td>
+<td><a href="08-pccp-mapping.html">PCCP mapping</a></td>
+<td>FDA PCCP regulatory alignment</td>
+</tr>
+<tr>
+<td>9</td>
+<td><a href="09-eu-mapping.html">EU regulatory mapping</a></td>
+<td>EU MDR and AI Act compliance</td>
+</tr>
+</tbody></table>
+<h2>Relationship between guide and supplements</h2>
+<p>Each guide page references one or more sections of the supplementary material. The <code>supplement</code> field in each page&#39;s metadata traces back to the exact supplement section where the formal specification resides.</p>
+<table>
+<thead>
+<tr>
+<th>Guide page</th>
+<th>Supplement section(s)</th>
+<th>Downloadable form</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Core concepts</td>
+<td>S1</td>
+<td><a href="../forms/s1-checklist.html">S1 Checklist</a></td>
+</tr>
+<tr>
+<td>Configuration</td>
+<td>S2.1--S2.2</td>
+<td><a href="../forms/s2-config.html">S2 Configuration</a></td>
+</tr>
+<tr>
+<td>Thresholds</td>
+<td>S2.3</td>
+<td><a href="../forms/s2-threshold-table.html">S2 Threshold Table</a></td>
+</tr>
+<tr>
+<td>CDM logic</td>
+<td>S3.3</td>
+<td><a href="../forms/s3-cdm-pseudocode.html">S3 CDM Pseudocode</a></td>
+</tr>
+<tr>
+<td>MLcps</td>
+<td>S2.4</td>
+<td>--</td>
+</tr>
+<tr>
+<td>Drift detection</td>
+<td>S2.5</td>
+<td>--</td>
+</tr>
+<tr>
+<td>Audit trail</td>
+<td>S1.4</td>
+<td>--</td>
+</tr>
+<tr>
+<td>PCCP mapping</td>
+<td>S2.8, S3.5</td>
+<td>--</td>
+</tr>
+<tr>
+<td>EU regulatory mapping</td>
+<td>S2.8</td>
+<td>--</td>
+</tr>
+</tbody></table>
+<h2>Quick start</h2>
+<p>If you are short on time, focus on these three pages first:</p>
+<ol>
+<li><strong><a href="01-concepts.html">Core concepts</a></strong> -- understand the vocabulary</li>
+<li><strong><a href="02-configure.html">Configuration</a></strong> -- fill in the S2 configuration form</li>
+<li><strong><a href="03-thresholds.html">Thresholds</a></strong> -- derive your safety-critical thresholds</li>
+</ol>
+<p>Then return to the remaining pages as you move toward deployment.</p>
+<h3>Source</h3>
+<p>Manuscript Sections I--II. The overall AEGIS architecture is introduced in Section I (Introduction) and formally defined in Section II (Methods). The three-module pipeline (DARM, MMM, CDM) is described in Section II-B. The iterative governance loop is depicted in Figure 1 of the manuscript.</p>
+
+
+      <div class="guide-nav-footer">
+        
+        <a href="01-concepts.html">Next →</a>
+      </div>
+    </main>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+  <script>
+    // Scroll progress
+    window.addEventListener('scroll', function () {
+      var bar = document.getElementById('scroll-progress');
+      if (!bar) return;
+      var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+      var scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      bar.style.width = (scrollTop / scrollHeight * 100) + '%';
+    });
+  </script>
+</body>
+</html>

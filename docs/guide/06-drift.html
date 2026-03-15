@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Drift detection — AEGIS Guide</title>
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <link rel="stylesheet" href="../assets/css/guide.css">
+  <script src="../assets/js/theme.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+</head>
+<body>
+  <div class="scroll-progress" id="scroll-progress"></div>
+
+  <nav class="site-nav">
+    <div class="nav-logo">
+      <a href="../index.html">AEGIS</a>
+    </div>
+    <div class="nav-links">
+      <a href="../index.html">Home</a>
+      <a href="index.html">Guide</a>
+      <a href="../forms/index.html">Forms</a>
+      <a href="https://github.com/ki-smile/aegis" target="_blank" rel="noopener">GitHub</a>
+      <button class="theme-toggle" id="theme-toggle">☾ Dark</button>
+    </div>
+  </nav>
+
+  <div class="guide-layout">
+    <aside class="guide-sidebar">
+      <nav>
+        <div class="sidebar-title">Implementation Guide</div>
+        <a href="index.html">Overview</a>
+<a href="01-concepts.html">1. Core concepts</a>
+<a href="02-configure.html">2. Configuration</a>
+<a href="03-thresholds.html">3. Thresholds</a>
+<a href="04-cdm-logic.html">4. CDM logic</a>
+<a href="05-mlcps.html">5. MLcps</a>
+<a href="06-drift.html" class="active">6. Drift detection</a>
+<a href="07-audit-trail.html">7. Audit trail</a>
+<a href="08-pccp-mapping.html">8. PCCP mapping</a>
+<a href="09-eu-mapping.html">9. EU mapping</a>
+
+      </nav>
+    </aside>
+
+    <main class="guide-content">
+      <h1>Drift detection</h1>
+<p>Distribution drift is one of the primary risks to adaptive medical AI systems in production. AEGIS monitors for drift at every iteration using statistical tests applied to the feature distributions of the golden and drifting datasets. This page covers the methodology, configuration, and calibration of drift detection.</p>
+<h2>Covariate drift vs concept drift</h2>
+<p>AEGIS distinguishes between two forms of distribution shift:</p>
+<table>
+<thead>
+<tr>
+<th>Drift type</th>
+<th>What changes</th>
+<th>Detection method</th>
+<th>AEGIS response</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Covariate drift</strong></td>
+<td>Input feature distributions P(X)</td>
+<td>Statistical tests (KS, MMD, PSI) on feature distributions</td>
+<td>Drift score feeds into CDM</td>
+</tr>
+<tr>
+<td><strong>Concept drift</strong></td>
+<td>Relationship between inputs and outputs P(Y|X)</td>
+<td>Performance degradation on D_G as a proxy</td>
+<td>Performance thresholds (P_fail, R_G)</td>
+</tr>
+</tbody></table>
+<p>Covariate drift is detected directly by comparing D_G and D_D,k feature distributions. Concept drift is detected indirectly through its effect on model performance -- when P(Y|X) changes, performance on the stable golden dataset D_G will degrade.</p>
+<blockquote>**Sepsis example:** In the sepsis experiment, covariate drift was introduced deliberately via Gaussian noise injection (sigma = scaling_factor * std) across all 34 clinical features. At low corruption levels (iterations 1-4), drift scores ranged from 0.000 to 0.265, remaining below theta_minor,low = 0.30. As corruption increased, the drift score climbed to 0.441 at iteration 7 (minor drift) and reached 1.000 at iteration 10 (major drift -- all 34 features significantly shifted). Concept drift was induced simultaneously through label flipping (progressive corruption of sepsis labels), causing sensitivity to degrade from 0.890 to 0.428.</blockquote>
+<h2>Bonferroni-corrected Kolmogorov-Smirnov test</h2>
+<p>AEGIS recommends the Kolmogorov-Smirnov (KS) test with Bonferroni correction as the default drift detection method. This is Equation 2 from the manuscript.</p>
+<h3>Method</h3>
+<p>For each of K features, perform a two-sample KS test comparing the distribution in D_G against D_D,k:</p>
+<pre><code>For feature j (j = 1, ..., K):
+    H_0: F_G,j = F_D,j    (distributions are identical)
+    H_1: F_G,j ≠ F_D,j    (distributions differ)
+
+    Compute p_j = KS_test(D_G[:, j], D_D,k[:, j])
+
+    Feature j has significant drift if p_j &lt; alpha&#39;
+</code></pre>
+<h3>Bonferroni correction</h3>
+<p>To control the family-wise error rate when testing K features simultaneously:</p>
+<pre><code>alpha&#39; = alpha / K
+</code></pre>
+<p>This is a conservative correction that reduces the probability of false drift detections at the cost of reduced sensitivity to true drift.</p>
+<h3>Drift score computation</h3>
+<p>The drift score is the proportion of features with statistically significant drift:</p>
+<pre><code>drift_score = |{j : p_j &lt; alpha&#39;}| / K
+</code></pre>
+<p>The drift score ranges from 0.0 (no features drifted) to 1.0 (all features drifted).</p>
+<h3>Implementation</h3>
+<pre><code class="language-python">from scipy import stats
+import numpy as np
+
+def compute_drift_score(golden_data: np.ndarray,
+                        drifting_data: np.ndarray,
+                        alpha: float = 0.05) -&gt; dict:
+    &quot;&quot;&quot;
+    Compute Bonferroni-corrected KS drift score.
+
+    Parameters
+    ----------
+    golden_data : np.ndarray   Shape (n_golden, K)
+    drifting_data : np.ndarray Shape (n_drifting, K)
+    alpha : float              Family-wise significance level
+
+    Returns
+    -------
+    dict  {drift_score, n_drifted, K, alpha_prime, p_values}
+    &quot;&quot;&quot;
+    K = golden_data.shape[1]
+    alpha_prime = alpha / K
+
+    p_values = []
+    n_drifted = 0
+
+    for j in range(K):
+        stat, p_val = stats.ks_2samp(golden_data[:, j], drifting_data[:, j])
+        p_values.append(p_val)
+        if p_val &lt; alpha_prime:
+            n_drifted += 1
+
+    return {
+        &#39;drift_score&#39;: n_drifted / K,
+        &#39;n_drifted&#39;: n_drifted,
+        &#39;K&#39;: K,
+        &#39;alpha_prime&#39;: alpha_prime,
+        &#39;p_values&#39;: p_values
+    }
+</code></pre>
+<h2>Feature selection</h2>
+<p>Not all features need to be monitored for drift. The choice of features affects both the drift score and the Bonferroni correction severity (since K determines alpha&#39;).</p>
+<h3>Selection criteria</h3>
+<table>
+<thead>
+<tr>
+<th>Criterion</th>
+<th>Guidance</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Clinical relevance</strong></td>
+<td>Include features that directly impact clinical predictions</td>
+</tr>
+<tr>
+<td><strong>Model importance</strong></td>
+<td>Include features with high feature importance scores</td>
+</tr>
+<tr>
+<td><strong>Stability</strong></td>
+<td>Exclude features known to have high natural variability</td>
+</tr>
+<tr>
+<td><strong>Redundancy</strong></td>
+<td>Avoid highly correlated feature pairs (inflates K unnecessarily)</td>
+</tr>
+</tbody></table>
+<blockquote>**Sepsis example:** All 34 clinical features were monitored for drift: HR, O2Sat, Temp, SBP, MAP, DBP, Resp, EtCO2, BaseExcess, HCO3, FiO2, pH, PaCO2, SaO2, AST, BUN, Alkalinephos, Calcium, Chloride, Creatinine, Bilirubin_direct, Glucose, Lactate, Magnesium, Phosphate, Potassium, Bilirubin_total, TroponinI, Hct, Hgb, PTT, WBC, Fibrinogen, Platelets. With K = 34 and alpha = 0.05, the Bonferroni-corrected threshold was alpha' = 0.05 / 34 = 0.00147. This conservative correction ensured that drift detections were genuine distribution shifts rather than multiple testing artefacts.</blockquote>
+<h2>Minor and major drift thresholds</h2>
+<p>The drift score is classified into three severity levels using the theta thresholds:</p>
+<pre><code>drift_score &lt; theta_minor,low          → No significant drift
+theta_minor,low &lt;= drift_score
+    &lt; theta_minor,high                 → Minor drift (informational)
+theta_minor,high &lt;= drift_score
+    &lt; theta_major                      → Moderate drift (heightened monitoring)
+drift_score &gt;= theta_major             → Major drift (triggers A3 alarm)
+</code></pre>
+<h3>CDM integration</h3>
+<p>Drift severity maps to CDM behaviour as follows:</p>
+<table>
+<thead>
+<tr>
+<th>Drift level</th>
+<th>CDM effect</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>No drift</td>
+<td>No impact on decision</td>
+</tr>
+<tr>
+<td>Minor drift</td>
+<td>May trigger CLINICAL REVIEW (P3.5) if enabled</td>
+</tr>
+<tr>
+<td>Moderate drift</td>
+<td>Heightened monitoring; logged but no automatic escalation</td>
+</tr>
+<tr>
+<td>Major drift</td>
+<td>Triggers A3 alarm; combined with performance degradation triggers P2 REJECT</td>
+</tr>
+</tbody></table>
+<h2>Calibration from baseline variability</h2>
+<p>To set meaningful drift thresholds, establish a baseline by measuring drift between temporal or random subsets of your own data:</p>
+<h3>Calibration procedure</h3>
+<ol>
+<li><strong>Split D_T,0 into two random halves</strong> (A and B)</li>
+<li><strong>Compute drift_score(A, B)</strong> -- this represents natural variability</li>
+<li><strong>Repeat 100 times</strong> with different random splits</li>
+<li><strong>Build the baseline distribution</strong> of drift scores</li>
+</ol>
+<pre><code class="language-python">def calibrate_drift_thresholds(training_data: np.ndarray,
+                                n_bootstrap: int = 100,
+                                alpha: float = 0.05) -&gt; dict:
+    &quot;&quot;&quot;
+    Calibrate drift thresholds from baseline variability.
+
+    Returns suggested theta_minor_low, theta_minor_high, theta_major.
+    &quot;&quot;&quot;
+    n = training_data.shape[0]
+    baseline_scores = []
+
+    for _ in range(n_bootstrap):
+        idx = np.random.permutation(n)
+        half = n // 2
+        A = training_data[idx[:half]]
+        B = training_data[idx[half:2*half]]
+        result = compute_drift_score(A, B, alpha)
+        baseline_scores.append(result[&#39;drift_score&#39;])
+
+    baseline_scores = np.array(baseline_scores)
+
+    return {
+        &#39;theta_minor_low&#39;: float(np.percentile(baseline_scores, 75)),
+        &#39;theta_minor_high&#39;: float(np.percentile(baseline_scores, 95)),
+        &#39;theta_major&#39;: max(float(np.percentile(baseline_scores, 99)), 0.90),
+        &#39;baseline_mean&#39;: float(baseline_scores.mean()),
+        &#39;baseline_std&#39;: float(baseline_scores.std()),
+        &#39;baseline_max&#39;: float(baseline_scores.max())
+    }
+</code></pre>
+<ol start="5">
+<li><strong>Set thresholds based on percentiles:</strong></li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>Threshold</th>
+<th>Suggested percentile</th>
+<th>Rationale</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>theta_minor,low</td>
+<td>75th percentile</td>
+<td>Drift above 75% of baseline is noteworthy</td>
+</tr>
+<tr>
+<td>theta_minor,high</td>
+<td>95th percentile</td>
+<td>Drift above 95% of baseline is unusual</td>
+</tr>
+<tr>
+<td>theta_major</td>
+<td>99th percentile or 0.90, whichever is higher</td>
+<td>Extreme drift only</td>
+</tr>
+</tbody></table>
+<h2>Alternative drift detection methods</h2>
+<p>While KS + Bonferroni is the default, AEGIS supports other methods:</p>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Strengths</th>
+<th>Limitations</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>KS + Bonferroni</strong></td>
+<td>Non-parametric; per-feature granularity; well-understood</td>
+<td>Conservative with large K</td>
+</tr>
+<tr>
+<td><strong>MMD (Maximum Mean Discrepancy)</strong></td>
+<td>Captures multivariate drift; kernel-based</td>
+<td>Less interpretable; single score for all features</td>
+</tr>
+<tr>
+<td><strong>PSI (Population Stability Index)</strong></td>
+<td>Industry standard; easy to explain</td>
+<td>Assumes binning; less powerful for continuous features</td>
+</tr>
+<tr>
+<td><strong>Performance comparison</strong></td>
+<td>Direct clinical relevance</td>
+<td>Only detects drift that affects performance</td>
+</tr>
+</tbody></table>
+<p>Document your chosen method and justification in the S2 configuration form.</p>
+<h2>Concept drift proxy at P2</h2>
+<p>AEGIS detects concept drift indirectly through the P2 condition: major covariate drift combined with performance degradation beyond the gold standard tolerance tau. The logic is:</p>
+<pre><code>IF drift_score &gt; theta_major AND any_metric degraded &gt; tau from gold_standard:
+    → REJECT (P2): concept drift is likely occurring
+</code></pre>
+<p>This proxy approach avoids the need for labelled data in the drifting dataset (which may not be immediately available in production).</p>
+<h3>Source</h3>
+<p>Manuscript Section II-D (drift detection configuration within instantiation parameters) and Equation 2 (Bonferroni-corrected KS test). Drift threshold calibration methodology is described in Supplementary S2.5. Feature selection guidance and the concept drift proxy are discussed in Section II-B-2 (MMM specification). The sepsis feature list and drift progression across iterations are detailed in Section IV-C.</p>
+
+
+      <div class="guide-nav-footer">
+        <a href="05-mlcps.html">← Previous</a>
+        <a href="07-audit-trail.html">Next →</a>
+      </div>
+    </main>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+  <script>
+    // Scroll progress
+    window.addEventListener('scroll', function () {
+      var bar = document.getElementById('scroll-progress');
+      if (!bar) return;
+      var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+      var scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      bar.style.width = (scrollTop / scrollHeight * 100) + '%';
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MLcps — AEGIS Guide</title>
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <link rel="stylesheet" href="../assets/css/guide.css">
+  <script src="../assets/js/theme.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+</head>
+<body>
+  <div class="scroll-progress" id="scroll-progress"></div>
+
+  <nav class="site-nav">
+    <div class="nav-logo">
+      <a href="../index.html">AEGIS</a>
+    </div>
+    <div class="nav-links">
+      <a href="../index.html">Home</a>
+      <a href="index.html">Guide</a>
+      <a href="../forms/index.html">Forms</a>
+      <a href="https://github.com/ki-smile/aegis" target="_blank" rel="noopener">GitHub</a>
+      <button class="theme-toggle" id="theme-toggle">☾ Dark</button>
+    </div>
+  </nav>
+
+  <div class="guide-layout">
+    <aside class="guide-sidebar">
+      <nav>
+        <div class="sidebar-title">Implementation Guide</div>
+        <a href="index.html">Overview</a>
+<a href="01-concepts.html">1. Core concepts</a>
+<a href="02-configure.html">2. Configuration</a>
+<a href="03-thresholds.html">3. Thresholds</a>
+<a href="04-cdm-logic.html">4. CDM logic</a>
+<a href="05-mlcps.html" class="active">5. MLcps</a>
+<a href="06-drift.html">6. Drift detection</a>
+<a href="07-audit-trail.html">7. Audit trail</a>
+<a href="08-pccp-mapping.html">8. PCCP mapping</a>
+<a href="09-eu-mapping.html">9. EU mapping</a>
+
+      </nav>
+    </aside>
+
+    <main class="guide-content">
+      <h1>MLcps</h1>
+<p>MLcps (Multi-criteria Likert Composite Performance Score) is a single scalar value that summarises the overall performance of a model across multiple clinically weighted metrics. It provides a unified view of model quality that respects the relative importance of different performance dimensions.</p>
+<h2>What MLcps is</h2>
+<p>MLcps aggregates multiple performance metrics into one composite score using a polar coordinate representation. Each metric is assigned a weight (reflecting its clinical importance), and the weighted metrics are projected onto a polar coordinate system. The resulting composite score captures both the magnitude and balance of performance across all tracked dimensions.</p>
+<p>Key properties of MLcps:</p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Range</strong></td>
+<td>0.0 to 1.0 (higher is better)</td>
+</tr>
+<tr>
+<td><strong>Weighted</strong></td>
+<td>Clinically important metrics contribute more to the score</td>
+</tr>
+<tr>
+<td><strong>Balanced</strong></td>
+<td>Penalises models that perform well on one metric but poorly on others</td>
+</tr>
+<tr>
+<td><strong>Interpretable</strong></td>
+<td>Single number for tracking trends across iterations</td>
+</tr>
+</tbody></table>
+<p>MLcps is used in MMM as a summary statistic for monitoring performance trends. It does <strong>not</strong> directly enter the CDM decision hierarchy (which uses individual metric thresholds), but it provides valuable context for audit trail entries and regulatory reporting.</p>
+<h2>Polar coordinate mechanics</h2>
+<p>MLcps maps each metric to an axis in a polar coordinate system. With N metrics, each axis is separated by 2*pi/N radians. The metric value (scaled by its weight) determines the distance from the origin along that axis.</p>
+<p>The composite score is derived from the area enclosed by the polygon formed by connecting the metric endpoints:</p>
+<pre><code>For N metrics with values v_1, ..., v_N and weights w_1, ..., w_N:
+
+1. Compute weighted values: v&#39;_i = v_i * w_i / max(w)
+2. Arrange on polar axes at angles theta_i = 2*pi*i / N
+3. Compute the polygon area A
+4. Normalise: MLcps = A / A_max
+</code></pre>
+<p>The normalisation ensures that a model achieving perfect scores (1.0) on all metrics with maximum weights yields MLcps = 1.0.</p>
+<pre><code class="language-python">import numpy as np
+
+def compute_mlcps(metrics: dict, weights: dict) -&gt; float:
+    &quot;&quot;&quot;
+    Compute MLcps composite performance score.
+
+    Parameters
+    ----------
+    metrics : dict   Metric name -&gt; value (0.0 to 1.0)
+    weights : dict   Metric name -&gt; weight (0.5 to 3.0)
+
+    Returns
+    -------
+    float  Composite score (0.0 to 1.0)
+    &quot;&quot;&quot;
+    names = sorted(metrics.keys())
+    N = len(names)
+    if N &lt; 2:
+        # Single metric: MLcps = weighted value normalised
+        name = names[0]
+        return metrics[name] * weights.get(name, 1.0) / max(weights.values())
+
+    max_w = max(weights.get(n, 1.0) for n in names)
+    angles = [2 * np.pi * i / N for i in range(N)]
+
+    # Weighted values
+    wv = [metrics[n] * weights.get(n, 1.0) / max_w for n in names]
+
+    # Polygon area using shoelace formula in polar coordinates
+    area = 0.0
+    for i in range(N):
+        j = (i + 1) % N
+        area += 0.5 * wv[i] * wv[j] * np.sin(angles[j] - angles[i])
+
+    # Maximum area (all metrics = 1.0, all weights = max_w)
+    max_area = 0.0
+    for i in range(N):
+        j = (i + 1) % N
+        max_area += 0.5 * 1.0 * 1.0 * np.sin(angles[j] - angles[i])
+
+    return abs(area) / abs(max_area) if max_area != 0 else 0.0
+</code></pre>
+<h2>The getCPS package</h2>
+<p>The reference implementation of composite performance scoring is available in the <code>getCPS</code> R/Python package. AEGIS recommends using this package for consistency with the manuscript&#39;s calculations.</p>
+<pre><code class="language-r"># R usage (getCPS package)
+library(getCPS)
+
+metrics &lt;- c(sensitivity = 0.890, specificity = 0.798,
+             roc_auc = 0.920, balanced_accuracy = 0.844)
+weights &lt;- c(sensitivity = 1.5, specificity = 1.0,
+             roc_auc = 1.3, balanced_accuracy = 1.1)
+
+cps &lt;- getCPS(metrics, weights)
+print(cps)
+# [1] 0.876
+</code></pre>
+<h2>Weight configuration</h2>
+<p>Weights range from 0.5 (low priority) to 3.0 (critical priority). They encode the clinical importance of each metric relative to the others.</p>
+<blockquote>**Sepsis example:** The sepsis case study used four metrics with the following weight configuration:
+
+| Metric | Weight | Rationale |
+|--------|--------|-----------|
+| Sensitivity | 1.5 | Highest priority -- missed sepsis has severe consequences |
+| ROC-AUC | 1.3 | Overall discrimination ability is clinically important |
+| Balanced Accuracy | 1.1 | Accounts for class imbalance in sepsis prevalence |
+| Specificity | 1.0 | Baseline importance -- false alarms burden ICU staff but are less dangerous than misses |
+
+This configuration produced an MLcps of 0.876 at the gold standard iteration (k=0). The weight ordering reflects the clinical reality that in sepsis prediction, failing to detect a true case (low sensitivity) carries greater patient risk than a false alarm (low specificity). Across the 11 iterations, MLcps tracked smoothly from 0.876 down to 0.354 at iteration 10, providing a clear trend signal even when individual metrics fluctuated differently.</blockquote>
+<h2>How to derive weights</h2>
+<p>AEGIS supports four methods for deriving metric weights, documented in the S2 configuration:</p>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>When to use</th>
+<th>Process</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Clinical risk assessment</strong></td>
+<td>Default recommendation</td>
+<td>Map ISO 14971 hazard severity to weight magnitude</td>
+</tr>
+<tr>
+<td><strong>Literature review</strong></td>
+<td>Established domains</td>
+<td>Survey published acceptable performance ranges</td>
+</tr>
+<tr>
+<td><strong>Expert panel consensus</strong></td>
+<td>Novel applications</td>
+<td>Structured consensus process (e.g., modified Delphi)</td>
+</tr>
+<tr>
+<td><strong>Regulatory requirement</strong></td>
+<td>Specific guidance exists</td>
+<td>Use mandated performance priorities</td>
+</tr>
+</tbody></table>
+<h3>Step-by-step weight derivation</h3>
+<ol>
+<li><strong>List all primary metrics</strong> that will be tracked by MMM</li>
+<li><strong>Rank by clinical consequence</strong> of failure for each metric</li>
+<li><strong>Assign initial weights</strong> using the following heuristic:</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>Clinical consequence of metric failure</th>
+<th>Suggested weight range</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Life-threatening (missed diagnosis, wrong treatment)</td>
+<td>2.0 -- 3.0</td>
+</tr>
+<tr>
+<td>Significant clinical impact (delayed care, unnecessary intervention)</td>
+<td>1.3 -- 2.0</td>
+</tr>
+<tr>
+<td>Moderate impact (workflow disruption, reduced efficiency)</td>
+<td>1.0 -- 1.3</td>
+</tr>
+<tr>
+<td>Low impact (minor inconvenience, easily corrected)</td>
+<td>0.5 -- 1.0</td>
+</tr>
+</tbody></table>
+<ol start="4">
+<li><strong>Validate with domain experts</strong> -- present the weights and their rationale to the clinical team</li>
+<li><strong>Document the derivation method</strong> in the S2 configuration form</li>
+</ol>
+<h2>MLcps in the governance loop</h2>
+<p>MLcps is computed at every iteration and logged in the audit trail. While it does not directly trigger CDM decisions, it serves several important functions:</p>
+<ul>
+<li><strong>Trend monitoring</strong>: A declining MLcps across iterations signals gradual performance degradation that may not yet trigger individual metric thresholds</li>
+<li><strong>Regulatory reporting</strong>: A single composite score is easier to communicate in PSUR and PCCP documentation</li>
+<li><strong>Gold standard tracking</strong>: The gold standard MLcps provides a single-number baseline for comparison</li>
+</ul>
+<pre><code>Iteration  Sensitivity  Specificity  ROC-AUC  Bal.Acc  MLcps  Decision
+k=0        0.890        0.798        0.920    0.844    0.876  APPROVE
+k=1        0.885        0.792        0.918    0.839    0.868  APPROVE
+k=5        0.842        0.763        0.895    0.803    0.816  CLINICAL REVIEW
+k=7        0.653        0.720        0.847    0.687    0.607  CONDITIONAL APPROVAL
+k=10       0.428        0.585        0.593    0.507    0.354  REJECT
+</code></pre>
+<h3>Source</h3>
+<p>Manuscript Section II-D (MLcps configuration within instantiation parameters) and Section IV-E (MLcps results across iterations). The polar coordinate composite scoring methodology is described in the getCPS package documentation. Weight configuration is specified in Supplementary S2.4. The sepsis weight values are tabulated in Table IV of the manuscript.</p>
+
+
+      <div class="guide-nav-footer">
+        <a href="04-cdm-logic.html">← Previous</a>
+        <a href="06-drift.html">Next →</a>
+      </div>
+    </main>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+  <script>
+    // Scroll progress
+    window.addEventListener('scroll', function () {
+      var bar = document.getElementById('scroll-progress');
+      if (!bar) return;
+      var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+      var scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      bar.style.width = (scrollTop / scrollHeight * 100) + '%';
+    });
+  </script>
+</body>
+</html>

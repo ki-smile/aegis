@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CDM logic and pseudocode — AEGIS Forms</title>
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <link rel="stylesheet" href="../assets/css/forms.css">
+  <script src="../assets/js/theme.js"></script>
+</head>
+<body>
+  <nav class="site-nav">
+    <div class="nav-logo">
+      <a href="../index.html">AEGIS</a>
+    </div>
+    <div class="nav-links">
+      <a href="../index.html">Home</a>
+      <a href="../guide/index.html">Guide</a>
+      <a href="index.html">Forms</a>
+      <a href="https://github.com/ki-smile/aegis" target="_blank" rel="noopener">GitHub</a>
+      <button class="theme-toggle" id="theme-toggle">☾ Dark</button>
+    </div>
+  </nav>
+
+  <div class="form-page">
+    <h1>CDM logic and pseudocode</h1>
+    <div class="form-supplement">Supplement S3.3</div>
+    <p class="form-description">Reference document describing the Clinical Decision Module logic, priority-ordered decision hierarchy, PMS alarm conditions, and Python reference implementation.</p>
+
+    
+
+    <form id="s3-cdm-pseudocode" onsubmit="return false;">
+      <div class="form-section">
+  <h2>Key framing</h2>
+  <div class="section-source">Supplementary S3.3</div>
+<ul>
+  <li>The CDM produces a composite output: a decision category AND an independent alarm state.</li>
+  <li>APPROVE + ALARM is not contradictory — it means the model passed all performance checks but a PMS alarm condition was triggered (e.g., gold standard regression).</li>
+  <li>The alarm channel operates independently of the decision hierarchy.</li>
+</ul>
+</div>
+<div class="form-section">
+  <h2>Priority-ordered decision hierarchy</h2>
+  <div class="section-source">Manuscript Table VI Part A</div>
+<table class="threshold-table">
+<thead><tr>
+  <th>Priority</th>
+  <th>Condition</th>
+  <th>Decision</th>
+  <th>Trigger description</th>
+</tr></thead>
+<tbody>
+<tr>
+  <td><input type="text" name="decision-hierarchy_0_priority" value="P1 (highest)"></td>
+  <td><input type="text" name="decision-hierarchy_0_condition" value="Any metric < P_fail"></td>
+  <td><input type="text" name="decision-hierarchy_0_decision" value="REJECT"></td>
+  <td><input type="text" name="decision-hierarchy_0_trigger" value="Critical safety floor violated"></td>
+</tr>
+<tr>
+  <td><input type="text" name="decision-hierarchy_1_priority" value="P2"></td>
+  <td><input type="text" name="decision-hierarchy_1_condition" value="Major drift AND performance degradation"></td>
+  <td><input type="text" name="decision-hierarchy_1_decision" value="REJECT"></td>
+  <td><input type="text" name="decision-hierarchy_1_trigger" value="Severe distribution shift with performance impact"></td>
+</tr>
+<tr>
+  <td><input type="text" name="decision-hierarchy_2_priority" value="P3"></td>
+  <td><input type="text" name="decision-hierarchy_2_condition" value="Any metric below R_G buffer"></td>
+  <td><input type="text" name="decision-hierarchy_2_decision" value="CONDITIONAL APPROVAL"></td>
+  <td><input type="text" name="decision-hierarchy_2_trigger" value="Performance in buffer zone — acceptable but declining"></td>
+</tr>
+<tr>
+  <td><input type="text" name="decision-hierarchy_3_priority" value="P4 (lowest)"></td>
+  <td><input type="text" name="decision-hierarchy_3_condition" value="All metrics pass all checks"></td>
+  <td><input type="text" name="decision-hierarchy_3_decision" value="APPROVE"></td>
+  <td><input type="text" name="decision-hierarchy_3_trigger" value="Full compliance with all thresholds"></td>
+</tr>
+</tbody></table>
+</div>
+<div class="form-section">
+  <h2>PMS alarm conditions</h2>
+  <div class="section-source">Manuscript Table VI Part B</div>
+<table class="threshold-table">
+<thead><tr>
+  <th>Alarm</th>
+  <th>Condition</th>
+  <th>Description</th>
+</tr></thead>
+<tbody>
+<tr>
+  <td><input type="text" name="alarm-conditions_0_alarm" value="A1"></td>
+  <td><input type="text" name="alarm-conditions_0_condition" value="Released model performance < P_PMS"></td>
+  <td><input type="text" name="alarm-conditions_0_description" value="Post-market safety floor breach on currently deployed model"></td>
+</tr>
+<tr>
+  <td><input type="text" name="alarm-conditions_1_alarm" value="A2"></td>
+  <td><input type="text" name="alarm-conditions_1_condition" value="Released model regression > δ from release baseline"></td>
+  <td><input type="text" name="alarm-conditions_1_description" value="Significant regression from performance at time of release"></td>
+</tr>
+<tr>
+  <td><input type="text" name="alarm-conditions_2_alarm" value="A3"></td>
+  <td><input type="text" name="alarm-conditions_2_condition" value="Drift score > θ_major"></td>
+  <td><input type="text" name="alarm-conditions_2_description" value="Severe covariate drift detected"></td>
+</tr>
+</tbody></table>
+</div>
+<div class="form-section">
+  <h2>Reference Python implementation</h2>
+  <div class="section-source">Supplementary S3.3</div>
+<pre class="code-block"><code class="language-python">def cdm_evaluate(metrics, thresholds, drift_score, gold_standard, config):
+    """
+    Clinical Decision Module — priority-ordered evaluation.
+
+    Parameters
+    ----------
+    metrics : dict
+        Current iteration metrics, e.g. {'sensitivity': 0.85, 'specificity': 0.72}
+    thresholds : dict
+        All threshold values from S2 configuration
+    drift_score : float
+        Proportion of features with significant drift (0.0–1.0)
+    gold_standard : dict
+        Gold standard baseline metrics from iteration 0
+    config : dict
+        Active categories and configuration
+
+    Returns
+    -------
+    dict
+        {'decision': str, 'alarm': bool, 'alarm_conditions': list, 'details': dict}
+    """
+    alarm_conditions = _check_alarm(metrics, thresholds, config)
+
+    # P1: Critical safety floor
+    for metric_name, value in metrics.items():
+        pfail_key = f'P_fail_{metric_name}'
+        if pfail_key in thresholds and value &lt; thresholds[pfail_key]:
+            return {
+                'decision': 'REJECT',
+                'alarm': len(alarm_conditions) &gt; 0,
+                'alarm_conditions': alarm_conditions,
+                'details': {'priority': 'P1', 'trigger': f'{metric_name} = {value:.3f} &lt; P_fail = {thresholds[pfail_key]}'}
+            }
+
+    # P2: Major drift + performance degradation
+    if drift_score &gt; thresholds.get('theta_major', 0.90):
+        degraded = any(
+            metrics[m] &lt; gold_standard[m] - thresholds.get('tau', 0.015)
+            for m in metrics if m in gold_standard
+        )
+        if degraded:
+            return {
+                'decision': 'REJECT',
+                'alarm': len(alarm_conditions) &gt; 0,
+                'alarm_conditions': alarm_conditions,
+                'details': {'priority': 'P2', 'trigger': f'drift_score = {drift_score:.3f} &gt; θ_major with performance degradation'}
+            }
+
+    # P3: Performance buffer zone
+    if config.get('conditional_approval_enabled', True):
+        for metric_name, value in metrics.items():
+            rg_key = f'R_G_{metric_name}'
+            if rg_key in thresholds and value &lt; thresholds[rg_key]:
+                return {
+                    'decision': 'CONDITIONAL APPROVAL',
+                    'alarm': len(alarm_conditions) &gt; 0,
+                    'alarm_conditions': alarm_conditions,
+                    'details': {'priority': 'P3', 'trigger': f'{metric_name} = {value:.3f} &lt; R_G = {thresholds[rg_key]}'}
+                }
+
+    # P4: All checks passed
+    return {
+        'decision': 'APPROVE',
+        'alarm': len(alarm_conditions) &gt; 0,
+        'alarm_conditions': alarm_conditions,
+        'details': {'priority': 'P4', 'trigger': 'All metrics pass all checks'}
+    }
+
+
+def _check_alarm(metrics, thresholds, config):
+    """Check PMS alarm conditions independently of decision hierarchy."""
+    alarms = []
+
+    # A1: Released model below PMS safety floor
+    released = config.get('released_metrics', {})
+    for metric_name, value in released.items():
+        pms_key = f'P_PMS_{metric_name}'
+        if pms_key in thresholds and value &lt; thresholds[pms_key]:
+            alarms.append({'id': 'A1', 'detail': f'Released {metric_name} = {value:.3f} &lt; P_PMS = {thresholds[pms_key]}'})
+
+    # A2: Released model regression from release baseline
+    release_baseline = config.get('release_baseline', {})
+    delta = thresholds.get('delta', 0.025)
+    for metric_name, value in released.items():
+        if metric_name in release_baseline:
+            regression = release_baseline[metric_name] - value
+            if regression &gt; delta:
+                alarms.append({'id': 'A2', 'detail': f'Released {metric_name} regressed by {regression:.3f} &gt; δ = {delta}'})
+
+    # A3: Severe covariate drift
+    drift_score = config.get('current_drift_score', 0.0)
+    if drift_score &gt; thresholds.get('theta_major', 0.90):
+        alarms.append({'id': 'A3', 'detail': f'Drift score {drift_score:.3f} &gt; θ_major = {thresholds["theta_major"]}'})
+
+    return alarms
+
+
+def gold_standard_compare(current_metrics, gold_standard, tau=0.015):
+    """
+    Compare current metrics against gold standard baseline.
+
+    Returns dict with per-metric comparison and overall pass/fail.
+    """
+    comparisons = {}
+    all_pass = True
+    for metric_name, gold_value in gold_standard.items():
+        if metric_name in current_metrics:
+            current = current_metrics[metric_name]
+            deviation = gold_value - current
+            passed = deviation &lt;= tau
+            comparisons[metric_name] = {
+                'gold': gold_value,
+                'current': current,
+                'deviation': deviation,
+                'within_tolerance': passed
+            }
+            if not passed:
+                all_pass = False
+    return {'comparisons': comparisons, 'all_within_tolerance': all_pass}
+</code></pre>
+</div>
+<div class="form-section">
+  <h2>Required log fields per iteration</h2>
+  <div class="section-source">Supplementary S1.4, S3.4</div>
+<ul>
+  <li>Iteration number (k)</li>
+  <li>Timestamp (ISO 8601)</li>
+  <li>Dataset sizes: |D_T,k|, |D_G|, |D_D,k|</li>
+  <li>All computed metrics (name, value, threshold, pass/fail)</li>
+  <li>MLcps composite score</li>
+  <li>Drift score and per-feature p-values</li>
+  <li>CDM decision category</li>
+  <li>Alarm state and triggered conditions (A1/A2/A3)</li>
+  <li>Gold standard comparison result</li>
+  <li>Model version hash or tag</li>
+  <li>Operator ID and review notes (if CLINICAL REVIEW)</li>
+</ul>
+</div>
+
+
+      <button type="button" class="btn-download" id="download-docx">
+        Download .docx
+      </button>
+
+      <div class="form-privacy">
+        All data stays in your browser. Nothing is sent to any server.
+      </div>
+    </form>
+  </div>
+
+  <script src="https://unpkg.com/docx@8/build/index.umd.js"></script>
+  <script src="../assets/js/forms-docx.js"></script>
+  <script>
+    
+document.getElementById('download-docx')?.addEventListener('click', function() {
+  if (!window.AEGISForms || !window.docx) { alert('Libraries not loaded yet. Please wait.'); return; }
+  var F = window.AEGISForms;
+  var docx = window.docx;
+
+  var headerValues = {
+    device_name: (document.getElementById('device_name') || {}).value || '',
+    intended_use: (document.getElementById('intended_use') || {}).value || '',
+    author_name: (document.getElementById('author_name') || {}).value || '',
+    author_role: (document.getElementById('author_role') || {}).value || '',
+    date: (document.getElementById('date') || {}).value || '',
+    org: (document.getElementById('org') || {}).value || ''
+  };
+
+  var children = [];
+  children = children.concat(F.buildTitle("AEGIS CDM Logic Reference", "S3.3"));
+
+
+  // Section: Key framing
+  children = children.concat(F.buildSectionHeading("Key framing", "Supplementary S3.3"));
+  children.push(new docx.Paragraph({ children: [new docx.TextRun('• The CDM produces a composite output: a decision category AND an independent alarm state.')], spacing: { after: 80 } }));
+  children.push(new docx.Paragraph({ children: [new docx.TextRun('• APPROVE + ALARM is not contradictory — it means the model passed all performance checks but a PMS alarm condition was triggered (e.g., gold standard regression).')], spacing: { after: 80 } }));
+  children.push(new docx.Paragraph({ children: [new docx.TextRun('• The alarm channel operates independently of the decision hierarchy.')], spacing: { after: 80 } }));
+
+  // Section: Priority-ordered decision hierarchy
+  children = children.concat(F.buildSectionHeading("Priority-ordered decision hierarchy", "Manuscript Table VI Part A"));
+  var tableRows_decision_hierarchy = [];
+  for (var i = 0; i < 4; i++) {
+    var row = [];
+    row.push((document.querySelector('[name="decision-hierarchy_'+i+'_priority"]') || {}).value || '');
+    row.push((document.querySelector('[name="decision-hierarchy_'+i+'_condition"]') || {}).value || '');
+    row.push((document.querySelector('[name="decision-hierarchy_'+i+'_decision"]') || {}).value || '');
+    row.push((document.querySelector('[name="decision-hierarchy_'+i+'_trigger"]') || {}).value || '');
+    tableRows_decision_hierarchy.push(row);
+  }
+  children.push(F.buildTable(["Priority","Condition","Decision","Trigger description"], tableRows_decision_hierarchy));
+
+  // Section: PMS alarm conditions
+  children = children.concat(F.buildSectionHeading("PMS alarm conditions", "Manuscript Table VI Part B"));
+  var tableRows_alarm_conditions = [];
+  for (var i = 0; i < 3; i++) {
+    var row = [];
+    row.push((document.querySelector('[name="alarm-conditions_'+i+'_alarm"]') || {}).value || '');
+    row.push((document.querySelector('[name="alarm-conditions_'+i+'_condition"]') || {}).value || '');
+    row.push((document.querySelector('[name="alarm-conditions_'+i+'_description"]') || {}).value || '');
+    tableRows_alarm_conditions.push(row);
+  }
+  children.push(F.buildTable(["Alarm","Condition","Description"], tableRows_alarm_conditions));
+
+  // Section: Reference Python implementation
+  children = children.concat(F.buildSectionHeading("Reference Python implementation", "Supplementary S3.3"));
+  children.push(new docx.Paragraph({ children: [new docx.TextRun({ text: "def cdm_evaluate(metrics, thresholds, drift_score, gold_standard, config):\n    \"\"\"\n    Clinical Decision Module — priority-ordered evaluation.\n\n    Parameters\n    ----------\n    metrics : dict\n        Current iteration metrics, e.g. {'sensitivity': 0.85, 'specificity': 0.72}\n    thresholds : dict\n        All threshold values from S2 configuration\n    drift_score : float\n        Proportion of features with significant drift (0.0–1.0)\n    gold_standard : dict\n        Gold standard baseline metrics from iteration 0\n    config : dict\n        Active categories and configuration\n\n    Returns\n    -------\n    dict\n        {'decision': str, 'alarm': bool, 'alarm_conditions': list, 'details': dict}\n    \"\"\"\n    alarm_conditions = _check_alarm(metrics, thresholds, config)\n\n    # P1: Critical safety floor\n    for metric_name, value in metrics.items():\n        pfail_key = f'P_fail_{metric_name}'\n        if pfail_key in thresholds and value < thresholds[pfail_key]:\n            return {\n                'decision': 'REJECT',\n                'alarm': len(alarm_conditions) > 0,\n                'alarm_conditions': alarm_conditions,\n                'details': {'priority': 'P1', 'trigger': f'{metric_name} = {value:.3f} < P_fail = {thresholds[pfail_key]}'}\n            }\n\n    # P2: Major drift + performance degradation\n    if drift_score > thresholds.get('theta_major', 0.90):\n        degraded = any(\n            metrics[m] < gold_standard[m] - thresholds.get('tau', 0.015)\n            for m in metrics if m in gold_standard\n        )\n        if degraded:\n            return {\n                'decision': 'REJECT',\n                'alarm': len(alarm_conditions) > 0,\n                'alarm_conditions': alarm_conditions,\n                'details': {'priority': 'P2', 'trigger': f'drift_score = {drift_score:.3f} > θ_major with performance degradation'}\n            }\n\n    # P3: Performance buffer zone\n    if config.get('conditional_approval_enabled', True):\n        for metric_name, value in metrics.i", font: 'Courier New', size: 18 })], spacing: { after: 200 } }));
+
+  // Section: Required log fields per iteration
+  children = children.concat(F.buildSectionHeading("Required log fields per iteration", "Supplementary S1.4, S3.4"));
+  children.push(new docx.Paragraph({ children: [new docx.TextRun('• Iteration number (k)')], spacing: { after: 80 } }));
+  children.push(new docx.Paragraph({ children: [new docx.TextRun('• Timestamp (ISO 8601)')], spacing: { after: 80 } }));
+  children.push(new docx.Paragraph({ children: [new docx.TextRun('• Dataset sizes: |D_T,k|, |D_G|, |D_D,k|')], spacing: { after: 80 } }));
+  children.push(new docx.Paragraph({ children: [new docx.TextRun('• All computed metrics (name, value, threshold, pass/fail)')], spacing: { after: 80 } }));
+  children.push(new docx.Paragraph({ children: [new docx.TextRun('• MLcps composite score')], spacing: { after: 80 } }));
+  children.push(new docx.Paragraph({ children: [new docx.TextRun('• Drift score and per-feature p-values')], spacing: { after: 80 } }));
+  children.push(new docx.Paragraph({ children: [new docx.TextRun('• CDM decision category')], spacing: { after: 80 } }));
+  children.push(new docx.Paragraph({ children: [new docx.TextRun('• Alarm state and triggered conditions (A1/A2/A3)')], spacing: { after: 80 } }));
+  children.push(new docx.Paragraph({ children: [new docx.TextRun('• Gold standard comparison result')], spacing: { after: 80 } }));
+  children.push(new docx.Paragraph({ children: [new docx.TextRun('• Model version hash or tag')], spacing: { after: 80 } }));
+  children.push(new docx.Paragraph({ children: [new docx.TextRun('• Operator ID and review notes (if CLINICAL REVIEW)')], spacing: { after: 80 } }));
+
+  // Sign-off
+  children = children.concat(F.buildSectionHeading('Sign-off'));
+  children = children.concat(F.buildSignoff());
+
+  var doc = new docx.Document({
+    sections: [{
+      footers: F.buildFooterConfig(),
+      children: children
+    }],
+    styles: {
+      default: {
+        document: {
+          run: { font: 'Arial', size: 20, color: '000000' }
+        },
+        heading1: {
+          run: { font: 'Arial', size: 36, bold: true, color: '4F0433' }
+        },
+        heading2: {
+          run: { font: 'Arial', size: 28, bold: true, color: '870052' }
+        }
+      }
+    }
+  });
+
+  var filename = "AEGIS_CDM_Logic_{date}.docx";
+  filename = filename.replace('{device_name}', (headerValues.device_name || 'device').replace(/[^a-zA-Z0-9]/g, '_'));
+  filename = filename.replace('{date}', headerValues.date || new Date().toISOString().split('T')[0]);
+  filename = filename.replace('{iteration}', (document.getElementById('iteration') || {}).value || '0');
+  F.triggerDownload(doc, filename);
+});
+
+  </script>
+</body>
+</html>
