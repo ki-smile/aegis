@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
   <title>AEGIS — Adaptive Medical AI Governance</title>
   <link rel="stylesheet" href="assets/css/main.css">
   <script src="assets/js/theme.js"></script>
@@ -31,7 +32,7 @@
       <div class="hero-ctas">
         <a href="guide/index.html" class="btn-primary">Read the guide</a>
         <a href="forms/index.html" class="btn-secondary">Fill templates</a>
-        <a href="#results" class="btn-secondary">View results</a>
+        <a href="https://www.researchsquare.com/article/rs-9199100/v1" target="_blank" rel="noopener" class="btn-secondary">Read preprint</a>
       </div>
       <div class="hero-badges">
         <span class="badge badge-approve" data-tooltip="All metrics pass all thresholds. FDA: within PCCP bounds. EU: compliant per AI Act Art. 43(4).">APPROVE</span>
@@ -43,8 +44,52 @@
     </div>
   </section>
 
+  <!-- Explore AEGIS (Multimedia) -->
+  <section class="section section-white" id="explore">
+    <div class="section-inner">
+      <h2 class="section-title">Overview & Research</h2>
+      <p class="section-subtitle">A quick introduction to the AEGIS framework and its research foundation.</p>
+
+      <div class="grid-2">
+        <!-- Video -->
+        <div class="media-column">
+          <h3 style="margin-bottom: 1rem;">Video Overview</h3>
+          <p style="margin-bottom: 1rem; color: var(--color-text-muted); font-size: 0.95rem;">A 10-minute walkthrough of the AEGIS three-module architecture and regulatory decision logic.</p>
+          <div style="position:relative; width:100%; padding-bottom:56.25%; height:0; overflow:hidden; border-radius:12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); background: #000; margin-bottom: 1rem;">
+            <iframe 
+              width="560" 
+              height="315" 
+              src="https://www.youtube.com/embed/bt-knWx440o?si=lWfGjC68Gm6y7nUn" 
+              title="YouTube video player" 
+              frameborder="0" 
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+              referrerpolicy="strict-origin-when-cross-origin" 
+              allowfullscreen 
+              style="position:absolute; top:0; left:0; width:100%; height:100%;">
+            </iframe>
+          </div>
+          <a href="https://www.youtube.com/watch?v=bt-knWx440o" target="_blank" rel="noopener" class="btn-ghost" style="font-size: 0.9rem; padding: 0.25rem 0;">
+            ↗ Watch on YouTube (if player doesn't load)
+          </a>
+        </div>
+
+        <!-- Podcast Summary -->
+        <div class="card" style="align-self: center; border-color: var(--ki-blue); background: var(--color-bg-card);">
+          <h3 style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; color: var(--color-text-primary);">
+            <span style="font-size: 1.5rem;">🎧</span> Podcast Summary
+          </h3>
+          <p style="font-size: 0.95rem; margin-bottom: 1.5rem; color: var(--color-text-muted);">A conversational overview of the AEGIS framework, designed for clinical and regulatory stakeholders.</p>
+          <audio controls preload="metadata" style="width:100%; border-radius:8px;">
+            <source src="assets/media/aegis-podcast.mp3" type="audio/mpeg">
+            Your browser does not support the audio element.
+          </audio>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Problem -->
-  <section class="section section-white" id="problem">
+  <section class="section section-orange" id="problem">
     <div class="section-inner">
       <h2 class="section-title">The adaptive AI governance gap</h2>
       <p class="section-subtitle">Medical AI systems that learn from new data need structured post-market oversight — not just initial approval.</p>
@@ -66,7 +111,7 @@
   </section>
 
   <!-- Architecture -->
-  <section class="section section-orange" id="architecture">
+  <section class="section section-white" id="architecture">
     <div class="section-inner">
       <h2 class="section-title">Three-module architecture</h2>
       <p class="section-subtitle">DARM manages data, MMM monitors performance and drift, CDM makes structured decisions.</p>
@@ -139,7 +184,7 @@
   </section>
 
   <!-- Decision Taxonomy -->
-  <section class="section section-white" id="taxonomy">
+  <section class="section section-orange" id="taxonomy">
     <div class="section-inner">
       <h2 class="section-title">Decision taxonomy</h2>
       <p class="section-subtitle">Five decision categories with composite output — APPROVE + ALARM is not contradictory.</p>
@@ -225,7 +270,7 @@
   </section>
 
   <!-- Results -->
-  <section class="section section-orange" id="results">
+  <section class="section section-white" id="results">
     <div class="section-inner">
       <h2 class="section-title">Experimental results</h2>
       <p class="section-subtitle">Performance trajectories across iterative governance cycles.</p>
@@ -262,19 +307,20 @@
   </section>
 
   <!-- Citation -->
-  <section class="section section-dark" id="cite">
+  <section class="section section-white" id="cite">
     <div class="section-inner">
-      <h2 class="section-title" style="color:var(--color-text-on-dark);">Citation</h2>
-      <p style="color:rgba(255,255,255,0.7); margin-bottom:1rem;">If you use AEGIS, please cite:</p>
+      <h2 class="section-title">Citation</h2>
+      <p style="color:var(--color-text-muted); margin-bottom:1rem;">If you use AEGIS in your research, please cite our preprint:</p>
       <pre class="code-block" id="bibtex-block" style="position:relative;">@article{afdideh2026aegis,
   title   = {AEGIS: An Operational Infrastructure for Post-Market
-             Governance of Adaptive Medical AI Under US and EU Regulations},
+             Governance of Adaptive Medical AI Under US and EU
+             Regulatory Frameworks},
   author  = {Afdideh, Fardin and Astaraki, Mehdi and Seoane, Fernando
              and Abtahi, Farhad},
   year    = {2026},
-  journal = {},
-  doi     = {10.XXXX/PLACEHOLDER},
-  url     = {https://ki-smile.github.io/aegis}
+  journal = {Research Square (Preprint)},
+  doi     = {10.21203/rs.3.rs-9199100/v1},
+  url     = {https://doi.org/10.21203/rs.3.rs-9199100/v1}
 }</pre>
       <button class="btn-primary" id="copy-bibtex" style="margin-top:1rem;">Copy BibTeX</button>
     </div>
