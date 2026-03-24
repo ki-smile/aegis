@@ -45,18 +45,32 @@
     // Sidebar Toggle (for Guide)
     var sidebarToggle = document.getElementById('sidebar-toggle');
     var sidebar = document.querySelector('.guide-sidebar');
+    var overlay = document.getElementById('sidebar-overlay');
+
+    function closeSidebar() {
+      if (sidebar) sidebar.classList.remove('active');
+      if (overlay) overlay.classList.remove('active');
+      if (sidebarToggle) {
+        var icon = sidebarToggle.querySelector('.toggle-icon');
+        if (icon) icon.textContent = '☰';
+      }
+    }
+
     if (sidebarToggle && sidebar) {
       sidebarToggle.addEventListener('click', function() {
-        sidebar.classList.toggle('active');
-        sidebarToggle.querySelector('.toggle-icon').textContent = sidebar.classList.contains('active') ? '✕' : '☰';
+        var isOpen = sidebar.classList.toggle('active');
+        if (overlay) overlay.classList.toggle('active');
+        var icon = sidebarToggle.querySelector('.toggle-icon');
+        if (icon) icon.textContent = isOpen ? '✕' : '☰';
       });
+
+      if (overlay) {
+        overlay.addEventListener('click', closeSidebar);
+      }
 
       // Close sidebar when clicking a link
       sidebar.querySelectorAll('a').forEach(function(link) {
-        link.addEventListener('click', function() {
-          sidebar.classList.remove('active');
-          sidebarToggle.querySelector('.toggle-icon').textContent = '☰';
-        });
+        link.addEventListener('click', closeSidebar);
       });
     }
   });

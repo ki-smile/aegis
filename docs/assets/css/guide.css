@@ -15,17 +15,19 @@
 .sidebar-toggle {
   display: none;
   position: sticky;
-  top: 60px;
-  background: var(--color-bg-card);
+  top: 58px; /* Height of site-nav */
+  background: var(--color-bg-page);
   border-bottom: 1px solid var(--color-border);
-  padding: 0.75rem 1.25rem;
+  padding: 0.6rem 1.25rem;
   z-index: 900;
   width: 100%;
   font-weight: 500;
   color: var(--color-accent-strong);
   cursor: pointer;
   align-items: center;
-  gap: 0.5rem;
+  justify-content: space-between;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 @media (max-width: 992px) {
@@ -34,20 +36,37 @@
   }
   .guide-sidebar {
     position: fixed;
-    top: 60px;
-    left: -100%;
+    top: 0;
+    left: -280px;
     width: 280px;
-    height: calc(100vh - 60px);
-    z-index: 950;
-    transition: left 0.3s ease;
-    box-shadow: 5px 0 15px rgba(0,0,0,0.1);
+    height: 100vh;
+    z-index: 2000; /* Above site-nav */
+    transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 10px 0 25px rgba(0,0,0,0.2);
+    padding-top: 2rem;
   }
   .guide-sidebar.active {
     left: 0;
   }
   .guide-content {
-    padding: 2rem 1.25rem !important;
+    padding: 2rem 1.5rem 4rem !important;
   }
+}
+
+/* Sidebar Backdrop Overlay */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.5);
+  z-index: 1999;
+  backdrop-filter: blur(2px);
+}
+.sidebar-overlay.active {
+  display: block;
 }
 
 /* ===== Sidebar ===== */
@@ -56,8 +75,8 @@
   border-right: 1px solid var(--color-border);
   padding: 2rem 0;
   position: sticky;
-  top: 60px;
-  height: calc(100vh - 60px);
+  top: 58px;
+  height: calc(100vh - 58px);
   overflow-y: auto;
   transition: background var(--transition-base), left 0.3s ease;
 }
