@@ -23,5 +23,41 @@
       localStorage.setItem('aegis-theme', next);
       updateLabel();
     });
+
+    // Mobile Menu Toggle
+    var menuBtn = document.getElementById('menu-toggle');
+    var navLinks = document.querySelector('.nav-links');
+    if (menuBtn && navLinks) {
+      menuBtn.addEventListener('click', function() {
+        navLinks.classList.toggle('active');
+        menuBtn.textContent = navLinks.classList.contains('active') ? '✕' : '☰';
+      });
+
+      // Close menu when clicking a link
+      navLinks.querySelectorAll('a').forEach(function(link) {
+        link.addEventListener('click', function() {
+          navLinks.classList.remove('active');
+          menuBtn.textContent = '☰';
+        });
+      });
+    }
+
+    // Sidebar Toggle (for Guide)
+    var sidebarToggle = document.getElementById('sidebar-toggle');
+    var sidebar = document.querySelector('.guide-sidebar');
+    if (sidebarToggle && sidebar) {
+      sidebarToggle.addEventListener('click', function() {
+        sidebar.classList.toggle('active');
+        sidebarToggle.querySelector('.toggle-icon').textContent = sidebar.classList.contains('active') ? '✕' : '☰';
+      });
+
+      // Close sidebar when clicking a link
+      sidebar.querySelectorAll('a').forEach(function(link) {
+        link.addEventListener('click', function() {
+          sidebar.classList.remove('active');
+          sidebarToggle.querySelector('.toggle-icon').textContent = '☰';
+        });
+      });
+    }
   });
 })();

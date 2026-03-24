@@ -450,6 +450,7 @@ let hubHtml = `<!DOCTYPE html>
 <body>
   <nav class="site-nav">
     <div class="nav-logo"><a href="../index.html">AEGIS</a></div>
+    <button class="menu-toggle" id="menu-toggle" aria-label="Toggle navigation">☰</button>
     <div class="nav-links">
       <a href="../index.html">Home</a>
       <a href="../guide/index.html">Guide</a>

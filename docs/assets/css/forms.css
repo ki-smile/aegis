@@ -267,6 +267,29 @@ select {
   border-radius: 8px;
 }
 
+/* ===== Responsive Styles ===== */
+@media (max-width: 768px) {
+  .form-page {
+    padding: 1.5rem 1rem;
+  }
+  .form-section {
+    padding: 1.25rem;
+  }
+  .threshold-table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  .slider-group {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+  .slider-group .slider-value {
+    align-self: flex-end;
+  }
+}
+
 /* ===== Reference Doc (non-form) ===== */
 .reference-doc .ref-section {
   margin-bottom: 2rem;

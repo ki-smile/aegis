@@ -115,6 +115,9 @@ a:hover {
   align-items: center;
   justify-content: space-between;
   box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
 }
 .site-nav a {
   color: var(--color-text-on-dark);
@@ -132,11 +135,62 @@ a:hover {
   font-size: 1.3rem;
   font-weight: 500;
   letter-spacing: 0.05em;
+  z-index: 1001;
 }
 .nav-links {
   display: flex;
   align-items: center;
   gap: 0.25rem;
+}
+
+/* Mobile Menu Toggle */
+.menu-toggle {
+  display: none;
+  background: transparent;
+  border: none;
+  color: var(--color-text-on-dark);
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  z-index: 1001;
+}
+
+@media (max-width: 768px) {
+  .site-nav {
+    padding: 0.75rem 1.25rem;
+  }
+  .menu-toggle {
+    display: block;
+  }
+  .nav-links {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 80%;
+    height: 100vh;
+    background: var(--ki-dark-plum);
+    flex-direction: column;
+    padding: 5rem 2rem;
+    align-items: flex-start;
+    transition: right 0.3s ease;
+    box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+    gap: 1.5rem;
+  }
+  .nav-links.active {
+    right: 0;
+  }
+  .nav-links a {
+    margin-left: 0;
+    font-size: 1.2rem;
+    width: 100%;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+  .theme-toggle {
+    margin-top: 1rem;
+    width: 100%;
+    text-align: center;
+  }
 }
 
 /* ===== Buttons ===== */
@@ -303,6 +357,11 @@ a:hover {
 .section {
   padding: 5rem 2rem;
 }
+@media (max-width: 768px) {
+  .section {
+    padding: 3rem 1.25rem;
+  }
+}
 .section-inner {
   max-width: 1100px;
   margin: 0 auto;
@@ -310,10 +369,21 @@ a:hover {
 .section-title {
   margin-bottom: 1rem;
 }
+@media (max-width: 768px) {
+  .section-title {
+    font-size: 1.8rem;
+  }
+}
 .section-subtitle {
   color: var(--color-text-muted);
   margin-bottom: 2.5rem;
   font-size: 1.1rem;
+}
+@media (max-width: 768px) {
+  .section-subtitle {
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+  }
 }
 
 /* Section colour schedule */
@@ -385,6 +455,13 @@ table {
   border-collapse: collapse;
   margin: 1rem 0;
 }
+@media (max-width: 768px) {
+  table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+}
 th, td {
   padding: 0.75rem 1rem;
   text-align: left;
@@ -402,6 +479,11 @@ th {
   padding: 6rem 2rem 5rem;
   text-align: center;
 }
+@media (max-width: 768px) {
+  .hero {
+    padding: 4rem 1.25rem 3rem;
+  }
+}
 [data-theme="dark"] .hero {
   background: #0e000c;
 }
@@ -409,11 +491,22 @@ th {
   font-size: 2.8rem;
   margin-bottom: 1rem;
 }
+@media (max-width: 768px) {
+  .hero h1 {
+    font-size: 2.2rem;
+  }
+}
 .hero .subtitle {
   font-size: 1.2rem;
   max-width: 700px;
   margin: 0 auto 2.5rem;
   opacity: 0.9;
+}
+@media (max-width: 768px) {
+  .hero .subtitle {
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+  }
 }
 .hero-ctas {
   display: flex;
