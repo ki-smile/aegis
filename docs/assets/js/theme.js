@@ -43,25 +43,23 @@
     }
 
     // Sidebar Toggle (for Guide)
-    var sidebarToggle = document.getElementById('sidebar-toggle');
+    var fabToggle = document.getElementById('fab-toggle');
     var sidebar = document.querySelector('.guide-sidebar');
     var overlay = document.getElementById('sidebar-overlay');
 
     function closeSidebar() {
       if (sidebar) sidebar.classList.remove('active');
       if (overlay) overlay.classList.remove('active');
-      if (sidebarToggle) {
-        var icon = sidebarToggle.querySelector('.toggle-icon');
-        if (icon) icon.textContent = '☰';
+      if (fabToggle) {
+        fabToggle.textContent = '☰';
       }
     }
 
-    if (sidebarToggle && sidebar) {
-      sidebarToggle.addEventListener('click', function() {
+    if (fabToggle && sidebar) {
+      fabToggle.addEventListener('click', function() {
         var isOpen = sidebar.classList.toggle('active');
         if (overlay) overlay.classList.toggle('active');
-        var icon = sidebarToggle.querySelector('.toggle-icon');
-        if (icon) icon.textContent = isOpen ? '✕' : '☰';
+        fabToggle.textContent = isOpen ? '✕' : '☰';
       });
 
       if (overlay) {
