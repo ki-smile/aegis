@@ -54,17 +54,21 @@
   .guide-sidebar {
     position: fixed !important;
     top: 0 !important;
-    left: -280px !important; /* Force hidden */
+    right: -280px !important; /* Move to right side */
+    left: auto !important;
     width: 280px;
     height: 100vh;
     z-index: 6000 !important;
-    transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-    box-shadow: 10px 0 25px rgba(0,0,0,0.3);
+    transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow: -10px 0 25px rgba(0,0,0,0.3);
     padding: 2rem 0;
     display: block !important;
+    border-right: none !important;
+    border-left: 1px solid var(--color-border) !important;
   }
   .guide-sidebar.active {
-    left: 0 !important;
+    right: 0 !important;
+    left: auto !important;
   }
   .guide-content {
     padding: 1.5rem 1.25rem 7rem !important;
