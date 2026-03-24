@@ -15,22 +15,30 @@
 .fab-toggle {
   display: none;
   position: fixed;
-  bottom: 2rem;
+  bottom: 2.5rem; /* Moved up slightly */
   right: 1.5rem;
-  width: 56px;
-  height: 56px;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
   background: var(--ki-plum);
   color: white;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-  z-index: 2100; /* Above everything */
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  z-index: 5100; /* Above sidebar */
   border: none;
   cursor: pointer;
   align-items: center;
   justify-content: center;
-  font-size: 1.5rem;
-  transition: transform var(--transition-fast), background var(--transition-fast);
+  font-size: 1.6rem;
+  transition: transform 0.2s, background 0.2s;
+  animation: fab-pulse 2s infinite;
 }
+
+@keyframes fab-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(135, 0, 82, 0.4); }
+  70% { box-shadow: 0 0 0 15px rgba(135, 0, 82, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(135, 0, 82, 0); }
+}
+
 [data-theme="dark"] .fab-toggle {
   background: var(--ki-orange);
   color: var(--ki-dark-plum);
@@ -42,28 +50,24 @@
 @media (max-width: 992px) {
   .fab-toggle {
     display: flex !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-  }
-  .sidebar-toggle {
-    display: none !important;
   }
   .guide-sidebar {
-    position: fixed;
-    top: 0;
-    left: -280px;
+    position: fixed !important;
+    top: 0 !important;
+    left: -280px !important; /* Force hidden */
     width: 280px;
     height: 100vh;
-    z-index: 5000; /* Extremely high */
-    transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 10px 0 25px rgba(0,0,0,0.2);
-    padding-top: 2rem;
+    z-index: 6000 !important;
+    transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow: 10px 0 25px rgba(0,0,0,0.3);
+    padding: 2rem 0;
+    display: block !important;
   }
   .guide-sidebar.active {
-    left: 0;
+    left: 0 !important;
   }
   .guide-content {
-    padding: 1.5rem 1.25rem 6rem !important;
+    padding: 1.5rem 1.25rem 7rem !important;
   }
 }
 
@@ -76,7 +80,7 @@
   width: 100vw;
   height: 100vh;
   background: rgba(0,0,0,0.6);
-  z-index: 4000;
+  z-index: 5500;
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
 }
@@ -84,16 +88,18 @@
   display: block !important;
 }
 
-/* ===== Sidebar ===== */
-.guide-sidebar {
-  background: var(--color-bg-card);
-  border-right: 1px solid var(--color-border);
-  padding: 2rem 0;
-  position: sticky;
-  top: 58px;
-  height: calc(100vh - 58px);
-  overflow-y: auto;
-  transition: background var(--transition-base), left 0.3s ease;
+/* ===== Sidebar (Desktop Only) ===== */
+@media (min-width: 993px) {
+  .guide-sidebar {
+    background: var(--color-bg-card);
+    border-right: 1px solid var(--color-border);
+    padding: 2rem 0;
+    position: sticky;
+    top: 58px;
+    height: calc(100vh - 58px);
+    overflow-y: auto;
+    transition: background var(--transition-base);
+  }
 }
 .guide-sidebar nav {
   padding: 0 1.25rem;

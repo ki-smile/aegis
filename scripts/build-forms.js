@@ -481,7 +481,7 @@ hubHtml += `    </div>
   </div>
   <footer class="site-footer">
     <div class="section-inner">
-      <p>&copy; 2026 SMAILE (Stockholm Medical Artificial Intelligence and Learning Environments), Karolinska Institutet. All rights reserved. <span style="opacity:0.5; margin-left:10px;">v1.0.2</span></p>
+      <p>&copy; 2026 SMAILE (Stockholm Medical Artificial Intelligence and Learning Environments), Karolinska Institutet. All rights reserved. <span style="opacity:0.5; margin-left:10px;">v1.0.3</span></p>
     </div>
   </footer>
 </body>
