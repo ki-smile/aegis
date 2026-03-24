@@ -19,7 +19,7 @@ AEGIS is **not** a machine learning library, a training framework, or a model ar
 - A deterministic, auditable decision engine with priority-ordered logic
 - Full traceability to ISO 14971:2019, FDA PCCP, and EU MDR/AI Act requirements
 
-> **Sepsis example:** In the sepsis prediction case study, AEGIS governed 11 iterations (k = 0 through k = 10) of a Random Forest classifier trained on PhysioNet ICU data. The framework autonomously approved, conditionally approved, flagged for clinical review, or rejected each retrained model version — exercising all five decision categories across the experiment. At iteration 10, a catastrophic data corruption event triggered simultaneous REJECT + ALARM, demonstrating the framework's safety boundaries under extreme conditions.
+> **Sepsis example:** In the sepsis prediction case study, AEGIS governed 11 iterations (k = 0 through k = 10) of a Random Forest classifier trained on 20,336 patients from Hospital A of the PhysioNet Sepsis Challenge, with 4,067 reserved as a fixed performance reference (Golden evaluation set). The framework autonomously issued 8 APPROVE decisions (iterations 0--5 and 8--9), 1 CONDITIONAL APPROVAL (iteration 6), 1 CLINICAL REVIEW (iteration 7), and 1 REJECT (iteration 10) — exercising all four deployment decision categories across the experiment. ALARM was co-issued at iterations 8 and 10. At iteration 10, sensitivity dropped to 0.428 (below the 0.65 threshold), triggering simultaneous REJECT + ALARM and demonstrating the framework's safety boundaries under extreme conditions.
 
 ## When to use AEGIS
 
@@ -42,8 +42,8 @@ Iteration k
 ┌──────────┐     ┌──────────┐     ┌──────────┐
 │   DARM   │ ──> │   MMM    │ ──> │   CDM    │
 │ Dataset  │     │ Model    │     │ Clinical │
-│ & Review │     │ Monitor  │     │ Decision │
-│ Mgmt     │     │ Metrics  │     │ Module   │
+│ Assimilat.│     │ Monitor  │     │ Decision │
+│ & Retrain│     │ Metrics  │     │ Module   │
 └──────────┘     └──────────┘     └──────────┘
      │                                  │
      │    ┌────────────────────────┐    │
@@ -58,7 +58,7 @@ This guide is structured as a sequential implementation walkthrough. Each page b
 
 | # | Page | What you will learn |
 |---|------|---------------------|
-| 1 | [Core concepts](01-concepts.html) | DARM, MMM, CDM definitions; gold standard; notation |
+| 1 | [Core concepts](01-concepts.html) | DARM, MMM, CDM definitions; fixed performance reference; notation |
 | 2 | [Configuration](02-configure.html) | How to instantiate AEGIS for your domain |
 | 3 | [Thresholds](03-thresholds.html) | ISO 14971 threshold derivation and calibration |
 | 4 | [CDM logic](04-cdm-logic.html) | Decision hierarchy, alarm conditions, pseudocode |
@@ -96,4 +96,4 @@ Then return to the remaining pages as you move toward deployment.
 
 ### Source
 
-Manuscript Sections I--II. The overall AEGIS architecture is introduced in Section I (Introduction) and formally defined in Section II (Methods). The three-module pipeline (DARM, MMM, CDM) is described in Section II-B. The iterative governance loop is depicted in Figure 1 of the manuscript.
+Manuscript Sections I--II. The overall AEGIS infrastructure is introduced in Section I (Introduction) and formally defined in Section II (Methods). The three-module pipeline (DARM, MMM, CDM) is described in Section II-B. The DARM architecture is depicted in Figure 1 and the overall AEGIS infrastructure in Figure 4 of the manuscript.

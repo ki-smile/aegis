@@ -47,7 +47,7 @@
       <h1>Core concepts</h1>
 <p>This page defines the foundational terminology and architectural principles of AEGIS. All subsequent guide pages assume familiarity with these concepts.</p>
 <h2>The three modules</h2>
-<h3>DARM -- Dataset and Review Management</h3>
+<h3>DARM -- Dataset Assimilation and Retraining Module</h3>
 <p>DARM manages the lifecycle of three dataset splits that feed the iterative governance loop:</p>
 <table>
 <thead>
@@ -77,7 +77,7 @@
 <pre><code>D_T,k+1 = D_T,k ∪ D_D,k
 </code></pre>
 <p>This means new data always enters the training pool regardless of the CDM decision. The model is always retrained on the full accumulated dataset.</p>
-<blockquote>**Sepsis example:** In the sepsis case study, the golden dataset D_G consisted of 813 samples (20% hold-out) from PhysioNet Hospital A. The drifting dataset D_D,k contained 5,000 synthetic samples per iteration, generated with controlled corruption levels ranging from 0% (clean) to 80% label flip with Gaussian noise. The training set grew from 3,254 samples at k=0 to 53,254 at k=10.</blockquote>
+<blockquote>**Sepsis example:** In the sepsis case study, the golden dataset D_G consisted of 4,067 patients (20% hold-out from 20,336) from PhysioNet Hospital A, with 202 features. 34 features were monitored for drift. The training set grew from 8,134 samples at k=0 to 48,994 at k=10.</blockquote>
 <h3>MMM -- Model Monitoring Metrics</h3>
 <p>MMM computes all performance, drift, and fairness metrics for the current iteration. It operates on three outputs:</p>
 <ol>
@@ -91,39 +91,33 @@
 </code></pre>
 <p>The decision and alarm channels are <strong>independent</strong>. This means APPROVE + ALARM is a valid output -- the model passed all performance thresholds, but a post-market safety condition was triggered.</p>
 <h2>Decision categories</h2>
-<p>AEGIS defines five decision categories arranged in a priority hierarchy:</p>
+<p>AEGIS defines four deployment decision categories arranged in a priority hierarchy:</p>
 <table>
 <thead>
 <tr>
 <th>Priority</th>
 <th>Category</th>
 <th>Badge</th>
-<th>Meaning</th>
+<th>Trigger</th>
 </tr>
 </thead>
 <tbody><tr>
 <td>P1</td>
 <td>REJECT</td>
 <td><code>badge-reject</code></td>
-<td>Critical safety floor violated</td>
+<td>Deployment safety performance floor violated (P_G,k &lt; P^fail)</td>
 </tr>
 <tr>
 <td>P2</td>
-<td>REJECT</td>
-<td><code>badge-reject</code></td>
-<td>Major drift with performance degradation</td>
+<td>CLINICAL REVIEW</td>
+<td><code>badge-review</code></td>
+<td>Performance buffer / regression from fixed performance reference (R_G threshold)</td>
 </tr>
 <tr>
 <td>P3</td>
 <td>CONDITIONAL APPROVAL</td>
 <td><code>badge-cond</code></td>
-<td>Performance in buffer zone</td>
-</tr>
-<tr>
-<td>P3.5</td>
-<td>CLINICAL REVIEW</td>
-<td><code>badge-review</code></td>
-<td>Minor drift or borderline metrics requiring human assessment</td>
+<td>Minor drift / TAI (tolerable adaptive improvement)</td>
 </tr>
 <tr>
 <td>P4</td>
@@ -157,14 +151,15 @@
 <td>Severe covariate drift</td>
 </tr>
 </tbody></table>
-<h2>Gold standard</h2>
-<p>The gold standard is the performance baseline established at the first APPROVE decision (typically iteration 0). All subsequent iterations are compared against this baseline via the gold standard tolerance tau.</p>
-<pre><code class="language-python"># Gold standard comparison
-deviation = gold_metric - current_metric
+<h2>Fixed performance reference</h2>
+<p>The fixed performance reference (P^ref) is the performance of the first fully approved model on the Golden dataset. P^ref is fixed at the first APPROVE and never updated. It serves as a stable anchor for detecting long-term regression.</p>
+<p>In contrast, the most recently fully approved released model performance on the Golden set (P^rel_G) IS updated with each subsequent APPROVE decision. This allows the system to detect regression relative to the current deployed model.</p>
+<pre><code class="language-python"># Fixed performance reference comparison
+deviation = P_ref - current_metric
 within_tolerance = (deviation &lt;= tau)
 </code></pre>
-<p>The gold standard is locked once set and should never be updated without a formal change control process. The dataset ID (hash or version tag) must be recorded.</p>
-<blockquote>**Sepsis example:** The gold standard was set at iteration 0 with sensitivity = 0.890, specificity = 0.798, ROC-AUC = 0.920, balanced accuracy = 0.844, and MLcps = 0.876. The gold standard tolerance was tau = 0.015 for sensitivity. Throughout iterations 1-6, all metrics remained within tolerance of this baseline.</blockquote>
+<p>The fixed performance reference is locked once set and should never be updated without a formal change control process. The dataset ID (hash or version tag) must be recorded.</p>
+<blockquote>**Sepsis example:** The fixed performance reference was set at iteration 0 with sensitivity = 0.723, specificity = 0.933, AUC = 0.922, and MLcps = 0.721. The fixed performance reference tolerance was tau = 0.015 for sensitivity. Throughout iterations 1-6, all metrics remained within tolerance of this baseline.</blockquote>
 <h2>Two-tier threshold architecture</h2>
 <p>AEGIS employs two tiers of thresholds, each serving a distinct safety function:</p>
 <h3>Tier 1: Iterative governance thresholds</h3>
@@ -178,33 +173,33 @@ within_tolerance = (deviation &lt;= tau)
 </tr>
 </thead>
 <tbody><tr>
-<td>Critical safety floor</td>
+<td>Deployment safety performance floor</td>
 <td>P_fail</td>
 <td>Absolute minimum performance -- violation triggers immediate REJECT</td>
 </tr>
 <tr>
 <td>Performance buffer</td>
 <td>R_G</td>
-<td>Zone between P_fail and full approval -- triggers CONDITIONAL APPROVAL</td>
+<td>Performance thresholds buffer zone for CLINICAL REVIEW</td>
 </tr>
 <tr>
-<td>Gold standard tolerance</td>
+<td>Fixed performance reference tolerance</td>
 <td>tau</td>
-<td>Maximum acceptable deviation from gold standard baseline</td>
+<td>Maximum acceptable deviation from fixed performance reference (P^ref)</td>
 </tr>
 <tr>
 <td>Minor drift bounds</td>
-<td>theta_minor,low / theta_minor,high</td>
-<td>Drift severity classification</td>
+<td>S^minor_D</td>
+<td>Range for minor drift classification</td>
 </tr>
 <tr>
-<td>Major drift threshold</td>
-<td>theta_major</td>
-<td>Severe drift -- triggers REJECT at P2 if combined with degradation</td>
+<td>Major drift bounds</td>
+<td>S^major_D</td>
+<td>Range for major drift classification</td>
 </tr>
 </tbody></table>
 <h3>Tier 2: Post-market surveillance (PMS) thresholds</h3>
-<p>These apply to the <strong>currently released model</strong> and trigger alarms independently:</p>
+<p>These apply to the <strong>currently released model</strong> and trigger PMS ALARM independently:</p>
 <table>
 <thead>
 <tr>
@@ -214,8 +209,8 @@ within_tolerance = (deviation &lt;= tau)
 </tr>
 </thead>
 <tbody><tr>
-<td>PMS safety floor</td>
-<td>P_PMS</td>
+<td>PMS safety performance floor</td>
+<td>P^PMS</td>
 <td>Minimum acceptable performance for the deployed model</td>
 </tr>
 <tr>
@@ -264,31 +259,43 @@ within_tolerance = (deviation &lt;= tau)
 </tr>
 <tr>
 <td>P_fail</td>
-<td>Critical safety floor threshold</td>
+<td>Deployment safety performance floor</td>
+</tr>
+<tr>
+<td>P^ref</td>
+<td>Fixed performance reference (performance of first fully approved model on Golden set, never updated)</td>
+</tr>
+<tr>
+<td>P^rel_G</td>
+<td>Most recently fully approved released model performance on Golden set (updated with each APPROVE)</td>
+</tr>
+<tr>
+<td>P^rel_D</td>
+<td>Most recently fully approved released model performance on Drifting set</td>
 </tr>
 <tr>
 <td>R_G</td>
-<td>Performance buffer threshold (gold standard region)</td>
+<td>Performance thresholds buffer zone for CLINICAL REVIEW</td>
 </tr>
 <tr>
 <td>tau</td>
-<td>Gold standard tolerance</td>
+<td>Fixed performance reference tolerance</td>
 </tr>
 <tr>
-<td>theta_minor,low</td>
-<td>Minor drift lower bound</td>
+<td>S_D</td>
+<td>Bonferroni-corrected KS drift score</td>
 </tr>
 <tr>
-<td>theta_minor,high</td>
-<td>Minor drift upper bound</td>
+<td>S^minor_D</td>
+<td>Range for minor drift classification</td>
 </tr>
 <tr>
-<td>theta_major</td>
-<td>Major drift threshold</td>
+<td>S^major_D</td>
+<td>Range for major drift classification</td>
 </tr>
 <tr>
-<td>P_PMS</td>
-<td>PMS safety floor for released model</td>
+<td>P^PMS</td>
+<td>PMS safety performance floor for released model</td>
 </tr>
 <tr>
 <td>delta</td>
@@ -296,7 +303,7 @@ within_tolerance = (deviation &lt;= tau)
 </tr>
 <tr>
 <td>MLcps</td>
-<td>Multi-criteria Likert composite performance score</td>
+<td>ML Cumulative Performance Score</td>
 </tr>
 <tr>
 <td>K</td>
@@ -312,7 +319,7 @@ within_tolerance = (deviation &lt;= tau)
 </tr>
 </tbody></table>
 <h3>Source</h3>
-<p>Manuscript Section II-B. Module definitions appear in Section II-B-1 (DARM), II-B-2 (MMM), and II-B-3 (CDM). The notation table corresponds to Table XIII in the manuscript. The two-tier threshold architecture is formally defined in Section II-B-3. Decision categories and alarm conditions are specified in Tables III and VI.</p>
+<p>Manuscript Section II-B. Module definitions appear in Section II-B-1 (DARM), II-B-2 (MMM), and II-B-3 (CDM). The two-tier threshold architecture is formally defined in Section II-B-3. Decision categories and alarm conditions are specified in Tables III and IV.</p>
 
 
       <div class="guide-nav-footer">

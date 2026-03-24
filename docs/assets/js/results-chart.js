@@ -15,7 +15,7 @@
       datasets: [
         {
           label: 'Sensitivity',
-          data: [0.890, 0.882, 0.880, 0.871, 0.790, 0.752, 0.764, 0.781, 0.650, 0.612, 0.428],
+          data: [0.723, 0.745, 0.745, 0.742, 0.742, 0.753, 0.809, 0.702, 0.697, 0.824, 0.428],
           borderColor: '#4DB5BC',
           backgroundColor: 'rgba(77, 181, 188, 0.1)',
           tension: 0.3,
@@ -24,7 +24,7 @@
         },
         {
           label: 'MLcps',
-          data: [0.876, 0.869, 0.865, 0.847, 0.801, 0.778, 0.784, 0.790, 0.671, 0.645, 0.430],
+          data: [0.721, 0.731, 0.731, 0.729, 0.733, 0.739, 0.746, 0.716, 0.716, 0.739, 0.549],
           borderColor: '#870052',
           backgroundColor: 'rgba(135, 0, 82, 0.1)',
           tension: 0.3,
@@ -32,20 +32,32 @@
           pointRadius: 5
         },
         {
-          label: 'P_fail (Sensitivity)',
-          data: [0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65],
-          borderColor: '#B84145',
-          borderDash: [8, 4],
-          pointRadius: 0,
-          fill: false
+          label: 'AUC',
+          data: [0.922, 0.922, 0.923, 0.923, 0.923, 0.924, 0.922, 0.922, 0.920, 0.919, 0.912],
+          borderColor: '#6A9F5B',
+          backgroundColor: 'rgba(106, 159, 91, 0.1)',
+          tension: 0.3,
+          fill: false,
+          pointRadius: 5
         },
         {
-          label: 'R_G (Sensitivity)',
-          data: [0.66, 0.66, 0.66, 0.66, 0.66, 0.66, 0.66, 0.66, 0.66, 0.66, 0.66],
+          label: 'Specificity',
+          data: [0.933, 0.926, 0.926, 0.926, 0.932, 0.929, 0.881, 0.950, 0.956, 0.856, 0.999],
           borderColor: '#F59A00',
-          borderDash: [4, 4],
-          pointRadius: 0,
-          fill: false
+          backgroundColor: 'rgba(245, 154, 0, 0.1)',
+          tension: 0.3,
+          fill: false,
+          pointRadius: 5
+        },
+        {
+          label: 'Drift',
+          data: [0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.412, 0.000, 1.000, 0.029, 1.000],
+          borderColor: '#B84145',
+          backgroundColor: 'rgba(184, 65, 69, 0.1)',
+          tension: 0.3,
+          fill: false,
+          pointRadius: 5,
+          borderDash: [6, 3]
         }
       ]
     };
@@ -53,8 +65,8 @@
     // Decision labels for sepsis
     var sepsisDecisions = [
       'APPROVE', 'APPROVE', 'APPROVE', 'APPROVE',
-      'COND. APPROVE', 'COND. APPROVE', 'COND. APPROVE', 'COND. APPROVE',
-      'REJECT', 'REJECT', 'REJECT+ALARM'
+      'APPROVE', 'APPROVE', 'COND. APPR.', 'CLIN. REV.',
+      'APPROVE / ALARM', 'APPROVE', 'REJECT / ALARM'
     ];
 
     // BraTS data — Manuscript Table IX (iterations 0–12)
@@ -62,8 +74,8 @@
       labels: ['k=0', 'k=1', 'k=2', 'k=3', 'k=4', 'k=5', 'k=6', 'k=7', 'k=8', 'k=9', 'k=10', 'k=11', 'k=12'],
       datasets: [
         {
-          label: 'Golden DSC',
-          data: [0.912, 0.908, 0.905, 0.901, 0.895, 0.887, 0.876, 0.862, 0.845, 0.821, 0.792, 0.758, 0.710],
+          label: 'Golden DSC (P_G,k)',
+          data: [0.726, 0.646, 0.673, 0.690, 0.700, 0.725, 0.726, 0.742, 0.723, 0.714, 0.706, 0.707, 0.698],
           borderColor: '#4DB5BC',
           backgroundColor: 'rgba(77, 181, 188, 0.1)',
           tension: 0.3,
@@ -71,24 +83,23 @@
           pointRadius: 5
         },
         {
-          label: 'Drifting DSC',
-          data: [0.905, 0.897, 0.882, 0.861, 0.835, 0.804, 0.769, 0.728, 0.682, 0.631, 0.575, 0.514, 0.448],
+          label: 'Drifting DSC (P_D,k)',
+          data: [null, 0.694, 0.748, 0.745, 0.758, 0.735, 0.836, 0.892, 0.910, 0.900, 0.904, 0.931, null],
           borderColor: '#FF876F',
           backgroundColor: 'rgba(255, 135, 111, 0.1)',
           tension: 0.3,
           fill: false,
           pointRadius: 5
-        },
-        {
-          label: 'P_fail (DSC)',
-          data: [0.70, 0.70, 0.70, 0.70, 0.70, 0.70, 0.70, 0.70, 0.70, 0.70, 0.70, 0.70, 0.70],
-          borderColor: '#B84145',
-          borderDash: [8, 4],
-          pointRadius: 0,
-          fill: false
         }
       ]
     };
+
+    // Decision labels for BraTS
+    var bratsDecisions = [
+      '— (reference)', 'REJECT', 'REJECT', 'APPROVE / ALARM',
+      'APPROVE', 'APPROVE / ALARM', 'APPROVE', 'APPROVE',
+      'APPROVE', 'REJECT / ALARM', 'REJECT', 'REJECT', 'REJECT'
+    ];
 
     var chart = new Chart(ctx, {
       type: 'line',
@@ -108,8 +119,12 @@
           tooltip: {
             callbacks: {
               afterBody: function (context) {
-                if (activeDataset === 'sepsis' && sepsisDecisions[context[0].dataIndex]) {
-                  return 'Decision: ' + sepsisDecisions[context[0].dataIndex];
+                var idx = context[0].dataIndex;
+                if (activeDataset === 'sepsis' && sepsisDecisions[idx]) {
+                  return 'Decision: ' + sepsisDecisions[idx];
+                }
+                if (activeDataset === 'brats' && bratsDecisions[idx]) {
+                  return 'Decision: ' + bratsDecisions[idx];
                 }
                 return '';
               }

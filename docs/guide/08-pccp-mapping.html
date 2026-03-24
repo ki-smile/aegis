@@ -45,7 +45,7 @@
 
     <main class="guide-content">
       <h1>PCCP mapping</h1>
-<p>The FDA&#39;s Predetermined Change Control Plan (PCCP) is the primary US regulatory pathway for adaptive AI/ML medical devices. AEGIS is designed to align with PCCP requirements by providing pre-specified modification descriptions, protocols, and impact assessments. This page maps the three PCCP components to AEGIS framework elements.</p>
+<p>The FDA&#39;s Predetermined Change Control Plan (PCCP), finalized in the August 2025 final guidance, is the primary US regulatory pathway for adaptive AI/ML medical devices. AEGIS is designed to align with PCCP requirements by providing pre-specified modification descriptions, protocols, and impact assessments. This page maps the three PCCP components to AEGIS framework elements.</p>
 <h2>What is PCCP?</h2>
 <p>A PCCP is a plan submitted as part of a marketing submission (510(k), De Novo, or PMA) that describes anticipated modifications to an AI/ML device and the methodology for implementing and assessing those modifications without requiring a new submission for each change.</p>
 <p>The PCCP has three required components:</p>
@@ -110,7 +110,7 @@
 <td>Same metrics, same golden dataset</td>
 </tr>
 </tbody></table>
-<blockquote>**Sepsis example:** For the sepsis prediction device, Component 1 would describe: "The device undergoes iterative retraining using newly accumulated ICU patient data. At each iteration, the Random Forest classifier (300 trees, fixed hyperparameters) is retrained on the union of all previously accumulated training data and newly collected patient records. The model architecture, feature set (34 clinical features), and intended use (early sepsis onset prediction in adult ICU patients) remain unchanged. The only modification is the expansion of the training dataset."</blockquote>
+<blockquote>**Sepsis example:** For the sepsis prediction device, Component 1 would describe: "The device undergoes iterative retraining using newly accumulated ICU patient data. At each iteration, the Random Forest classifier (300 trees, fixed hyperparameters) is retrained on the union of all previously accumulated training data and newly collected patient records. The model architecture, feature set (202 features, with 34 key clinical features monitored for drift), and intended use (early sepsis onset prediction in adult ICU patients) remain unchanged. The only modification is the expansion of the training dataset."</blockquote>
 <h2>Component 2: Modification Protocol</h2>
 <p>PCCP Component 2 requires a pre-specified protocol for implementing modifications, including the decision criteria for accepting or rejecting changes.</p>
 <p>AEGIS maps directly to this requirement through its CDM decision hierarchy:</p>
@@ -126,12 +126,12 @@
 <td>Automatic rejection criterion -- modification rejected if safety is compromised</td>
 </tr>
 <tr>
-<td>P2: Major drift + degradation</td>
-<td>Rejection criterion for distribution shift scenarios</td>
+<td>P2: Regression from P^ref</td>
+<td>CLINICAL REVIEW -- regression from fixed performance reference requires human assessment</td>
 </tr>
 <tr>
 <td>P3: Performance buffer (R_G)</td>
-<td>Conditional acceptance with heightened monitoring</td>
+<td>CONDITIONAL APPROVAL -- accepted with heightened monitoring</td>
 </tr>
 <tr>
 <td>P4: Full compliance</td>
@@ -142,7 +142,7 @@
 <td>Independent safety monitoring of the deployed device</td>
 </tr>
 </tbody></table>
-<p>The protocol is fully deterministic and pre-specified before the first iteration. No human judgement is required for P1, P2, P3, or P4 decisions (though CLINICAL REVIEW at P3.5, if enabled, does involve human assessment).</p>
+<p>The protocol is fully deterministic and pre-specified before the first iteration. No human judgement is required for P1, P3, or P4 decisions, though CLINICAL REVIEW at P2 involves human assessment of regression from the fixed performance reference.</p>
 <h3>Four categories as predetermined pathways</h3>
 <p>Each AEGIS decision category maps to a predetermined pathway within the PCCP:</p>
 <table>
@@ -154,22 +154,22 @@
 </tr>
 </thead>
 <tbody><tr>
-<td>APPROVE</td>
+<td>APPROVE (P4)</td>
 <td>Modification accepted</td>
 <td>Deploy updated model; log results; continue monitoring</td>
 </tr>
 <tr>
-<td>CONDITIONAL APPROVAL</td>
+<td>CONDITIONAL APPROVAL (P3)</td>
 <td>Modification accepted with conditions</td>
 <td>Deploy with heightened monitoring; schedule early re-evaluation</td>
 </tr>
 <tr>
-<td>CLINICAL REVIEW</td>
+<td>CLINICAL REVIEW (P2)</td>
 <td>Modification requires human assessment</td>
 <td>Pause deployment; clinical expert reviews metrics and context</td>
 </tr>
 <tr>
-<td>REJECT</td>
+<td>REJECT (P1)</td>
 <td>Modification rejected</td>
 <td>Do not deploy; initiate root cause analysis; CAPA if warranted</td>
 </tr>
@@ -270,7 +270,7 @@
 </tbody></table>
 <blockquote>**Caveat:** This mapping provides a technical framework for PCCP preparation. Confirm all regulatory interpretations with qualified regulatory counsel before submission. PCCP requirements may evolve as FDA guidance is updated.</blockquote>
 <h3>Source</h3>
-<p>Manuscript Section IV-F (regulatory pathway mapping) and Table XI (PCCP component alignment). The three-component PCCP structure follows FDA guidance on predetermined change control plans for AI/ML devices. Supplementary S2.8 provides the configuration template for regulatory pathway mapping. Supplementary S3.5 provides additional PCCP preparation guidance.</p>
+<p>Manuscript Section IV-F (regulatory pathway mapping) and Table VI (decision taxonomy). The three-component PCCP structure follows the August 2025 final FDA guidance on predetermined change control plans for AI/ML devices. Supplementary S2.8 provides the configuration template for regulatory pathway mapping. Supplementary S3.5 provides additional PCCP preparation guidance.</p>
 
 
       <div class="guide-nav-footer">

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta name="referrer" content="no-referrer-when-downgrade">
   <title>AEGIS — Adaptive Medical AI Governance</title>
   <link rel="stylesheet" href="assets/css/main.css">
   <script src="assets/js/theme.js"></script>
@@ -28,7 +28,7 @@
   <section class="hero" id="hero">
     <div class="section-inner">
       <h1>AEGIS</h1>
-      <p class="subtitle">An Operational Infrastructure for Post-Market Governance of Adaptive Medical AI Under US and EU Regulations</p>
+      <p class="subtitle">An Operational Infrastructure for Post-Market Governance of Adaptive Medical AI Under US and EU Regulatory Frameworks</p>
       <div class="hero-ctas">
         <a href="guide/index.html" class="btn-primary">Read the guide</a>
         <a href="forms/index.html" class="btn-secondary">Fill templates</a>
@@ -36,8 +36,8 @@
       </div>
       <div class="hero-badges">
         <span class="badge badge-approve" data-tooltip="All metrics pass all thresholds. FDA: within PCCP bounds. EU: compliant per AI Act Art. 43(4).">APPROVE</span>
-        <span class="badge badge-cond" data-tooltip="Performance in buffer zone (above P_fail, below R_G). FDA: PCCP modification protocol triggered. EU: enhanced monitoring.">CONDITIONAL</span>
-        <span class="badge badge-review" data-tooltip="Minor drift detected. Clinician review required before release. FDA: predetermined change assessment. EU: risk management update.">REVIEW</span>
+        <span class="badge badge-cond" data-tooltip="P3: Minor drift or TAI concern. FDA: PCCP modification protocol triggered. EU: enhanced monitoring.">CONDITIONAL</span>
+        <span class="badge badge-review" data-tooltip="P2: Performance buffer / regression from fixed performance reference. Hold deployment; clinician review required. FDA: predetermined change assessment. EU: risk management update.">REVIEW</span>
         <span class="badge badge-alarm" data-tooltip="PMS alarm triggered (A1/A2/A3). Independent of decision. FDA: MDR reporting assessment. EU: MDR Art. 87 vigilance.">ALARM</span>
         <span class="badge badge-reject" data-tooltip="Critical safety floor breached or major drift with degradation. FDA: outside PCCP bounds. EU: corrective action required.">REJECT</span>
       </div>
@@ -50,39 +50,65 @@
       <h2 class="section-title">Overview & Research</h2>
       <p class="section-subtitle">A quick introduction to the AEGIS framework and its research foundation.</p>
 
-      <div class="grid-2">
-        <!-- Video -->
-        <div class="media-column">
-          <h3 style="margin-bottom: 1rem;">Video Overview</h3>
-          <p style="margin-bottom: 1rem; color: var(--color-text-muted); font-size: 0.95rem;">A 10-minute walkthrough of the AEGIS three-module architecture and regulatory decision logic.</p>
-          <div style="position:relative; width:100%; padding-bottom:56.25%; height:0; overflow:hidden; border-radius:12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); background: #000; margin-bottom: 1rem;">
-            <iframe 
-              width="560" 
-              height="315" 
-              src="https://www.youtube.com/embed/bt-knWx440o?si=lWfGjC68Gm6y7nUn" 
-              title="YouTube video player" 
-              frameborder="0" 
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-              referrerpolicy="strict-origin-when-cross-origin" 
-              allowfullscreen 
-              style="position:absolute; top:0; left:0; width:100%; height:100%;">
-            </iframe>
-          </div>
-          <a href="https://www.youtube.com/watch?v=bt-knWx440o" target="_blank" rel="noopener" class="btn-ghost" style="font-size: 0.9rem; padding: 0.25rem 0;">
-            ↗ Watch on YouTube (if player doesn't load)
-          </a>
-        </div>
-
-        <!-- Podcast Summary -->
-        <div class="card" style="align-self: center; border-color: var(--ki-blue); background: var(--color-bg-card);">
-          <h3 style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; color: var(--color-text-primary);">
-            <span style="font-size: 1.5rem;">🎧</span> Podcast Summary
-          </h3>
-          <p style="font-size: 0.95rem; margin-bottom: 1.5rem; color: var(--color-text-muted);">A conversational overview of the AEGIS framework, designed for clinical and regulatory stakeholders.</p>
+      <!-- Podcast Summary -->
+      <div class="card" style="display: flex; flex-direction: column; border-color: var(--ki-blue); background: var(--color-bg-card); margin-bottom: 2rem;">
+        <h3 style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; color: var(--color-text-primary);">
+          <span style="font-size: 1.5rem;">🎧</span> Podcast Summary
+        </h3>
+        <p style="font-size: 0.95rem; margin-bottom: 1rem; color: var(--color-text-muted);">A conversational overview of the AEGIS framework, designed for clinical and regulatory stakeholders.</p>
+        <div style="margin-top: auto;">
           <audio controls preload="metadata" style="width:100%; border-radius:8px;">
             <source src="assets/media/aegis-podcast.mp3" type="audio/mpeg">
             Your browser does not support the audio element.
           </audio>
+        </div>
+      </div>
+
+      <div class="grid-2" style="align-items: stretch;">
+        <!-- Video 1 -->
+        <div class="card" style="display: flex; flex-direction: column; border-color: var(--ki-plum); background: var(--color-bg-card);">
+          <h3 style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; color: var(--color-text-primary);">
+            <span style="font-size: 1.5rem;">🎬</span> Video Overview
+          </h3>
+          <p style="font-size: 0.95rem; margin-bottom: 1rem; color: var(--color-text-muted);">A 10-minute walkthrough of the AEGIS three-module architecture and regulatory decision logic.</p>
+          <div style="position:relative; width:100%; padding-bottom:56.25%; height:0; overflow:hidden; border-radius:8px; background: #000; margin-bottom: 1rem;">
+            <iframe
+              src="https://www.youtube.com/embed/bt-knWx440o?si=lWfGjC68Gm6y7nUn"
+              title="AEGIS Video Overview"
+              frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              referrerpolicy="no-referrer-when-downgrade"
+              allowfullscreen
+              loading="lazy"
+              style="position:absolute; top:0; left:0; width:100%; height:100%; border:0;">
+            </iframe>
+          </div>
+          <a href="https://www.youtube.com/watch?v=bt-knWx440o" target="_blank" rel="noopener" class="btn-ghost" style="font-size: 0.9rem; padding: 0.25rem 0; margin-top: auto;">
+            ↗ Watch on YouTube
+          </a>
+        </div>
+
+        <!-- Video 2 -->
+        <div class="card" style="display: flex; flex-direction: column; border-color: var(--ki-plum); background: var(--color-bg-card);">
+          <h3 style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; color: var(--color-text-primary);">
+            <span style="font-size: 1.5rem;">🎬</span> Presentation
+          </h3>
+          <p style="font-size: 0.95rem; margin-bottom: 1rem; color: var(--color-text-muted);">A detailed presentation of the AEGIS infrastructure, validation results, and regulatory alignment.</p>
+          <div style="position:relative; width:100%; padding-bottom:56.25%; height:0; overflow:hidden; border-radius:8px; background: #000; margin-bottom: 1rem;">
+            <iframe
+              src="https://www.youtube.com/embed/emo5xtmXi5s?si=WtxodfeSFEaQDJ6n"
+              title="AEGIS Presentation"
+              frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              referrerpolicy="strict-origin-when-cross-origin"
+              allowfullscreen
+              loading="lazy"
+              style="position:absolute; top:0; left:0; width:100%; height:100%; border:0;">
+            </iframe>
+          </div>
+          <a href="https://www.youtube.com/watch?v=emo5xtmXi5s" target="_blank" rel="noopener" class="btn-ghost" style="font-size: 0.9rem; padding: 0.25rem 0; margin-top: auto;">
+            ↗ Watch on YouTube
+          </a>
         </div>
       </div>
     </div>
@@ -95,8 +121,8 @@
       <p class="section-subtitle">Medical AI systems that learn from new data need structured post-market oversight — not just initial approval.</p>
       <div class="grid-3">
         <div class="card-stat">
-          <div class="stat-number">5</div>
-          <div class="stat-label">Decision categories with regulatory traceability</div>
+          <div class="stat-number">4</div>
+          <div class="stat-label">Deployment decision categories + independent PMS ALARM</div>
         </div>
         <div class="card-stat">
           <div class="stat-number">3</div>
@@ -121,8 +147,8 @@
         <!-- DARM node -->
         <rect id="node-darm" x="30" y="80" width="200" height="120" rx="12" fill="#4DB5BC" opacity="0.15"/>
         <text x="130" y="125" text-anchor="middle" font-family="DM Sans, sans-serif" font-weight="500" font-size="18" fill="#002C34">DARM</text>
-        <text x="130" y="150" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="12" fill="#002C34">Dataset &amp; Review</text>
-        <text x="130" y="170" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="12" fill="#002C34">Management</text>
+        <text x="130" y="150" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="12" fill="#002C34">Dataset Assimilation</text>
+        <text x="130" y="170" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="12" fill="#002C34">&amp; Retraining</text>
 
         <!-- Arrow 1: DARM → MMM -->
         <g id="arrow-1" opacity="0.15">
@@ -169,7 +195,7 @@
       <div class="grid-3">
         <div class="card-module">
           <h3>DARM</h3>
-          <p>Dataset and Review Management. Manages training (D<sub>T,k</sub>), golden (D<sub>G</sub>), and drifting (D<sub>D,k</sub>) datasets with unconditional accumulation.</p>
+          <p>Dataset Assimilation and Retraining Module. Manages training (D<sub>T,k</sub>), golden (D<sub>G</sub>), and drifting (D<sub>D,k</sub>) datasets with unconditional accumulation.</p>
         </div>
         <div class="card-module">
           <h3>MMM</h3>
@@ -187,14 +213,14 @@
   <section class="section section-orange" id="taxonomy">
     <div class="section-inner">
       <h2 class="section-title">Decision taxonomy</h2>
-      <p class="section-subtitle">Five decision categories with composite output — APPROVE + ALARM is not contradictory.</p>
+      <p class="section-subtitle">Four deployment decision categories with composite output — APPROVE + ALARM is not contradictory.</p>
 
       <div style="display:flex; gap:0.75rem; flex-wrap:wrap; margin-bottom:2rem;">
         <span class="badge badge-approve" data-tooltip="P4: All metrics pass all checks">APPROVE</span>
-        <span class="badge badge-cond" data-tooltip="P3: Metric below R_G buffer but above P_fail">CONDITIONAL APPROVAL</span>
-        <span class="badge badge-review" data-tooltip="Minor drift detected; clinician review required">CLINICAL REVIEW</span>
+        <span class="badge badge-cond" data-tooltip="P3: Minor drift or TAI concern">CONDITIONAL APPROVAL</span>
+        <span class="badge badge-review" data-tooltip="P2: Performance buffer / regression from fixed performance reference">CLINICAL REVIEW</span>
         <span class="badge badge-alarm" data-tooltip="Independent PMS alarm: A1 (safety floor), A2 (regression), or A3 (major drift)">ALARM</span>
-        <span class="badge badge-reject" data-tooltip="P1: Below P_fail, or P2: Major drift + degradation">REJECT</span>
+        <span class="badge badge-reject" data-tooltip="P1: Below P_fail">REJECT</span>
       </div>
 
       <table>
@@ -215,15 +241,15 @@
           </tr>
           <tr>
             <td>P2</td>
-            <td>Major drift + degradation</td>
-            <td><span class="badge badge-reject">REJECT</span></td>
-            <td>Suspend model; investigate drift source</td>
+            <td>Performance buffer / regression from P<sup>ref</sup></td>
+            <td><span class="badge badge-review">CLINICAL REVIEW</span></td>
+            <td>Hold deployment; clinician review required</td>
           </tr>
           <tr>
             <td>P3</td>
-            <td>Metric below R<sub>G</sub> buffer</td>
-            <td><span class="badge badge-cond">CONDITIONAL</span></td>
-            <td>Enhanced monitoring; PCCP modification protocol</td>
+            <td>Minor drift or TAI concern</td>
+            <td><span class="badge badge-cond">CONDITIONAL APPROVAL</span></td>
+            <td>Deploy with enhanced monitoring</td>
           </tr>
           <tr>
             <td>P4 (lowest)</td>
@@ -262,7 +288,7 @@
         <div class="step-number">3</div>
         <div class="step-content">
           <h3>Run the examples</h3>
-          <p>Jupyter notebook with 11 iterations of adaptive AI governance on the PhysioNet Sepsis Challenge dataset. All 5 decision categories exercised.</p>
+          <p>Jupyter notebook with 11 iterations of adaptive AI governance on the PhysioNet Sepsis Challenge dataset. All four deployment decision categories exercised.</p>
           <a href="https://github.com/ki-smile/aegis/tree/main/examples" class="btn-ghost">View examples →</a>
         </div>
       </div>
@@ -294,12 +320,12 @@
       <div class="grid-2">
         <div class="card" style="background:rgba(255,255,255,0.08); border-color:rgba(255,255,255,0.15);">
           <h3 style="color:var(--color-text-on-dark);">Sepsis prediction</h3>
-          <p style="color:rgba(255,255,255,0.8);">PhysioNet Challenge 2019. Random Forest classifier. 11 iterations with progressive data corruption. All 5 decision categories exercised.</p>
+          <p style="color:rgba(255,255,255,0.8);">PhysioNet Challenge 2019. Random Forest classifier. 11 iterations with progressive data corruption. All four deployment decision categories exercised.</p>
           <p style="margin-top:0.75rem;"><a href="https://github.com/ki-smile/aegis/tree/main/examples/sepsis" style="color:var(--ki-orange);">View notebook →</a></p>
         </div>
         <div class="card" style="background:rgba(255,255,255,0.08); border-color:rgba(255,255,255,0.15);">
           <h3 style="color:var(--color-text-on-dark);">Brain tumour segmentation</h3>
-          <p style="color:rgba(255,255,255,0.8);">BraTS 2023/24. nnU-Net ResENC-M. 13 iterations with binary APPROVE/REJECT governance (intermediate categories disabled).</p>
+          <p style="color:rgba(255,255,255,0.8);">BraTS 2023/24. nnU-Net ResENC-M. 12 iterations with binary APPROVE/REJECT governance (intermediate categories disabled).</p>
           <p style="margin-top:0.75rem;"><a href="https://github.com/ki-smile/aegis/tree/main/examples/brain_tumor" style="color:var(--ki-orange);">View example →</a></p>
         </div>
       </div>

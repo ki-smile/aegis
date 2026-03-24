@@ -48,7 +48,7 @@
 <p>Instantiating AEGIS for a specific domain requires populating a set of configuration parameters that define the deployment context, dataset structure, performance metrics, thresholds, and decision categories. This page walks through each parameter group with worked examples.</p>
 <p><a href="../forms/s2-config.html">Download the S2 Configuration Template</a></p>
 <h2>Instantiation parameters overview</h2>
-<p>Table IV in the manuscript defines the complete set of parameters required to instantiate AEGIS. They are grouped into seven sections:</p>
+<p>Table V in the manuscript defines the complete set of parameters required to instantiate AEGIS. They are grouped into seven sections:</p>
 <table>
 <thead>
 <tr>
@@ -65,7 +65,7 @@
 <tr>
 <td>S2.2 Dataset configuration</td>
 <td>Golden size, split strategy, deduplication method</td>
-<td>Define the DARM data structure</td>
+<td>Define the Dataset Assimilation and Retraining Module data structure</td>
 </tr>
 <tr>
 <td>S2.3 Thresholds</td>
@@ -88,7 +88,7 @@
 <td>Tailor decision hierarchy</td>
 </tr>
 <tr>
-<td>S2.7 Gold standard</td>
+<td>S2.7 Fixed performance reference</td>
 <td>Iteration, metric values, dataset ID</td>
 <td>Lock the performance baseline</td>
 </tr>
@@ -133,7 +133,7 @@
 <td>Combined imaging + EHR systems</td>
 </tr>
 </tbody></table>
-<blockquote>**Sepsis example:** The sepsis prediction system uses **Tabular EHR** data modality. The model is a Random Forest with 300 trees, processing 34 clinical features (vital signs and laboratory values) collected hourly from ICU patients. Primary metrics are sensitivity, specificity, ROC-AUC, and balanced accuracy. The clinical use case is early prediction of sepsis onset in adult ICU patients, where the model produces hourly risk scores and clinicians receive alerts when the score exceeds a threshold.</blockquote>
+<blockquote>**Sepsis example:** The sepsis prediction system uses **Tabular EHR** data modality. The model is a Random Forest with 300 trees, processing 202 clinical features (vital signs and laboratory values) collected hourly from ICU patients. Primary metrics are sensitivity, specificity, ROC-AUC, and balanced accuracy. The clinical use case is early prediction of sepsis onset in adult ICU patients, where the model produces hourly risk scores and clinicians receive alerts when the score exceeds a threshold.</blockquote>
 <h3>Model architecture</h3>
 <p>Document the model type with sufficient detail for reproducibility. Include:</p>
 <ul>
@@ -200,15 +200,15 @@ print(f&quot;Golden dataset hash: sha256:{golden_hash[:12]}...golden_v1.0&quot;)
 <td>Maintains prevalence ratios</td>
 </tr>
 </tbody></table>
-<blockquote>**Sepsis example:** A random 80/20 hold-out split was used. D_T,0 = 3,254 samples and D_G = 813 samples from PhysioNet Hospital A. The drifting dataset D_D,k consisted of 5,000 synthetic samples per iteration generated with controlled corruption. Patient ID deduplication was performed via SHA-256 hashing across all splits to ensure no patient appeared in more than one partition.</blockquote>
+<blockquote>**Sepsis example:** A random 80/20 hold-out split was used with patient-safe splitting (all samples from a unique patient ID in the same split). D_T,0 = 8,134 samples and D_G = 4,067 patients (20% of 20,336) from PhysioNet Hospital A. Iterations 1--5 used ~1,626 real samples each from Hospital A as drifting batches. Iterations 6--10 used mixed/synthetic batches with controlled corruption. Patient ID deduplication was performed via SHA-256 hashing across all splits to ensure no patient appeared in more than one partition.</blockquote>
 <h3>Deduplication</h3>
 <p>Patient-level deduplication across all dataset splits is mandatory. A single patient appearing in both D_G and D_T,k will invalidate the governance loop by introducing data leakage.</p>
 <h2>S2.6 -- Active decision categories</h2>
 <p>APPROVE and REJECT are always active. The two intermediate categories (CONDITIONAL APPROVAL and CLINICAL REVIEW) can be disabled with documented clinical justification.</p>
 <h3>Four-category configuration (default)</h3>
-<pre><code>REJECT ← P1, P2
-CONDITIONAL APPROVAL ← P3
-CLINICAL REVIEW ← P3.5 (minor drift, borderline)
+<pre><code>REJECT ← P1
+CLINICAL REVIEW ← P2 (performance buffer / regression from fixed performance reference)
+CONDITIONAL APPROVAL ← P3 (minor drift or TAI concern)
 APPROVE ← P4
 </code></pre>
 <h3>Two-category configuration</h3>
@@ -219,9 +219,9 @@ APPROVE ← P4
 APPROVE ← P4
 </code></pre>
 <p>When disabling categories, document the clinical justification in the S2 configuration form. Regulatory reviewers will need to understand why intermediate governance states were not implemented.</p>
-<blockquote>**Sepsis example:** The sepsis case study used all four active categories plus ALARM, exercising all five decision outputs across 11 iterations. CONDITIONAL APPROVAL was triggered at iterations 7 and 8 when sensitivity dropped into the buffer zone (below R_G = 0.66 but above P_fail = 0.65). CLINICAL REVIEW was triggered at iteration 5 when minor drift was detected. In contrast, the BraTS brain tumour segmentation study disabled both intermediate categories with the justification that the binary DSC metric does not support a meaningful buffer zone.</blockquote>
-<h2>S2.7 -- Gold standard baseline</h2>
-<p>The gold standard baseline is established at the first iteration that receives APPROVE. Record:</p>
+<blockquote>**Sepsis example:** The sepsis case study used all four active categories plus ALARM, exercising all five decision outputs across 11 iterations. CONDITIONAL APPROVAL was triggered at iteration 6 when cross-site drift was detected (minor drift from Hospital B data). CLINICAL REVIEW was triggered at iteration 7 when sensitivity regressed from the fixed performance reference (P^ref 0.723 minus observed 0.702 = 0.021 > tau 0.015). In contrast, the BraTS brain tumour segmentation study used only REJECT, APPROVE, and ALARM, disabling both CONDITIONAL APPROVAL and CLINICAL REVIEW with the justification that the binary DSC metric does not support a meaningful buffer zone.</blockquote>
+<h2>S2.7 -- Fixed performance reference baseline</h2>
+<p>The fixed performance reference (P^ref) is established at the first iteration that receives APPROVE. Record:</p>
 <table>
 <thead>
 <tr>
@@ -238,7 +238,7 @@ APPROVE ← P4
 <tr>
 <td>Metric values</td>
 <td>All primary metrics at that iteration</td>
-<td>Sens: 0.890, Spec: 0.798, AUC: 0.920</td>
+<td>Sens: 0.723, Spec: 0.933, AUC: 0.922</td>
 </tr>
 <tr>
 <td>Date</td>
@@ -251,7 +251,7 @@ APPROVE ← P4
 <td>sha256:a3f7c2...golden_v1.0</td>
 </tr>
 </tbody></table>
-<p>Once the gold standard is set, it must not be modified without a formal change control process. Any change to the gold standard effectively resets the governance baseline and should be treated as a significant modification.</p>
+<p>Once the fixed performance reference is set, it must not be modified without a formal change control process. Any change to the fixed performance reference effectively resets the governance baseline and should be treated as a significant modification.</p>
 <h2>Configuration checklist</h2>
 <p>Before proceeding to threshold configuration, verify:</p>
 <ul>
@@ -261,10 +261,10 @@ APPROVE ← P4
 <li><input disabled="" type="checkbox"> Split strategy documented with rationale</li>
 <li><input disabled="" type="checkbox"> Patient-level deduplication confirmed</li>
 <li><input disabled="" type="checkbox"> Active decision categories selected with justification</li>
-<li><input disabled="" type="checkbox"> Gold standard baseline recorded (or planned for iteration 0)</li>
+<li><input disabled="" type="checkbox"> Fixed performance reference baseline recorded (or planned for iteration 0)</li>
 </ul>
 <h3>Source</h3>
-<p>Manuscript Section II-D, Table IV. Instantiation parameters are formally defined in Table IV, with the sepsis column providing worked example values. BraTS configuration appears in Section IV-D. Dataset management follows DARM specification in Section II-B-1. Active category configuration is described in Supplementary S2.6.</p>
+<p>Manuscript Section II-D, Table V. Instantiation parameters are formally defined in Table V, with the sepsis column providing worked example values. BraTS configuration appears in Section IV-D. Dataset management follows the Dataset Assimilation and Retraining Module (DARM) specification in Section II-B-1. Active category configuration is described in Supplementary S2.6.</p>
 
 
       <div class="guide-nav-footer">

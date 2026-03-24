@@ -40,7 +40,7 @@ AEGIS's position is that pre-specified iterative updates within the AEGIS govern
 
 When the CDM produces REJECT, the candidate model is not deployed, so no substantial modification occurs. When ALARM fires on the released model, this may signal a need for regulatory reporting under MDR vigilance rules rather than a new conformity assessment.
 
-> **Sepsis example:** Across 11 iterations, the sepsis prediction model underwent iterative retraining. Iterations 0--6 produced APPROVE or CLINICAL REVIEW decisions, all within the predetermined performance boundaries. Under Article 43(4), these iterations would not constitute substantial modifications because the modification protocol was pre-specified, the impact was assessed against locked thresholds, and the intended purpose remained unchanged. Iterations 9--10 (REJECT and REJECT+ALARM) did not result in deployment of modified models, so no substantial modification to the marketed device occurred -- instead, the governance framework prevented a potentially harmful modification from reaching clinical use.
+> **Sepsis example:** Across 11 iterations, the sepsis prediction model underwent iterative retraining. Iterations 0--5 produced APPROVE decisions, all within the predetermined performance boundaries. Iteration 6 was CONDITIONAL APPROVAL (cross-site drift), and iteration 7 was CLINICAL REVIEW (regression from P^ref). Under Article 43(4), these iterations would not constitute substantial modifications because the modification protocol was pre-specified, the impact was assessed against locked thresholds, and the intended purpose remained unchanged. Iteration 10 (REJECT + ALARM) did not result in deployment of a modified model, and iteration 9 was an APPROVE (recovery). The governance framework prevented potentially harmful modifications from reaching clinical use.
 
 ## Technical documentation requirements
 
@@ -54,7 +54,7 @@ The AI Act requires high-risk AI systems to maintain comprehensive technical doc
 | Performance metrics | MMM outputs (primary metrics, MLcps, drift score) |
 | Human oversight measures | CLINICAL REVIEW category + operator ID in audit trail |
 | Accuracy, robustness, cybersecurity | Gold standard comparison, drift detection, dataset hashing |
-| Logging capabilities | 11-field audit trail (see [Audit trail](07-audit-trail.html)) |
+| Logging capabilities | Structured audit trail (see [Audit trail](07-audit-trail.html)) |
 | Post-market monitoring | PMS alarm channel (A1, A2, A3) |
 
 ## EU MDR Article 83 and the ALARM signal

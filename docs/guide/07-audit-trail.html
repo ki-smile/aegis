@@ -73,9 +73,9 @@
 </tr>
 </tbody></table>
 <p>Without a complete audit trail, the iterative governance loop cannot demonstrate compliance with post-market surveillance obligations. Regulators expect to see the full history of model versions, their performance evaluations, and the decisions made at each step.</p>
-<blockquote>**Sepsis example:** The sepsis case study produced 11 audit trail entries (k = 0 through k = 10), documenting the complete lifecycle from initial deployment through catastrophic failure. The audit trail showed a clear progression: five consecutive APPROVE decisions (k = 0--4), one CLINICAL REVIEW (k = 5), another APPROVE (k = 6), two CONDITIONAL APPROVALs (k = 7--8), a REJECT (k = 9), and a REJECT + ALARM (k = 10). This documented trajectory would be essential for regulatory review, demonstrating that the framework correctly escalated its response as data quality degraded.</blockquote>
-<h2>11 required log fields</h2>
-<p>Every iteration must log the following fields. These are derived from the CDM specification (Manuscript Section II-B-3) and Supplementary S1.4.</p>
+<blockquote>**Sepsis example:** The sepsis case study produced 11 audit trail entries (k = 0 through k = 10), documenting the complete lifecycle from initial deployment through catastrophic failure. The audit trail showed the following progression per Table VIII: six consecutive APPROVE decisions (k = 0--5), one CONDITIONAL APPROVAL (k = 6, cross-site drift), one CLINICAL REVIEW (k = 7, regression from P^ref), one APPROVE + ALARM (k = 8, extreme drift but small batch did not corrupt the model), one APPROVE (k = 9, recovery), and one REJECT + ALARM (k = 10, catastrophic corruption). This documented trajectory would be essential for regulatory review, demonstrating that the framework correctly escalated its response as data quality degraded.</blockquote>
+<h2>Required log fields</h2>
+<p>Every iteration must log the following fields. These are derived from the CDM specification (Manuscript Section II-B-3) and Supplementary S3.6.3.</p>
 <table>
 <thead>
 <tr>
@@ -87,69 +87,81 @@
 </thead>
 <tbody><tr>
 <td>1</td>
-<td><code>iteration</code></td>
-<td>integer</td>
-<td>Iteration index k</td>
-</tr>
-<tr>
-<td>2</td>
 <td><code>timestamp</code></td>
 <td>string (ISO 8601)</td>
 <td>When the CDM evaluation was executed</td>
 </tr>
 <tr>
+<td>2</td>
+<td><code>iteration_id</code></td>
+<td>integer</td>
+<td>Iteration index k</td>
+</tr>
+<tr>
 <td>3</td>
-<td><code>dataset_sizes</code></td>
-<td>object</td>
-<td>Sizes of D_T,k, D_G, and D_D,k</td>
+<td><code>model_version</code></td>
+<td>string</td>
+<td>Model hash, version tag, or unique identifier</td>
 </tr>
 <tr>
 <td>4</td>
+<td><code>dataset_hash</code></td>
+<td>string</td>
+<td>SHA-256 hash of D_D,k for integrity verification</td>
+</tr>
+<tr>
+<td>5</td>
+<td><code>decision</code></td>
+<td>string</td>
+<td>Decision category (APPROVE / CONDITIONAL APPROVAL / CLINICAL REVIEW / REJECT)</td>
+</tr>
+<tr>
+<td>6</td>
+<td><code>trigger_reason</code></td>
+<td>string</td>
+<td>Priority level and condition that triggered the decision</td>
+</tr>
+<tr>
+<td>7</td>
 <td><code>metrics</code></td>
 <td>object</td>
 <td>All computed metric values with names, values, thresholds, and pass/fail</td>
 </tr>
 <tr>
-<td>5</td>
-<td><code>mlcps</code></td>
-<td>float</td>
-<td>MLcps composite performance score</td>
-</tr>
-<tr>
-<td>6</td>
-<td><code>drift_score</code></td>
-<td>float</td>
-<td>Proportion of features with significant drift</td>
-</tr>
-<tr>
-<td>7</td>
-<td><code>drift_details</code></td>
-<td>object</td>
-<td>Per-feature p-values from KS tests</td>
-</tr>
-<tr>
 <td>8</td>
-<td><code>cdm_decision</code></td>
-<td>string</td>
-<td>Decision category (APPROVE / CONDITIONAL APPROVAL / CLINICAL REVIEW / REJECT)</td>
+<td><code>thresholds</code></td>
+<td>object</td>
+<td>P_fail, R_G, tau values used for this evaluation</td>
 </tr>
 <tr>
 <td>9</td>
-<td><code>alarm_state</code></td>
+<td><code>drift_results</code></td>
 <td>object</td>
-<td>Alarm flag (true/false) and list of triggered conditions (A1/A2/A3)</td>
+<td>Drift score, method, per-feature p-values from KS tests</td>
 </tr>
 <tr>
 <td>10</td>
-<td><code>gold_standard_comparison</code></td>
+<td><code>tai_scores</code></td>
+<td>object</td>
+<td>MLcps and other composite scores</td>
+</tr>
+<tr>
+<td>11</td>
+<td><code>gold_comparison</code></td>
 <td>object</td>
 <td>Per-metric deviation from gold standard and within-tolerance flag</td>
 </tr>
 <tr>
-<td>11</td>
-<td><code>model_version</code></td>
+<td>12</td>
+<td><code>confidence</code></td>
+<td>object</td>
+<td>Confidence intervals or uncertainty estimates</td>
+</tr>
+<tr>
+<td>13</td>
+<td><code>reviewer</code></td>
 <td>string</td>
-<td>Model hash, version tag, or unique identifier</td>
+<td>Operator or system identifier responsible for the evaluation</td>
 </tr>
 </tbody></table>
 <p>Additional recommended (but not mandatory) fields:</p>
@@ -161,8 +173,8 @@
 </tr>
 </thead>
 <tbody><tr>
-<td><code>operator_id</code></td>
-<td>Always (identifies the responsible person)</td>
+<td><code>alarm_state</code></td>
+<td>Object with alarm flag (true/false) and list of triggered conditions (A1/A2/A3)</td>
 </tr>
 <tr>
 <td><code>review_notes</code></td>
@@ -173,8 +185,8 @@
 <td>When decision is REJECT or alarm is triggered</td>
 </tr>
 <tr>
-<td><code>data_hash</code></td>
-<td>SHA-256 hash of D_D,k for integrity verification</td>
+<td><code>dataset_sizes</code></td>
+<td>Sizes of D_T,k, D_G, and D_D,k</td>
 </tr>
 </tbody></table>
 <h2>Recommended JSON format</h2>
@@ -184,7 +196,7 @@
   &quot;timestamp&quot;: &quot;2026-03-15T14:32:18Z&quot;,
   &quot;dataset_sizes&quot;: {
     &quot;D_T_k&quot;: 38254,
-    &quot;D_G&quot;: 813,
+    &quot;D_G&quot;: 4067,
     &quot;D_D_k&quot;: 5000
   },
   &quot;metrics&quot;: {
@@ -240,7 +252,7 @@
   },
   &quot;gold_standard_comparison&quot;: {
     &quot;sensitivity&quot;: {
-      &quot;gold&quot;: 0.890,
+      &quot;gold&quot;: 0.723,
       &quot;current&quot;: 0.653,
       &quot;deviation&quot;: 0.237,
       &quot;within_tolerance&quot;: false
@@ -313,7 +325,7 @@ def compute_entry_hash(entry: dict, prev_hash: str = &quot;&quot;) -&gt; str:
 <li>CAPA record references the triggering iteration number and audit entry</li>
 </ul>
 <h3>Source</h3>
-<p>Manuscript Section II-B-3 (CDM specification and logging requirements). The 11 required log fields are specified in Supplementary S1.4 and S3.4. Retention requirements are derived from the regulatory frameworks discussed in Section II-A (Table I). The JSON format is a recommended implementation approach consistent with the reference Python implementation in Supplementary S3.3.</p>
+<p>Manuscript Section II-B-3 (CDM specification and logging requirements). The required log fields are specified in Supplementary S3.6.3. Retention requirements are derived from the regulatory frameworks discussed in Section II-A (Table I). The JSON format is a recommended implementation approach consistent with the reference Python implementation in Supplementary S3.3.</p>
 
 
       <div class="guide-nav-footer">

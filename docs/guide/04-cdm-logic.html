@@ -45,16 +45,16 @@
 
     <main class="guide-content">
       <h1>CDM logic</h1>
-<p>The Clinical Decision Module (CDM) is the deterministic decision engine at the core of AEGIS. It takes performance metrics, drift scores, and gold standard comparisons as input and produces a composite output: a decision category and an independent alarm state.</p>
+<p>The Clinical Decision Module (CDM) is the deterministic decision engine at the core of AEGIS. It takes performance metrics, drift scores, and fixed performance reference comparisons as input and produces a composite output: a decision category and an independent alarm state.</p>
 <p><a href="../forms/s3-cdm-pseudocode.html">View the CDM Pseudocode Reference</a></p>
 <h2>Ternary operator</h2>
-<p>AEGIS uses a ternary evaluation operator (Eq. 1 from the manuscript) that maps each metric to one of three states:</p>
+<p>AEGIS uses a general ternary decision function (Eq. 1 from the manuscript) of the form D = f(C1,...,CN) ? D1 : D2, which maps a set of conditions to one of multiple decision outcomes. Each metric evaluation produces a ternary state:</p>
 <pre><code>T(metric, threshold_lower, threshold_upper) =
     FAIL    if metric &lt; threshold_lower
     BUFFER  if threshold_lower &lt;= metric &lt; threshold_upper
     PASS    if metric &gt;= threshold_upper
 </code></pre>
-<p>This ternary logic underpins the CDM&#39;s ability to distinguish between outright failure (REJECT), borderline performance (CONDITIONAL APPROVAL), and full compliance (APPROVE).</p>
+<p>This ternary logic underpins the CDM&#39;s ability to distinguish between outright failure (REJECT), performance buffer (CLINICAL REVIEW), minor drift (CONDITIONAL APPROVAL), and full compliance (APPROVE).</p>
 <h2>Condition polarity</h2>
 <p>AEGIS uses a <strong>lower-is-worse</strong> polarity convention for all metrics by default. This means:</p>
 <ul>
@@ -83,42 +83,35 @@ def normalise_polarity(value, higher_is_worse=False):
 <tbody><tr>
 <td>P1 (highest)</td>
 <td>Critical safety</td>
-<td>Any metric &lt; P_fail</td>
+<td>P_G,k &lt; P^fail</td>
 <td>REJECT</td>
 </tr>
 <tr>
 <td>P2</td>
-<td>Major drift</td>
-<td>drift_score &gt; theta_major AND performance degradation (&gt; tau from gold standard)</td>
-<td>REJECT</td>
+<td>Performance buffer / regression</td>
+<td>(P_G,k in R_G) OR (tau &lt; P^ref - P_G,k)</td>
+<td>CLINICAL REVIEW</td>
 </tr>
 <tr>
 <td>P3</td>
-<td>Buffer zone</td>
-<td>Any metric below R_G buffer</td>
+<td>Minor drift / TAI concern</td>
+<td>(S_D in S^minor_D) OR (S_T &lt; S^thr_T)</td>
 <td>CONDITIONAL APPROVAL</td>
-</tr>
-<tr>
-<td>P3.5</td>
-<td>Minor drift / borderline</td>
-<td>Minor drift detected OR borderline metrics requiring human judgement</td>
-<td>CLINICAL REVIEW</td>
 </tr>
 <tr>
 <td>P4 (lowest)</td>
 <td>Full compliance</td>
-<td>All metrics pass all checks</td>
+<td>All checks pass</td>
 <td>APPROVE</td>
 </tr>
 </tbody></table>
 <p>The priority ordering ensures that safety-critical failures are always caught first, regardless of other conditions.</p>
-<blockquote>**Sepsis example:** At iteration 7, sensitivity dropped to 0.653 -- above P_fail (0.65) but below R_G(sensitivity) (0.66). The CDM evaluated as follows:
+<blockquote>**Sepsis example:** At iteration 7, sensitivity was 0.702 -- above P^fail (0.65) and above R_G(sensitivity) (0.66), but regressed from the fixed performance reference P^ref (0.723). The CDM evaluated as follows:
 
-- P1: sensitivity 0.653 >= P_fail 0.65 -- **not triggered**
-- P2: drift_score 0.441 < theta_major 0.90 -- **not triggered**
-- P3: sensitivity 0.653 < R_G(sensitivity) 0.66 -- **TRIGGERED**
+- P1: sensitivity 0.702 >= P^fail 0.65 -- **not triggered**
+- P2: P^ref - P_G,k = 0.723 - 0.702 = 0.021 > tau 0.015 -- **TRIGGERED** (regression from fixed performance reference)
 
-Result: CONDITIONAL APPROVAL with details `{priority: P3, trigger: "sensitivity = 0.653 < R_G = 0.66"}`. The model was flagged for heightened monitoring but not withdrawn.</blockquote>
+Result: CLINICAL REVIEW with details `{priority: P2, trigger: "P^ref 0.723 - sensitivity 0.702 = 0.021 > tau 0.015"}`. The model was flagged for clinical review due to performance regression.</blockquote>
 <h2>Alarm conditions (A1--A3)</h2>
 <p>Alarm conditions operate on an <strong>independent channel</strong> from the decision hierarchy. They are evaluated for every iteration regardless of the decision outcome.</p>
 <table>
@@ -131,25 +124,26 @@ Result: CONDITIONAL APPROVAL with details `{priority: P3, trigger: "sensitivity 
 </thead>
 <tbody><tr>
 <td>A1</td>
-<td>Released model metric &lt; P_PMS</td>
-<td>Currently deployed model&#39;s absolute performance</td>
+<td>P^rel_D &lt; P^PMS</td>
+<td>Released model on Drifting set below PMS safety floor</td>
 </tr>
 <tr>
 <td>A2</td>
-<td>Released model regressed &gt; delta from release baseline</td>
-<td>Deployed model&#39;s performance trend</td>
+<td>P^rel_D &lt;= P^rel_G - tau</td>
+<td>Released model regressed from released performance reference</td>
 </tr>
 <tr>
 <td>A3</td>
-<td>drift_score &gt; theta_major</td>
-<td>Severity of covariate drift</td>
+<td>S_D in S^major_D (drift score &gt; 0.90)</td>
+<td>Major distributional shift</td>
 </tr>
 </tbody></table>
 <p>Key framing: <strong>APPROVE + ALARM is not contradictory.</strong> This combination means:</p>
 <ul>
-<li>The candidate model (being evaluated) passed all checks and can be approved</li>
+<li>The candidate model (being evaluated) passed all checks and can be approved (P4)</li>
 <li>BUT the currently released model has triggered a post-market safety concern</li>
 </ul>
+<p>For example, at iteration 8 in the sepsis study, the new model passed P4 (APPROVE) but the released model triggered alarm A3 due to drift_score 1.000, exceeding S^major_D = 0.90.</p>
 <p>This dual-channel design ensures that PMS obligations are never masked by a successful iteration.</p>
 <h2>Composite output</h2>
 <p>The CDM returns a structured object containing both channels:</p>
@@ -204,37 +198,51 @@ Result: CONDITIONAL APPROVAL with details `{priority: P3, trigger: "sensitivity 
                 }
             }
 
-    # P2: Major drift + performance degradation
-    if drift_score &gt; thresholds.get(&#39;theta_major&#39;, 0.90):
-        degraded = any(
-            metrics[m] &lt; gold_standard[m] - thresholds.get(&#39;tau&#39;, 0.015)
-            for m in metrics if m in gold_standard
-        )
-        if degraded:
-            return {
-                &#39;decision&#39;: &#39;REJECT&#39;,
-                &#39;alarm&#39;: len(alarm_conditions) &gt; 0,
-                &#39;alarm_conditions&#39;: alarm_conditions,
-                &#39;details&#39;: {
-                    &#39;priority&#39;: &#39;P2&#39;,
-                    &#39;trigger&#39;: f&#39;drift = {drift_score:.3f} &gt; theta_major with degradation&#39;
-                }
-            }
-
-    # P3: Performance buffer zone
-    if config.get(&#39;conditional_approval_enabled&#39;, True):
+    # P2: Performance buffer OR regression from fixed performance reference → CLINICAL REVIEW
+    if config.get(&#39;clinical_review_enabled&#39;, True):
+        # Check R_G buffer zone
         for metric_name, value in metrics.items():
             rg_key = f&#39;R_G_{metric_name}&#39;
             if rg_key in thresholds and value &lt; thresholds[rg_key]:
                 return {
-                    &#39;decision&#39;: &#39;CONDITIONAL APPROVAL&#39;,
+                    &#39;decision&#39;: &#39;CLINICAL REVIEW&#39;,
                     &#39;alarm&#39;: len(alarm_conditions) &gt; 0,
                     &#39;alarm_conditions&#39;: alarm_conditions,
                     &#39;details&#39;: {
-                        &#39;priority&#39;: &#39;P3&#39;,
-                        &#39;trigger&#39;: f&#39;{metric_name} = {value:.3f} &lt; R_G = {thresholds[rg_key]}&#39;
+                        &#39;priority&#39;: &#39;P2&#39;,
+                        &#39;trigger&#39;: f&#39;{metric_name} = {value:.3f} in R_G buffer&#39;
                     }
                 }
+        # Check regression from fixed performance reference (P^ref)
+        tau = thresholds.get(&#39;tau&#39;, 0.015)
+        for metric_name, value in metrics.items():
+            if metric_name in gold_standard:
+                deviation = gold_standard[metric_name] - value
+                if deviation &gt; tau:
+                    return {
+                        &#39;decision&#39;: &#39;CLINICAL REVIEW&#39;,
+                        &#39;alarm&#39;: len(alarm_conditions) &gt; 0,
+                        &#39;alarm_conditions&#39;: alarm_conditions,
+                        &#39;details&#39;: {
+                            &#39;priority&#39;: &#39;P2&#39;,
+                            &#39;trigger&#39;: f&#39;P^ref - {metric_name} = {deviation:.3f} &gt; tau = {tau}&#39;
+                        }
+                    }
+
+    # P3: Minor drift OR TAI concern → CONDITIONAL APPROVAL
+    if config.get(&#39;conditional_approval_enabled&#39;, True):
+        minor_low = thresholds.get(&#39;S_minor_D_low&#39;, 0.30)
+        minor_high = thresholds.get(&#39;S_minor_D_high&#39;, 0.70)
+        if minor_low &lt;= drift_score &lt;= minor_high:
+            return {
+                &#39;decision&#39;: &#39;CONDITIONAL APPROVAL&#39;,
+                &#39;alarm&#39;: len(alarm_conditions) &gt; 0,
+                &#39;alarm_conditions&#39;: alarm_conditions,
+                &#39;details&#39;: {
+                    &#39;priority&#39;: &#39;P3&#39;,
+                    &#39;trigger&#39;: f&#39;drift = {drift_score:.3f} in S^minor_D [{minor_low}, {minor_high}]&#39;
+                }
+            }
 
     # P4: All checks passed
     return {
@@ -259,21 +267,20 @@ Result: CONDITIONAL APPROVAL with details `{priority: P3, trigger: "sensitivity 
                 &#39;detail&#39;: f&#39;Released {metric_name} = {value:.3f} &lt; P_PMS&#39;
             })
 
-    # A2: Released model regression from release baseline
-    release_baseline = config.get(&#39;release_baseline&#39;, {})
-    delta = thresholds.get(&#39;delta&#39;, 0.025)
+    # A2: Released model regressed from released performance reference
+    released_golden = config.get(&#39;released_golden_metrics&#39;, {})
+    tau = thresholds.get(&#39;tau&#39;, 0.015)
     for metric_name, value in released.items():
-        if metric_name in release_baseline:
-            regression = release_baseline[metric_name] - value
-            if regression &gt; delta:
+        if metric_name in released_golden:
+            if value &lt;= released_golden[metric_name] - tau:
                 alarms.append({
                     &#39;id&#39;: &#39;A2&#39;,
-                    &#39;detail&#39;: f&#39;Regression {regression:.3f} &gt; delta = {delta}&#39;
+                    &#39;detail&#39;: f&#39;P^rel_D {value:.3f} &lt;= P^rel_G - tau = {released_golden[metric_name] - tau:.3f}&#39;
                 })
 
-    # A3: Severe covariate drift
+    # A3: Major distributional shift (drift score &gt; 0.90)
     drift_score = config.get(&#39;current_drift_score&#39;, 0.0)
-    if drift_score &gt; thresholds.get(&#39;theta_major&#39;, 0.90):
+    if drift_score &gt; thresholds.get(&#39;S_major_D&#39;, 0.90):
         alarms.append({
             &#39;id&#39;: &#39;A3&#39;,
             &#39;detail&#39;: f&#39;Drift {drift_score:.3f} &gt; theta_major&#39;
@@ -292,7 +299,7 @@ Result: CONDITIONAL APPROVAL with details `{priority: P3, trigger: "sensitivity 
 </ul>
 <blockquote>**Sepsis example:** At iteration 10, the CDM produced the most severe composite output observed in the experiment: REJECT (P1) + ALARM (A3). Sensitivity had dropped to 0.428 (far below P_fail = 0.65) due to catastrophic label corruption (80% positive flip, 30% negative flip) combined with Gaussian noise. Simultaneously, the drift score reached 1.000, exceeding theta_major = 0.90 and firing alarm A3. This composite REJECT + ALARM state triggered immediate CAPA initiation.</blockquote>
 <h3>Source</h3>
-<p>Manuscript Section II-B-3 (CDM specification), Tables III and VI (decision categories and priority hierarchy). The ternary operator is defined as Equation 1. Alarm conditions are specified in Table VI Part B. The reference Python implementation is reproduced from Supplementary S3.3.</p>
+<p>Manuscript Section II-B-3 (CDM specification), Tables III and IV (decision categories and priority hierarchy). The ternary decision function is defined as Equation 1. Alarm conditions are specified in Table IV. The reference Python implementation is reproduced from Supplementary S3.3. Sepsis iteration results are in Table VIII.</p>
 
 
       <div class="guide-nav-footer">

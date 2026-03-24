@@ -71,7 +71,7 @@
 </tr>
 </tbody></table>
 <p>Covariate drift is detected directly by comparing D_G and D_D,k feature distributions. Concept drift is detected indirectly through its effect on model performance -- when P(Y|X) changes, performance on the stable golden dataset D_G will degrade.</p>
-<blockquote>**Sepsis example:** In the sepsis experiment, covariate drift was introduced deliberately via Gaussian noise injection (sigma = scaling_factor * std) across all 34 clinical features. At low corruption levels (iterations 1-4), drift scores ranged from 0.000 to 0.265, remaining below theta_minor,low = 0.30. As corruption increased, the drift score climbed to 0.441 at iteration 7 (minor drift) and reached 1.000 at iteration 10 (major drift -- all 34 features significantly shifted). Concept drift was induced simultaneously through label flipping (progressive corruption of sepsis labels), causing sensitivity to degrade from 0.890 to 0.428.</blockquote>
+<blockquote>**Sepsis example:** The sepsis model used 202 features total, but only K=34 key clinical features were monitored for drift. Drift was not introduced uniformly across all iterations. Iterations 1--5 used real Hospital A data with no artificial drift (drift scores 0.000). Iteration 6 was a cross-site scenario (50% Hospital B data, drift score 0.412). Iteration 7 was clean Hospital A data. Iteration 8 used extreme feature scaling (drift score 1.000). Iteration 9 was a clean recovery. Iteration 10 was catastrophic corruption (drift score 1.000, all 34 monitored features significantly shifted). Concept drift was detected indirectly through performance degradation, with sensitivity degrading from 0.723 to 0.428.</blockquote>
 <h2>Bonferroni-corrected Kolmogorov-Smirnov test</h2>
 <p>AEGIS recommends the Kolmogorov-Smirnov (KS) test with Bonferroni correction as the default drift detection method. This is Equation 2 from the manuscript.</p>
 <h3>Method</h3>
@@ -161,7 +161,7 @@ def compute_drift_score(golden_data: np.ndarray,
 <td>Avoid highly correlated feature pairs (inflates K unnecessarily)</td>
 </tr>
 </tbody></table>
-<blockquote>**Sepsis example:** All 34 clinical features were monitored for drift: HR, O2Sat, Temp, SBP, MAP, DBP, Resp, EtCO2, BaseExcess, HCO3, FiO2, pH, PaCO2, SaO2, AST, BUN, Alkalinephos, Calcium, Chloride, Creatinine, Bilirubin_direct, Glucose, Lactate, Magnesium, Phosphate, Potassium, Bilirubin_total, TroponinI, Hct, Hgb, PTT, WBC, Fibrinogen, Platelets. With K = 34 and alpha = 0.05, the Bonferroni-corrected threshold was alpha' = 0.05 / 34 = 0.00147. This conservative correction ensured that drift detections were genuine distribution shifts rather than multiple testing artefacts.</blockquote>
+<blockquote>**Sepsis example:** The sepsis model used 202 total features, but only 34 key clinical features were selected for drift monitoring: HR, O2Sat, Temp, SBP, MAP, DBP, Resp, EtCO2, BaseExcess, HCO3, FiO2, pH, PaCO2, SaO2, AST, BUN, Alkalinephos, Calcium, Chloride, Creatinine, Bilirubin_direct, Glucose, Lactate, Magnesium, Phosphate, Potassium, Bilirubin_total, TroponinI, Hct, Hgb, PTT, WBC, Fibrinogen, Platelets. With K = 34 and alpha = 0.05, the Bonferroni-corrected threshold was alpha' = 0.05 / 34 = 0.00147. This conservative correction ensured that drift detections were genuine distribution shifts rather than multiple testing artefacts.</blockquote>
 <h2>Minor and major drift thresholds</h2>
 <p>The drift score is classified into three severity levels using the theta thresholds:</p>
 <pre><code>drift_score &lt; theta_minor,low          → No significant drift
@@ -186,7 +186,7 @@ drift_score &gt;= theta_major             → Major drift (triggers A3 alarm)
 </tr>
 <tr>
 <td>Minor drift</td>
-<td>May trigger CLINICAL REVIEW (P3.5) if enabled</td>
+<td>May trigger CONDITIONAL APPROVAL at P3</td>
 </tr>
 <tr>
 <td>Moderate drift</td>
@@ -194,7 +194,7 @@ drift_score &gt;= theta_major             → Major drift (triggers A3 alarm)
 </tr>
 <tr>
 <td>Major drift</td>
-<td>Triggers A3 alarm; combined with performance degradation triggers P2 REJECT</td>
+<td>Triggers A3 alarm; combined with safety floor violation triggers P1 REJECT</td>
 </tr>
 </tbody></table>
 <h2>Calibration from baseline variability</h2>
@@ -296,11 +296,11 @@ drift_score &gt;= theta_major             → Major drift (triggers A3 alarm)
 </tbody></table>
 <p>Document your chosen method and justification in the S2 configuration form.</p>
 <h2>Concept drift proxy at P2</h2>
-<p>AEGIS detects concept drift indirectly through the P2 condition: major covariate drift combined with performance degradation beyond the gold standard tolerance tau. The logic is:</p>
-<pre><code>IF drift_score &gt; theta_major AND any_metric degraded &gt; tau from gold_standard:
-    → REJECT (P2): concept drift is likely occurring
+<p>AEGIS detects concept drift indirectly through the P2 condition. P2 is CLINICAL REVIEW, triggered when a metric regresses beyond tolerance tau from the fixed performance reference P^ref. This regression may indicate concept drift indirectly:</p>
+<pre><code>IF any_metric degraded &gt; tau from P^ref (fixed performance reference):
+    → CLINICAL REVIEW (P2): regression from reference, concept drift may be occurring
 </code></pre>
-<p>This proxy approach avoids the need for labelled data in the drifting dataset (which may not be immediately available in production).</p>
+<p>This proxy approach avoids the need for labelled data in the drifting dataset (which may not be immediately available in production). Note that major drift is detected separately via A3 ALARM, which fires independently of the P2 condition.</p>
 <h3>Source</h3>
 <p>Manuscript Section II-D (drift detection configuration within instantiation parameters) and Equation 2 (Bonferroni-corrected KS test). Drift threshold calibration methodology is described in Supplementary S2.5. Feature selection guidance and the concept drift proxy are discussed in Section II-B-2 (MMM specification). The sepsis feature list and drift progression across iterations are detailed in Section IV-C.</p>
 

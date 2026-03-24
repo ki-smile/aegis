@@ -7,7 +7,7 @@ next: "06-drift.html"
 
 # MLcps
 
-MLcps (Multi-criteria Likert Composite Performance Score) is a single scalar value that summarises the overall performance of a model across multiple clinically weighted metrics. It provides a unified view of model quality that respects the relative importance of different performance dimensions.
+MLcps (ML Cumulative Performance Score) is a single scalar value that summarises the overall performance of a model across multiple clinically weighted metrics. It provides a unified view of model quality that respects the relative importance of different performance dimensions.
 
 ## What MLcps is
 
@@ -93,14 +93,14 @@ The reference implementation of composite performance scoring is available in th
 # R usage (getCPS package)
 library(getCPS)
 
-metrics <- c(sensitivity = 0.890, specificity = 0.798,
-             roc_auc = 0.920, balanced_accuracy = 0.844)
+metrics <- c(sensitivity = 0.723, specificity = 0.933,
+             roc_auc = 0.922, balanced_accuracy = 0.828)
 weights <- c(sensitivity = 1.5, specificity = 1.0,
              roc_auc = 1.3, balanced_accuracy = 1.1)
 
 cps <- getCPS(metrics, weights)
 print(cps)
-# [1] 0.876
+# [1] 0.721
 ```
 
 ## Weight configuration
@@ -116,7 +116,7 @@ Weights range from 0.5 (low priority) to 3.0 (critical priority). They encode th
 > | Balanced Accuracy | 1.1 | Accounts for class imbalance in sepsis prevalence |
 > | Specificity | 1.0 | Baseline importance -- false alarms burden ICU staff but are less dangerous than misses |
 >
-> This configuration produced an MLcps of 0.876 at the gold standard iteration (k=0). The weight ordering reflects the clinical reality that in sepsis prediction, failing to detect a true case (low sensitivity) carries greater patient risk than a false alarm (low specificity). Across the 11 iterations, MLcps tracked smoothly from 0.876 down to 0.354 at iteration 10, providing a clear trend signal even when individual metrics fluctuated differently.
+> These are raw weights; the official MLcps package normalizes internally. This configuration produced an MLcps of 0.721 at the gold standard iteration (k=0). The weight ordering reflects the clinical reality that in sepsis prediction, failing to detect a true case (low sensitivity) carries greater patient risk than a false alarm (low specificity). Across the 11 iterations, MLcps tracked smoothly from 0.721 down to 0.549 at iteration 10, providing a clear trend signal even when individual metrics fluctuated differently.
 
 ## How to derive weights
 
@@ -154,14 +154,14 @@ MLcps is computed at every iteration and logged in the audit trail. While it doe
 - **Gold standard tracking**: The gold standard MLcps provides a single-number baseline for comparison
 
 ```
-Iteration  Sensitivity  Specificity  ROC-AUC  Bal.Acc  MLcps  Decision
-k=0        0.890        0.798        0.920    0.844    0.876  APPROVE
-k=1        0.885        0.792        0.918    0.839    0.868  APPROVE
-k=5        0.842        0.763        0.895    0.803    0.816  CLINICAL REVIEW
-k=7        0.653        0.720        0.847    0.687    0.607  CONDITIONAL APPROVAL
-k=10       0.428        0.585        0.593    0.507    0.354  REJECT
+Iteration  Sensitivity  Specificity  ROC-AUC  MLcps  Decision
+k=0        0.723        0.933        0.922    0.721  APPROVE
+k=5        0.753        0.929        0.924    0.739  APPROVE
+k=6        0.809        0.881        0.922    0.746  CONDITIONAL APPROVAL
+k=7        0.702        0.950        0.922    0.716  CLINICAL REVIEW
+k=10       0.428        0.999        0.912    0.549  REJECT
 ```
 
 ### Source
 
-Manuscript Section II-D (MLcps configuration within instantiation parameters) and Section IV-E (MLcps results across iterations). The polar coordinate composite scoring methodology is described in the getCPS package documentation. Weight configuration is specified in Supplementary S2.4. The sepsis weight values are tabulated in Table IV of the manuscript.
+Manuscript Section II-D (MLcps configuration within instantiation parameters) and Section IV-E (MLcps results across iterations). The polar coordinate composite scoring methodology is described in the getCPS package documentation. Weight configuration is specified in Supplementary S2.4. The sepsis weight values are tabulated in Table VII of the manuscript.

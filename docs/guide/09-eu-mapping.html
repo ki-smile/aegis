@@ -107,7 +107,7 @@
 <li>The intended purpose is unchanged</li>
 </ol>
 <p>When the CDM produces REJECT, the candidate model is not deployed, so no substantial modification occurs. When ALARM fires on the released model, this may signal a need for regulatory reporting under MDR vigilance rules rather than a new conformity assessment.</p>
-<blockquote>**Sepsis example:** Across 11 iterations, the sepsis prediction model underwent iterative retraining. Iterations 0--6 produced APPROVE or CLINICAL REVIEW decisions, all within the predetermined performance boundaries. Under Article 43(4), these iterations would not constitute substantial modifications because the modification protocol was pre-specified, the impact was assessed against locked thresholds, and the intended purpose remained unchanged. Iterations 9--10 (REJECT and REJECT+ALARM) did not result in deployment of modified models, so no substantial modification to the marketed device occurred -- instead, the governance framework prevented a potentially harmful modification from reaching clinical use.</blockquote>
+<blockquote>**Sepsis example:** Across 11 iterations, the sepsis prediction model underwent iterative retraining. Iterations 0--5 produced APPROVE decisions, all within the predetermined performance boundaries. Iteration 6 was CONDITIONAL APPROVAL (cross-site drift), and iteration 7 was CLINICAL REVIEW (regression from P^ref). Under Article 43(4), these iterations would not constitute substantial modifications because the modification protocol was pre-specified, the impact was assessed against locked thresholds, and the intended purpose remained unchanged. Iteration 10 (REJECT + ALARM) did not result in deployment of a modified model, and iteration 9 was an APPROVE (recovery). The governance framework prevented potentially harmful modifications from reaching clinical use.</blockquote>
 <h2>Technical documentation requirements</h2>
 <p>The AI Act requires high-risk AI systems to maintain comprehensive technical documentation. AEGIS outputs map to these requirements:</p>
 <table>
@@ -143,7 +143,7 @@
 </tr>
 <tr>
 <td>Logging capabilities</td>
-<td>11-field audit trail (see <a href="07-audit-trail.html">Audit trail</a>)</td>
+<td>Structured audit trail (see <a href="07-audit-trail.html">Audit trail</a>)</td>
 </tr>
 <tr>
 <td>Post-market monitoring</td>

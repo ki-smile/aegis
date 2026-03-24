@@ -7,7 +7,7 @@ next: "09-eu-mapping.html"
 
 # PCCP mapping
 
-The FDA's Predetermined Change Control Plan (PCCP) is the primary US regulatory pathway for adaptive AI/ML medical devices. AEGIS is designed to align with PCCP requirements by providing pre-specified modification descriptions, protocols, and impact assessments. This page maps the three PCCP components to AEGIS framework elements.
+The FDA's Predetermined Change Control Plan (PCCP), finalized in the August 2025 final guidance, is the primary US regulatory pathway for adaptive AI/ML medical devices. AEGIS is designed to align with PCCP requirements by providing pre-specified modification descriptions, protocols, and impact assessments. This page maps the three PCCP components to AEGIS framework elements.
 
 ## What is PCCP?
 
@@ -44,7 +44,7 @@ The scope of modifications is bounded by the AEGIS configuration:
 | Intended use | Unchanged |
 | Performance evaluation | Same metrics, same golden dataset |
 
-> **Sepsis example:** For the sepsis prediction device, Component 1 would describe: "The device undergoes iterative retraining using newly accumulated ICU patient data. At each iteration, the Random Forest classifier (300 trees, fixed hyperparameters) is retrained on the union of all previously accumulated training data and newly collected patient records. The model architecture, feature set (34 clinical features), and intended use (early sepsis onset prediction in adult ICU patients) remain unchanged. The only modification is the expansion of the training dataset."
+> **Sepsis example:** For the sepsis prediction device, Component 1 would describe: "The device undergoes iterative retraining using newly accumulated ICU patient data. At each iteration, the Random Forest classifier (300 trees, fixed hyperparameters) is retrained on the union of all previously accumulated training data and newly collected patient records. The model architecture, feature set (202 features, with 34 key clinical features monitored for drift), and intended use (early sepsis onset prediction in adult ICU patients) remain unchanged. The only modification is the expansion of the training dataset."
 
 ## Component 2: Modification Protocol
 
@@ -55,12 +55,12 @@ AEGIS maps directly to this requirement through its CDM decision hierarchy:
 | CDM element | PCCP Component 2 mapping |
 |-------------|-------------------------|
 | P1: Critical safety floor (P_fail) | Automatic rejection criterion -- modification rejected if safety is compromised |
-| P2: Major drift + degradation | Rejection criterion for distribution shift scenarios |
-| P3: Performance buffer (R_G) | Conditional acceptance with heightened monitoring |
+| P2: Regression from P^ref | CLINICAL REVIEW -- regression from fixed performance reference requires human assessment |
+| P3: Performance buffer (R_G) | CONDITIONAL APPROVAL -- accepted with heightened monitoring |
 | P4: Full compliance | Acceptance criterion -- modification approved for deployment |
 | A1--A3: Alarm conditions | Independent safety monitoring of the deployed device |
 
-The protocol is fully deterministic and pre-specified before the first iteration. No human judgement is required for P1, P2, P3, or P4 decisions (though CLINICAL REVIEW at P3.5, if enabled, does involve human assessment).
+The protocol is fully deterministic and pre-specified before the first iteration. No human judgement is required for P1, P3, or P4 decisions, though CLINICAL REVIEW at P2 involves human assessment of regression from the fixed performance reference.
 
 ### Four categories as predetermined pathways
 
@@ -68,10 +68,10 @@ Each AEGIS decision category maps to a predetermined pathway within the PCCP:
 
 | Decision category | PCCP pathway | Action |
 |-------------------|-------------|--------|
-| APPROVE | Modification accepted | Deploy updated model; log results; continue monitoring |
-| CONDITIONAL APPROVAL | Modification accepted with conditions | Deploy with heightened monitoring; schedule early re-evaluation |
-| CLINICAL REVIEW | Modification requires human assessment | Pause deployment; clinical expert reviews metrics and context |
-| REJECT | Modification rejected | Do not deploy; initiate root cause analysis; CAPA if warranted |
+| APPROVE (P4) | Modification accepted | Deploy updated model; log results; continue monitoring |
+| CONDITIONAL APPROVAL (P3) | Modification accepted with conditions | Deploy with heightened monitoring; schedule early re-evaluation |
+| CLINICAL REVIEW (P2) | Modification requires human assessment | Pause deployment; clinical expert reviews metrics and context |
+| REJECT (P1) | Modification rejected | Do not deploy; initiate root cause analysis; CAPA if warranted |
 
 ## Component 3: Impact Assessment
 
@@ -128,4 +128,4 @@ When preparing your PCCP submission, use the following structure:
 
 ### Source
 
-Manuscript Section IV-F (regulatory pathway mapping) and Table XI (PCCP component alignment). The three-component PCCP structure follows FDA guidance on predetermined change control plans for AI/ML devices. Supplementary S2.8 provides the configuration template for regulatory pathway mapping. Supplementary S3.5 provides additional PCCP preparation guidance.
+Manuscript Section IV-F (regulatory pathway mapping) and Table VI (decision taxonomy). The three-component PCCP structure follows the August 2025 final FDA guidance on predetermined change control plans for AI/ML devices. Supplementary S2.8 provides the configuration template for regulatory pathway mapping. Supplementary S3.5 provides additional PCCP preparation guidance.

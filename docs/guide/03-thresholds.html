@@ -71,8 +71,8 @@
 </ul>
 <blockquote>**Sepsis example:** P_fail was set to sensitivity < 0.65. Below this level, the sepsis prediction model would miss more than 35% of sepsis cases, creating an unacceptable risk of delayed treatment. This value was derived from a hazard analysis that identified missed sepsis onset as the primary patient safety risk (severity: critical; probability: probable at sensitivity below 0.65). At iteration 10, sensitivity dropped to 0.428 -- far below P_fail -- triggering an immediate P1 REJECT.</blockquote>
 <h3>R_G -- Performance buffer</h3>
-<p>The R_G threshold defines a buffer zone above P_fail. Metrics in this zone are acceptable but declining, triggering CONDITIONAL APPROVAL rather than full APPROVE.</p>
-<pre><code>IF metric &gt;= P_fail AND metric &lt; R_G THEN → CONDITIONAL APPROVAL (P3)
+<p>The R_G threshold defines a buffer zone above P_fail. Metrics in this zone are acceptable but declining, triggering CLINICAL REVIEW (P2) rather than full APPROVE.</p>
+<pre><code>IF metric &gt;= P_fail AND metric &lt; R_G THEN → CLINICAL REVIEW (P2)
 </code></pre>
 <p>The gap between P_fail and R_G should be large enough to provide early warning but small enough that the buffer zone represents genuinely borderline performance.</p>
 <table>
@@ -97,10 +97,10 @@
 <td>--</td>
 </tr>
 </tbody></table>
-<h3>tau -- Gold standard tolerance</h3>
-<p>tau defines the maximum acceptable deviation between the current iteration&#39;s performance and the gold standard baseline. It is used in P2 evaluation (major drift + performance degradation).</p>
-<pre><code class="language-python"># Gold standard comparison at each iteration
-deviation = gold_standard_metric - current_metric
+<h3>tau -- Fixed performance reference tolerance</h3>
+<p>tau defines the maximum acceptable deviation between the current iteration&#39;s performance and the fixed performance reference (P^ref). It is used in P2 evaluation (regression from fixed performance reference triggers CLINICAL REVIEW).</p>
+<pre><code class="language-python"># Fixed performance reference comparison at each iteration
+deviation = P_ref_metric - current_metric
 degraded = (deviation &gt; tau)
 </code></pre>
 <p>Calibration approach:</p>
@@ -149,18 +149,18 @@ degraded = (deviation &gt; tau)
 <li>Set theta_minor,high at the 95th percentile</li>
 <li>Set theta_major conservatively (e.g., 0.90) -- this triggers A3 alarm</li>
 </ol>
-<blockquote>**Sepsis example:** With K = 34 clinical features and alpha = 0.05, the Bonferroni-corrected significance level was alpha' = 0.00147. The drift thresholds were set as:
+<blockquote>**Sepsis example:** With K = 202 clinical features and alpha = 0.05, the Bonferroni-corrected significance level was alpha' = 0.05/202. The drift thresholds were set as:
 
 | Threshold | Value | Meaning |
 |-----------|-------|---------|
-| theta_minor,low | 0.30 | < 30% of features drifted -- negligible |
-| theta_minor,high | 0.70 | > 70% of features drifted -- escalate to major |
-| theta_major | 0.90 | > 90% of features drifted -- severe, triggers A3 |
+| S^minor_D lower bound | 0.30 | < 30% of features drifted -- negligible |
+| S^minor_D upper bound | 0.70 | > 70% of features drifted -- escalate to major |
+| S^major_D | 0.90 | > 90% of features drifted -- severe, triggers A3 |
 
-At iteration 10, the drift score reached 1.000 (all 34 features significantly shifted), far exceeding theta_major and triggering A3 alarm alongside the P1 REJECT.</blockquote>
+Minor drift (0.30 <= S_D <= 0.70) triggers CONDITIONAL APPROVAL at P3. At iteration 10, the drift score reached 1.000 (all features significantly shifted), far exceeding S^major_D = 0.90 and triggering A3 alarm alongside the P1 REJECT.</blockquote>
 <h3>P_PMS -- Post-market surveillance safety floor</h3>
 <p>P_PMS applies to the <strong>currently released model</strong> (not the candidate model). It triggers alarm A1 if the deployed model&#39;s performance falls below an absolute floor.</p>
-<p>In many cases, P_PMS is set equal to P_fail, as the same safety rationale applies to both candidate and deployed models.</p>
+<p>In this proof-of-concept, P_PMS = P_fail, as the same safety rationale applies to both candidate and deployed models.</p>
 <h3>delta -- PMS regression margin</h3>
 <p>delta defines the maximum acceptable regression of the released model from its performance at the time of release. It triggers alarm A2.</p>
 <pre><code>regression = release_baseline_metric - current_released_metric
@@ -180,70 +180,82 @@ IF regression &gt; delta THEN → A2 alarm
 <th>Parameter</th>
 <th>Symbol</th>
 <th>Value</th>
-<th>Clinical justification</th>
+<th>Decision / Clinical justification</th>
 </tr>
 </thead>
 <tbody><tr>
+<td>Fixed performance reference</td>
+<td>P^ref</td>
+<td>Sens 0.723, Spec 0.933, AUC 0.922</td>
+<td>Baseline locked at iteration 0</td>
+</tr>
+<tr>
 <td>Critical safety floor</td>
-<td>P_fail</td>
-<td>Sens. &lt; 0.65</td>
-<td>Unacceptable miss rate below this level</td>
+<td>P^fail</td>
+<td>Sens &lt; 0.65</td>
+<td>P1 REJECT -- unacceptable miss rate below this level</td>
 </tr>
 <tr>
 <td>Performance buffer (sensitivity)</td>
 <td>R_G(sens)</td>
-<td>Sens. &lt; 0.66</td>
-<td>1 pp above P_fail; early warning zone</td>
+<td>0.66 &lt;= Sens</td>
+<td>P2 CLINICAL REVIEW -- 1 pp above P^fail; early warning zone</td>
 </tr>
 <tr>
 <td>Performance buffer (specificity)</td>
 <td>R_G(spec)</td>
-<td>Spec. &lt; 0.60</td>
-<td>Minimum acceptable specificity for ICU</td>
+<td>0.60 &lt;= Spec</td>
+<td>P2 CLINICAL REVIEW -- minimum acceptable specificity for ICU</td>
 </tr>
 <tr>
-<td>Gold standard tolerance</td>
+<td>Fixed performance reference tolerance</td>
 <td>tau</td>
-<td>0.015</td>
-<td>Derived from model variability on D_G</td>
+<td>0.015 (sensitivity)</td>
+<td>P2 CLINICAL REVIEW -- regression from P^ref</td>
 </tr>
 <tr>
-<td>Minor drift lower bound</td>
-<td>theta_minor,low</td>
-<td>0.30</td>
-<td>Below this, drift negligible</td>
-</tr>
-<tr>
-<td>Minor drift upper bound</td>
-<td>theta_minor,high</td>
-<td>0.70</td>
-<td>Above this, escalate to major</td>
+<td>Minor drift range</td>
+<td>S^minor_D</td>
+<td>0.30 &lt;= S_D &lt;= 0.70</td>
+<td>P3 CONDITIONAL APPROVAL -- minor distributional shift</td>
 </tr>
 <tr>
 <td>Major drift threshold</td>
-<td>theta_major</td>
-<td>0.90</td>
-<td>Severe shift; triggers A3</td>
+<td>S^major_D</td>
+<td>S_D &gt; 0.90</td>
+<td>A3 ALARM -- severe shift</td>
 </tr>
 <tr>
 <td>PMS safety floor</td>
-<td>P_PMS</td>
-<td>Sens. 0.65</td>
-<td>Aligned with P_fail</td>
+<td>P^PMS</td>
+<td>Sens 0.65 (= P^fail)</td>
+<td>A1 ALARM -- released model below safety floor</td>
 </tr>
 <tr>
 <td>PMS regression margin</td>
-<td>delta</td>
+<td>tau (PMS)</td>
 <td>0.020--0.030</td>
-<td>Clinically meaningful regression</td>
+<td>A2 ALARM -- clinically meaningful regression</td>
+</tr>
+<tr>
+<td>NPV floor</td>
+<td>NPV</td>
+<td>&gt;= 0.90</td>
+<td>Safety constraint on negative predictive value</td>
+</tr>
+<tr>
+<td>FNR ceiling</td>
+<td>FNR</td>
+<td>&lt;= 0.35</td>
+<td>Safety constraint on false negative rate</td>
 </tr>
 </tbody></table>
 <h2>Threshold dependencies</h2>
 <p>The thresholds interact with each other through the CDM priority hierarchy. It is essential that they are internally consistent:</p>
-<pre><code>P_fail &lt; R_G         (buffer zone must exist above safety floor)
+<pre><code>P^fail &lt; R_G         (buffer zone must exist above safety floor)
 tau &gt; 0              (zero tolerance is impractical)
-theta_minor,low &lt; theta_minor,high &lt; theta_major
-P_PMS &lt;= P_fail      (PMS floor should not be above iterative floor)
+S^minor_D,low &lt; S^minor_D,high &lt; S^major_D
+P^PMS = P^fail       (PMS floor equals iterative floor in this proof-of-concept)
 </code></pre>
 <p>Violating these constraints will produce incoherent CDM behaviour.</p>
 <h2>Documenting thresholds</h2>
@@ -257,7 +269,7 @@ P_PMS &lt;= P_fail      (PMS floor should not be above iterative floor)
 <li>Source (literature, expert panel, regulatory requirement)</li>
 </ol>
 <h3>Source</h3>
-<p>Manuscript Section II-B-3 (threshold definitions and CDM integration), Tables VI--VII (decision hierarchy and sepsis threshold values). Supplementary S2.3 (standalone threshold specification template). ISO 14971:2019 requirements are referenced throughout Section II-A.</p>
+<p>Manuscript Section II-B-3 (threshold definitions and CDM integration), Tables III, IV, and VII (decision categories, priority hierarchy, and sepsis threshold values). Supplementary S2.3 (standalone threshold specification template). ISO 14971:2019 requirements are referenced throughout Section II-A.</p>
 
 
       <div class="guide-nav-footer">

@@ -11,7 +11,7 @@ This page defines the foundational terminology and architectural principles of A
 
 ## The three modules
 
-### DARM -- Dataset and Review Management
+### DARM -- Dataset Assimilation and Retraining Module
 
 DARM manages the lifecycle of three dataset splits that feed the iterative governance loop:
 
@@ -29,7 +29,7 @@ D_T,k+1 = D_T,k ∪ D_D,k
 
 This means new data always enters the training pool regardless of the CDM decision. The model is always retrained on the full accumulated dataset.
 
-> **Sepsis example:** In the sepsis case study, the golden dataset D_G consisted of 813 samples (20% hold-out) from PhysioNet Hospital A. The drifting dataset D_D,k contained 5,000 synthetic samples per iteration, generated with controlled corruption levels ranging from 0% (clean) to 80% label flip with Gaussian noise. The training set grew from 3,254 samples at k=0 to 53,254 at k=10.
+> **Sepsis example:** In the sepsis case study, the golden dataset D_G consisted of 4,067 patients (20% hold-out from 20,336) from PhysioNet Hospital A, with 202 features. 34 features were monitored for drift. The training set grew from 8,134 samples at k=0 to 48,994 at k=10.
 
 ### MMM -- Model Monitoring Metrics
 
@@ -51,14 +51,13 @@ The decision and alarm channels are **independent**. This means APPROVE + ALARM 
 
 ## Decision categories
 
-AEGIS defines five decision categories arranged in a priority hierarchy:
+AEGIS defines four deployment decision categories arranged in a priority hierarchy:
 
-| Priority | Category | Badge | Meaning |
+| Priority | Category | Badge | Trigger |
 |----------|----------|-------|---------|
-| P1 | REJECT | `badge-reject` | Critical safety floor violated |
-| P2 | REJECT | `badge-reject` | Major drift with performance degradation |
-| P3 | CONDITIONAL APPROVAL | `badge-cond` | Performance in buffer zone |
-| P3.5 | CLINICAL REVIEW | `badge-review` | Minor drift or borderline metrics requiring human assessment |
+| P1 | REJECT | `badge-reject` | Deployment safety performance floor violated (P_G,k < P^fail) |
+| P2 | CLINICAL REVIEW | `badge-review` | Performance buffer / regression from fixed performance reference (R_G threshold) |
+| P3 | CONDITIONAL APPROVAL | `badge-cond` | Minor drift / TAI (tolerable adaptive improvement) |
 | P4 | APPROVE | `badge-approve` | All checks passed |
 
 The three alarm conditions (A1, A2, A3) operate independently alongside any decision:
@@ -69,19 +68,21 @@ The three alarm conditions (A1, A2, A3) operate independently alongside any deci
 | A2 | Released model regressed > delta from baseline | Performance regression |
 | A3 | Drift score > theta_major | Severe covariate drift |
 
-## Gold standard
+## Fixed performance reference
 
-The gold standard is the performance baseline established at the first APPROVE decision (typically iteration 0). All subsequent iterations are compared against this baseline via the gold standard tolerance tau.
+The fixed performance reference (P^ref) is the performance of the first fully approved model on the Golden dataset. P^ref is fixed at the first APPROVE and never updated. It serves as a stable anchor for detecting long-term regression.
+
+In contrast, the most recently fully approved released model performance on the Golden set (P^rel_G) IS updated with each subsequent APPROVE decision. This allows the system to detect regression relative to the current deployed model.
 
 ```python
-# Gold standard comparison
-deviation = gold_metric - current_metric
+# Fixed performance reference comparison
+deviation = P_ref - current_metric
 within_tolerance = (deviation <= tau)
 ```
 
-The gold standard is locked once set and should never be updated without a formal change control process. The dataset ID (hash or version tag) must be recorded.
+The fixed performance reference is locked once set and should never be updated without a formal change control process. The dataset ID (hash or version tag) must be recorded.
 
-> **Sepsis example:** The gold standard was set at iteration 0 with sensitivity = 0.890, specificity = 0.798, ROC-AUC = 0.920, balanced accuracy = 0.844, and MLcps = 0.876. The gold standard tolerance was tau = 0.015 for sensitivity. Throughout iterations 1-6, all metrics remained within tolerance of this baseline.
+> **Sepsis example:** The fixed performance reference was set at iteration 0 with sensitivity = 0.723, specificity = 0.933, AUC = 0.922, and MLcps = 0.721. The fixed performance reference tolerance was tau = 0.015 for sensitivity. Throughout iterations 1-6, all metrics remained within tolerance of this baseline.
 
 ## Two-tier threshold architecture
 
@@ -93,19 +94,19 @@ These apply to the **candidate model** at each retraining iteration:
 
 | Threshold | Symbol | Function |
 |-----------|--------|----------|
-| Critical safety floor | P_fail | Absolute minimum performance -- violation triggers immediate REJECT |
-| Performance buffer | R_G | Zone between P_fail and full approval -- triggers CONDITIONAL APPROVAL |
-| Gold standard tolerance | tau | Maximum acceptable deviation from gold standard baseline |
-| Minor drift bounds | theta_minor,low / theta_minor,high | Drift severity classification |
-| Major drift threshold | theta_major | Severe drift -- triggers REJECT at P2 if combined with degradation |
+| Deployment safety performance floor | P_fail | Absolute minimum performance -- violation triggers immediate REJECT |
+| Performance buffer | R_G | Performance thresholds buffer zone for CLINICAL REVIEW |
+| Fixed performance reference tolerance | tau | Maximum acceptable deviation from fixed performance reference (P^ref) |
+| Minor drift bounds | S^minor_D | Range for minor drift classification |
+| Major drift bounds | S^major_D | Range for major drift classification |
 
 ### Tier 2: Post-market surveillance (PMS) thresholds
 
-These apply to the **currently released model** and trigger alarms independently:
+These apply to the **currently released model** and trigger PMS ALARM independently:
 
 | Threshold | Symbol | Function |
 |-----------|--------|----------|
-| PMS safety floor | P_PMS | Minimum acceptable performance for the deployed model |
+| PMS safety performance floor | P^PMS | Minimum acceptable performance for the deployed model |
 | Regression margin | delta | Maximum regression from performance at time of release |
 
 ## Composite decision output
@@ -139,19 +140,22 @@ The following symbols are used throughout this guide and the manuscript:
 | D_T,k | Training dataset at iteration k |
 | D_G | Golden (reference) dataset |
 | D_D,k | Drifting (new) dataset at iteration k |
-| P_fail | Critical safety floor threshold |
-| R_G | Performance buffer threshold (gold standard region) |
-| tau | Gold standard tolerance |
-| theta_minor,low | Minor drift lower bound |
-| theta_minor,high | Minor drift upper bound |
-| theta_major | Major drift threshold |
-| P_PMS | PMS safety floor for released model |
+| P_fail | Deployment safety performance floor |
+| P^ref | Fixed performance reference (performance of first fully approved model on Golden set, never updated) |
+| P^rel_G | Most recently fully approved released model performance on Golden set (updated with each APPROVE) |
+| P^rel_D | Most recently fully approved released model performance on Drifting set |
+| R_G | Performance thresholds buffer zone for CLINICAL REVIEW |
+| tau | Fixed performance reference tolerance |
+| S_D | Bonferroni-corrected KS drift score |
+| S^minor_D | Range for minor drift classification |
+| S^major_D | Range for major drift classification |
+| P^PMS | PMS safety performance floor for released model |
 | delta | PMS regression margin |
-| MLcps | Multi-criteria Likert composite performance score |
+| MLcps | ML Cumulative Performance Score |
 | K | Number of features monitored for drift |
 | alpha | Significance level for drift test |
 | alpha' | Bonferroni-corrected significance (alpha / K) |
 
 ### Source
 
-Manuscript Section II-B. Module definitions appear in Section II-B-1 (DARM), II-B-2 (MMM), and II-B-3 (CDM). The notation table corresponds to Table XIII in the manuscript. The two-tier threshold architecture is formally defined in Section II-B-3. Decision categories and alarm conditions are specified in Tables III and VI.
+Manuscript Section II-B. Module definitions appear in Section II-B-1 (DARM), II-B-2 (MMM), and II-B-3 (CDM). The two-tier threshold architecture is formally defined in Section II-B-3. Decision categories and alarm conditions are specified in Tables III and IV.

@@ -21,34 +21,36 @@ The audit trail serves three critical functions:
 
 Without a complete audit trail, the iterative governance loop cannot demonstrate compliance with post-market surveillance obligations. Regulators expect to see the full history of model versions, their performance evaluations, and the decisions made at each step.
 
-> **Sepsis example:** The sepsis case study produced 11 audit trail entries (k = 0 through k = 10), documenting the complete lifecycle from initial deployment through catastrophic failure. The audit trail showed a clear progression: five consecutive APPROVE decisions (k = 0--4), one CLINICAL REVIEW (k = 5), another APPROVE (k = 6), two CONDITIONAL APPROVALs (k = 7--8), a REJECT (k = 9), and a REJECT + ALARM (k = 10). This documented trajectory would be essential for regulatory review, demonstrating that the framework correctly escalated its response as data quality degraded.
+> **Sepsis example:** The sepsis case study produced 11 audit trail entries (k = 0 through k = 10), documenting the complete lifecycle from initial deployment through catastrophic failure. The audit trail showed the following progression per Table VIII: six consecutive APPROVE decisions (k = 0--5), one CONDITIONAL APPROVAL (k = 6, cross-site drift), one CLINICAL REVIEW (k = 7, regression from P^ref), one APPROVE + ALARM (k = 8, extreme drift but small batch did not corrupt the model), one APPROVE (k = 9, recovery), and one REJECT + ALARM (k = 10, catastrophic corruption). This documented trajectory would be essential for regulatory review, demonstrating that the framework correctly escalated its response as data quality degraded.
 
-## 11 required log fields
+## Required log fields
 
-Every iteration must log the following fields. These are derived from the CDM specification (Manuscript Section II-B-3) and Supplementary S1.4.
+Every iteration must log the following fields. These are derived from the CDM specification (Manuscript Section II-B-3) and Supplementary S3.6.3.
 
 | # | Field | Type | Description |
 |---|-------|------|-------------|
-| 1 | `iteration` | integer | Iteration index k |
-| 2 | `timestamp` | string (ISO 8601) | When the CDM evaluation was executed |
-| 3 | `dataset_sizes` | object | Sizes of D_T,k, D_G, and D_D,k |
-| 4 | `metrics` | object | All computed metric values with names, values, thresholds, and pass/fail |
-| 5 | `mlcps` | float | MLcps composite performance score |
-| 6 | `drift_score` | float | Proportion of features with significant drift |
-| 7 | `drift_details` | object | Per-feature p-values from KS tests |
-| 8 | `cdm_decision` | string | Decision category (APPROVE / CONDITIONAL APPROVAL / CLINICAL REVIEW / REJECT) |
-| 9 | `alarm_state` | object | Alarm flag (true/false) and list of triggered conditions (A1/A2/A3) |
-| 10 | `gold_standard_comparison` | object | Per-metric deviation from gold standard and within-tolerance flag |
-| 11 | `model_version` | string | Model hash, version tag, or unique identifier |
+| 1 | `timestamp` | string (ISO 8601) | When the CDM evaluation was executed |
+| 2 | `iteration_id` | integer | Iteration index k |
+| 3 | `model_version` | string | Model hash, version tag, or unique identifier |
+| 4 | `dataset_hash` | string | SHA-256 hash of D_D,k for integrity verification |
+| 5 | `decision` | string | Decision category (APPROVE / CONDITIONAL APPROVAL / CLINICAL REVIEW / REJECT) |
+| 6 | `trigger_reason` | string | Priority level and condition that triggered the decision |
+| 7 | `metrics` | object | All computed metric values with names, values, thresholds, and pass/fail |
+| 8 | `thresholds` | object | P_fail, R_G, tau values used for this evaluation |
+| 9 | `drift_results` | object | Drift score, method, per-feature p-values from KS tests |
+| 10 | `tai_scores` | object | MLcps and other composite scores |
+| 11 | `gold_comparison` | object | Per-metric deviation from gold standard and within-tolerance flag |
+| 12 | `confidence` | object | Confidence intervals or uncertainty estimates |
+| 13 | `reviewer` | string | Operator or system identifier responsible for the evaluation |
 
 Additional recommended (but not mandatory) fields:
 
 | Field | When to include |
 |-------|----------------|
-| `operator_id` | Always (identifies the responsible person) |
+| `alarm_state` | Object with alarm flag (true/false) and list of triggered conditions (A1/A2/A3) |
 | `review_notes` | When decision is CLINICAL REVIEW (human assessment required) |
 | `capa_reference` | When decision is REJECT or alarm is triggered |
-| `data_hash` | SHA-256 hash of D_D,k for integrity verification |
+| `dataset_sizes` | Sizes of D_T,k, D_G, and D_D,k |
 
 ## Recommended JSON format
 
@@ -60,7 +62,7 @@ AEGIS recommends JSON as the log format for machine-readability and interoperabi
   "timestamp": "2026-03-15T14:32:18Z",
   "dataset_sizes": {
     "D_T_k": 38254,
-    "D_G": 813,
+    "D_G": 4067,
     "D_D_k": 5000
   },
   "metrics": {
@@ -116,7 +118,7 @@ AEGIS recommends JSON as the log format for machine-readability and interoperabi
   },
   "gold_standard_comparison": {
     "sensitivity": {
-      "gold": 0.890,
+      "gold": 0.723,
       "current": 0.653,
       "deviation": 0.237,
       "within_tolerance": false
@@ -181,4 +183,4 @@ The link between audit trail and CAPA should be bidirectional:
 
 ### Source
 
-Manuscript Section II-B-3 (CDM specification and logging requirements). The 11 required log fields are specified in Supplementary S1.4 and S3.4. Retention requirements are derived from the regulatory frameworks discussed in Section II-A (Table I). The JSON format is a recommended implementation approach consistent with the reference Python implementation in Supplementary S3.3.
+Manuscript Section II-B-3 (CDM specification and logging requirements). The required log fields are specified in Supplementary S3.6.3. Retention requirements are derived from the regulatory frameworks discussed in Section II-A (Table I). The JSON format is a recommended implementation approach consistent with the reference Python implementation in Supplementary S3.3.

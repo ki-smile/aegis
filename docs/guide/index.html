@@ -55,7 +55,7 @@
 <li>A deterministic, auditable decision engine with priority-ordered logic</li>
 <li>Full traceability to ISO 14971:2019, FDA PCCP, and EU MDR/AI Act requirements</li>
 </ul>
-<blockquote>**Sepsis example:** In the sepsis prediction case study, AEGIS governed 11 iterations (k = 0 through k = 10) of a Random Forest classifier trained on PhysioNet ICU data. The framework autonomously approved, conditionally approved, flagged for clinical review, or rejected each retrained model version — exercising all five decision categories across the experiment. At iteration 10, a catastrophic data corruption event triggered simultaneous REJECT + ALARM, demonstrating the framework's safety boundaries under extreme conditions.</blockquote>
+<blockquote>**Sepsis example:** In the sepsis prediction case study, AEGIS governed 11 iterations (k = 0 through k = 10) of a Random Forest classifier trained on 20,336 patients from Hospital A of the PhysioNet Sepsis Challenge, with 4,067 reserved as a fixed performance reference (Golden evaluation set). The framework autonomously issued 8 APPROVE decisions (iterations 0--5 and 8--9), 1 CONDITIONAL APPROVAL (iteration 6), 1 CLINICAL REVIEW (iteration 7), and 1 REJECT (iteration 10) — exercising all four deployment decision categories across the experiment. ALARM was co-issued at iterations 8 and 10. At iteration 10, sensitivity dropped to 0.428 (below the 0.65 threshold), triggering simultaneous REJECT + ALARM and demonstrating the framework's safety boundaries under extreme conditions.</blockquote>
 <h2>When to use AEGIS</h2>
 <p>AEGIS is designed for medical AI systems that meet <strong>all three</strong> of the following criteria:</p>
 <table>
@@ -85,8 +85,8 @@
 ┌──────────┐     ┌──────────┐     ┌──────────┐
 │   DARM   │ ──&gt; │   MMM    │ ──&gt; │   CDM    │
 │ Dataset  │     │ Model    │     │ Clinical │
-│ &amp; Review │     │ Monitor  │     │ Decision │
-│ Mgmt     │     │ Metrics  │     │ Module   │
+│ Assimilat.│     │ Monitor  │     │ Decision │
+│ &amp; Retrain│     │ Metrics  │     │ Module   │
 └──────────┘     └──────────┘     └──────────┘
      │                                  │
      │    ┌────────────────────────┐    │
@@ -107,7 +107,7 @@
 <tbody><tr>
 <td>1</td>
 <td><a href="01-concepts.html">Core concepts</a></td>
-<td>DARM, MMM, CDM definitions; gold standard; notation</td>
+<td>DARM, MMM, CDM definitions; fixed performance reference; notation</td>
 </tr>
 <tr>
 <td>2</td>
@@ -215,7 +215,7 @@
 </ol>
 <p>Then return to the remaining pages as you move toward deployment.</p>
 <h3>Source</h3>
-<p>Manuscript Sections I--II. The overall AEGIS architecture is introduced in Section I (Introduction) and formally defined in Section II (Methods). The three-module pipeline (DARM, MMM, CDM) is described in Section II-B. The iterative governance loop is depicted in Figure 1 of the manuscript.</p>
+<p>Manuscript Sections I--II. The overall AEGIS infrastructure is introduced in Section I (Introduction) and formally defined in Section II (Methods). The three-module pipeline (DARM, MMM, CDM) is described in Section II-B. The DARM architecture is depicted in Figure 1 and the overall AEGIS infrastructure in Figure 4 of the manuscript.</p>
 
 
       <div class="guide-nav-footer">
