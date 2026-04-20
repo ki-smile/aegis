@@ -9,7 +9,7 @@
 
 AEGIS provides a structured, regulatory-aligned framework for governing adaptive medical AI systems through iterative retraining cycles. It combines dataset management (DARM), performance and drift monitoring (MMM), and rule-based clinical decision logic (CDM) to produce traceable, auditable governance decisions.
 
-## Quick start 
+## Quick start
 
 ```bash
 git clone https://github.com/ki-smile/aegis.git
