@@ -117,8 +117,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9611774238640618,
                 "global_bin_nsd": 0.7240170178630392
-            },
-            "subject_name": "BraTS-GLI-02829-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -237,8 +236,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9560637204522097,
                 "global_bin_nsd": 0.6596979964824179
-            },
-            "subject_name": "BraTS-GLI-02794-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -357,8 +355,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9420877348965475,
                 "global_bin_nsd": 0.6240620417932253
-            },
-            "subject_name": "BraTS-GLI-02970-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -478,8 +475,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.975701620990485,
                 "global_bin_nsd": 0.778217526479734
-            },
-            "subject_name": "BraTS-GLI-02194-106.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -594,8 +590,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.904635761589404,
                 "global_bin_nsd": 0.47325889864380233
-            },
-            "subject_name": "BraTS-GLI-02851-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -710,8 +705,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.8060752040679781,
                 "global_bin_nsd": 0.3429844160892136
-            },
-            "subject_name": "BraTS-GLI-02915-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -830,8 +824,7 @@
                 "sq_nsd_std": 0.1029150452132302,
                 "global_bin_dsc": 0.9719979135441358,
                 "global_bin_nsd": 0.7676314822215078
-            },
-            "subject_name": "BraTS-GLI-02093-102.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -952,8 +945,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9186621753040831,
                 "global_bin_nsd": 0.4183966368122147
-            },
-            "subject_name": "BraTS-GLI-02172-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -1072,8 +1064,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9573521476055432,
                 "global_bin_nsd": 0.6395673338150933
-            },
-            "subject_name": "BraTS-GLI-02096-103.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -1188,8 +1179,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.8744650144321688,
                 "global_bin_nsd": 0.2812346872985171
-            },
-            "subject_name": "BraTS-GLI-02218-103.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -1310,8 +1300,7 @@
                 "sq_nsd_std": 0.11677401284846689,
                 "global_bin_dsc": 0.9410437355642836,
                 "global_bin_nsd": 0.6841908974689687
-            },
-            "subject_name": "BraTS-GLI-02111-105.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -1427,8 +1416,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.7221155000600312,
                 "global_bin_nsd": 0.17398848582411003
-            },
-            "subject_name": "BraTS-GLI-02224-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -1549,8 +1537,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9051778626643477,
                 "global_bin_nsd": 0.5468894531720998
-            },
-            "subject_name": "BraTS-GLI-02921-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -1670,8 +1657,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.8684495966375161,
                 "global_bin_nsd": 0.439206534698715
-            },
-            "subject_name": "BraTS-GLI-00046-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -1790,8 +1776,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.7063034255970495,
                 "global_bin_nsd": 0.29286664044213695
-            },
-            "subject_name": "BraTS-GLI-02384-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -1908,8 +1893,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.8701236244306769,
                 "global_bin_nsd": 0.47924721876009785
-            },
-            "subject_name": "BraTS-GLI-02131-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -2029,8 +2013,7 @@
                 "sq_nsd_std": 0.13343374300285976,
                 "global_bin_dsc": 0.9184939133247492,
                 "global_bin_nsd": 0.5962860356761039
-            },
-            "subject_name": "BraTS-GLI-00060-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -2145,8 +2128,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9634402532207011,
                 "global_bin_nsd": 0.601212176336152
-            },
-            "subject_name": "BraTS-GLI-02790-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -2265,8 +2247,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9317574222597439,
                 "global_bin_nsd": 0.5788782052751447
-            },
-            "subject_name": "BraTS-GLI-02761-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -2380,8 +2361,7 @@
                 "sq_nsd_std": NaN,
                 "global_bin_dsc": 0.6212018906144497,
                 "global_bin_nsd": 0.4564952203517644
-            },
-            "subject_name": "BraTS-GLI-02623-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -2498,8 +2478,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9010079693444034,
                 "global_bin_nsd": 0.6524543690186041
-            },
-            "subject_name": "BraTS-GLI-02068-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -2618,8 +2597,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9767328057498949,
                 "global_bin_nsd": 0.7825584542290286
-            },
-            "subject_name": "BraTS-GLI-02147-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -2738,8 +2716,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9467656729099708,
                 "global_bin_nsd": 0.6455357954260936
-            },
-            "subject_name": "BraTS-GLI-02826-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -2860,8 +2837,7 @@
                 "sq_nsd_std": 0.030925807974506336,
                 "global_bin_dsc": 0.963102988779049,
                 "global_bin_nsd": 0.688698353051728
-            },
-            "subject_name": "BraTS-GLI-02864-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -2982,8 +2958,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9409169943869394,
                 "global_bin_nsd": 0.5843234028252079
-            },
-            "subject_name": "BraTS-GLI-02892-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -3102,8 +3077,7 @@
                 "sq_nsd_std": 0.11540880361876432,
                 "global_bin_dsc": 0.9640121538408216,
                 "global_bin_nsd": 0.7690250826795912
-            },
-            "subject_name": "BraTS-GLI-02062-102.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -3222,8 +3196,7 @@
                 "sq_nsd_std": 0.17660626835713455,
                 "global_bin_dsc": 0.8734314821716983,
                 "global_bin_nsd": 0.4550958324385747
-            },
-            "subject_name": "BraTS-GLI-02912-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -3342,8 +3315,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.887744810248536,
                 "global_bin_nsd": 0.48322898604378606
-            },
-            "subject_name": "BraTS-GLI-03011-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -3458,8 +3430,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9275436574014773,
                 "global_bin_nsd": 0.5379967943529562
-            },
-            "subject_name": "BraTS-GLI-00548-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -3574,8 +3545,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9045584448657367,
                 "global_bin_nsd": 0.6107959309851042
-            },
-            "subject_name": "BraTS-GLI-02254-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -3696,8 +3666,7 @@
                 "sq_nsd_std": 0.047028499464792206,
                 "global_bin_dsc": 0.9091623509811472,
                 "global_bin_nsd": 0.6228471518499681
-            },
-            "subject_name": "BraTS-GLI-02101-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -3817,8 +3786,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9507326780437798,
                 "global_bin_nsd": 0.5293185196759916
-            },
-            "subject_name": "BraTS-GLI-00506-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -3938,8 +3906,7 @@
                 "sq_nsd_std": 0.0653760205000341,
                 "global_bin_dsc": 0.9654344566014136,
                 "global_bin_nsd": 0.7406550372494994
-            },
-            "subject_name": "BraTS-GLI-02724-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -4054,8 +4021,7 @@
                 "sq_nsd_std": 0.04668316280871038,
                 "global_bin_dsc": 0.986539280139999,
                 "global_bin_nsd": 0.8586124876798245
-            },
-            "subject_name": "BraTS-GLI-02230-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -4174,8 +4140,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9855922478643376,
                 "global_bin_nsd": 0.8206288117223599
-            },
-            "subject_name": "BraTS-GLI-02169-102.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -4294,8 +4259,7 @@
                 "sq_nsd_std": 0.052114026065935515,
                 "global_bin_dsc": 0.9736786726021853,
                 "global_bin_nsd": 0.7402727735976591
-            },
-            "subject_name": "BraTS-GLI-02819-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -4414,8 +4378,7 @@
                 "sq_nsd_std": 0.0009452303950455709,
                 "global_bin_dsc": 0.9609532538955087,
                 "global_bin_nsd": 0.7485312393906993
-            },
-            "subject_name": "BraTS-GLI-02675-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -4534,8 +4497,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9499466040565496,
                 "global_bin_nsd": 0.7318558024215053
-            },
-            "subject_name": "BraTS-GLI-02129-105.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -4652,8 +4614,7 @@
                 "sq_nsd_std": 0.07220721881124936,
                 "global_bin_dsc": 0.9577693822764581,
                 "global_bin_nsd": 0.6451516327694955
-            },
-            "subject_name": "BraTS-GLI-02191-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -4772,8 +4733,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.8879016779146802,
                 "global_bin_nsd": 0.5071740288409621
-            },
-            "subject_name": "BraTS-GLI-02821-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -4892,8 +4852,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.8895741749229054,
                 "global_bin_nsd": 0.5837707054753893
-            },
-            "subject_name": "BraTS-GLI-02769-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -5012,8 +4971,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9898351737164656,
                 "global_bin_nsd": 0.8791320429246934
-            },
-            "subject_name": "BraTS-GLI-02170-102.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -5132,8 +5090,7 @@
                 "sq_nsd_std": 0.09741562262674425,
                 "global_bin_dsc": 0.973961677638488,
                 "global_bin_nsd": 0.7654206099142962
-            },
-            "subject_name": "BraTS-GLI-03054-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -5248,8 +5205,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.8378976809229693,
                 "global_bin_nsd": 0.4720213358322468
-            },
-            "subject_name": "BraTS-GLI-02877-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -5366,8 +5322,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9556956450618449,
                 "global_bin_nsd": 0.6795226989352878
-            },
-            "subject_name": "BraTS-GLI-02191-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -5482,8 +5437,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9433604130286235,
                 "global_bin_nsd": 0.5898986483718154
-            },
-            "subject_name": "BraTS-GLI-02764-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -5602,8 +5556,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.8746219693474806,
                 "global_bin_nsd": 0.4804609855383441
-            },
-            "subject_name": "BraTS-GLI-02989-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -5718,8 +5671,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.858924238339175,
                 "global_bin_nsd": 0.6191299554757239
-            },
-            "subject_name": "BraTS-GLI-02215-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -5840,8 +5792,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9746903021821386,
                 "global_bin_nsd": 0.707666349370882
-            },
-            "subject_name": "BraTS-GLI-02660-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -5962,8 +5913,7 @@
                 "sq_nsd_std": 0.15620810299810373,
                 "global_bin_dsc": 0.9870926196260938,
                 "global_bin_nsd": 0.8613386282318709
-            },
-            "subject_name": "BraTS-GLI-02119-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -6082,8 +6032,7 @@
                 "sq_nsd_std": 0.13697108948480075,
                 "global_bin_dsc": 0.9539117295802899,
                 "global_bin_nsd": 0.6914789008487154
-            },
-            "subject_name": "BraTS-GLI-02740-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -6198,8 +6147,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.8728223842594198,
                 "global_bin_nsd": 0.31327161529632264
-            },
-            "subject_name": "BraTS-GLI-02994-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -6319,8 +6267,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9701807036587702,
                 "global_bin_nsd": 0.7679361887341689
-            },
-            "subject_name": "BraTS-GLI-02186-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -6439,8 +6386,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.8963491849656473,
                 "global_bin_nsd": 0.6703594714673129
-            },
-            "subject_name": "BraTS-GLI-02083-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -6558,8 +6504,7 @@
                 "sq_nsd_std": 0.11060008848149548,
                 "global_bin_dsc": 0.9075214783595397,
                 "global_bin_nsd": 0.5200878271522469
-            },
-            "subject_name": "BraTS-GLI-02768-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -6680,8 +6625,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9420138837929466,
                 "global_bin_nsd": 0.5203131454087317
-            },
-            "subject_name": "BraTS-GLI-02995-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -6802,8 +6746,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9587534826809823,
                 "global_bin_nsd": 0.5677477250384396
-            },
-            "subject_name": "BraTS-GLI-02868-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -6918,8 +6861,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9245562414661821,
                 "global_bin_nsd": 0.5566658544949195
-            },
-            "subject_name": "BraTS-GLI-00511-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -7040,8 +6982,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9786383765166152,
                 "global_bin_nsd": 0.7632066950444469
-            },
-            "subject_name": "BraTS-GLI-02102-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -7162,8 +7103,7 @@
                 "sq_nsd_std": 0.09577555114345498,
                 "global_bin_dsc": 0.9095600884738265,
                 "global_bin_nsd": 0.505333695196402
-            },
-            "subject_name": "BraTS-GLI-02969-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -7278,8 +7218,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9615128280914048,
                 "global_bin_nsd": 0.5740831877778361
-            },
-            "subject_name": "BraTS-GLI-00033-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -7398,8 +7337,7 @@
                 "sq_nsd_std": 0.01590367202734866,
                 "global_bin_dsc": 0.957474098802434,
                 "global_bin_nsd": 0.7141550253972841
-            },
-            "subject_name": "BraTS-GLI-02129-102.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -7518,8 +7456,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.919150772883002,
                 "global_bin_nsd": 0.4744505474661568
-            },
-            "subject_name": "BraTS-GLI-02863-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -7638,8 +7575,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9812074128727052,
                 "global_bin_nsd": 0.7981668816501495
-            },
-            "subject_name": "BraTS-GLI-02243-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -7760,8 +7696,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.97204343136209,
                 "global_bin_nsd": 0.6899403286546442
-            },
-            "subject_name": "BraTS-GLI-02196-104.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -7880,8 +7815,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.962312512791525,
                 "global_bin_nsd": 0.6736573750990527
-            },
-            "subject_name": "BraTS-GLI-02765-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -7996,8 +7930,7 @@
                 "sq_nsd_std": NaN,
                 "global_bin_dsc": 0.5862360398430425,
                 "global_bin_nsd": 0.15818120086491105
-            },
-            "subject_name": "BraTS-GLI-02751-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -8117,8 +8050,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9829622458857696,
                 "global_bin_nsd": 0.7816823101516228
-            },
-            "subject_name": "BraTS-GLI-02549-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -8237,8 +8169,7 @@
                 "sq_nsd_std": 0.14588121091772205,
                 "global_bin_dsc": 0.9748895570776027,
                 "global_bin_nsd": 0.8108606232430356
-            },
-            "subject_name": "BraTS-GLI-02088-102.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -8357,8 +8288,7 @@
                 "sq_nsd_std": 0.035083564163729215,
                 "global_bin_dsc": 0.9731151592308989,
                 "global_bin_nsd": 0.8139007756095216
-            },
-            "subject_name": "BraTS-GLI-02082-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -8473,8 +8403,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9782626180528217,
                 "global_bin_nsd": 0.7204388917430725
-            },
-            "subject_name": "BraTS-GLI-02241-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -8593,8 +8522,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.928314934077485,
                 "global_bin_nsd": 0.5897172108749329
-            },
-            "subject_name": "BraTS-GLI-02099-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -8713,8 +8641,7 @@
                 "sq_nsd_std": 0.16745641383295518,
                 "global_bin_dsc": 0.957708436989125,
                 "global_bin_nsd": 0.670860552337214
-            },
-            "subject_name": "BraTS-GLI-02777-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -8833,8 +8760,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9615414753404692,
                 "global_bin_nsd": 0.6442705069661575
-            },
-            "subject_name": "BraTS-GLI-02799-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -8953,8 +8879,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9178895743131921,
                 "global_bin_nsd": 0.5031196907570165
-            },
-            "subject_name": "BraTS-GLI-03025-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -9075,8 +9000,7 @@
                 "sq_nsd_std": 0.12007171715009801,
                 "global_bin_dsc": 0.9156767316575884,
                 "global_bin_nsd": 0.5746295903251002
-            },
-            "subject_name": "BraTS-GLI-02840-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -9197,8 +9121,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9811929571924772,
                 "global_bin_nsd": 0.7980048662452695
-            },
-            "subject_name": "BraTS-GLI-03051-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -9315,8 +9238,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9640395805958543,
                 "global_bin_nsd": 0.7524449789866186
-            },
-            "subject_name": "BraTS-GLI-02149-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -9437,8 +9359,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9505224478686244,
                 "global_bin_nsd": 0.7463538456713579
-            },
-            "subject_name": "BraTS-GLI-02375-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -9559,8 +9480,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9078901181762633,
                 "global_bin_nsd": 0.5229509954573893
-            },
-            "subject_name": "BraTS-GLI-00080-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -9681,8 +9601,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9609922287647407,
                 "global_bin_nsd": 0.6904297891097183
-            },
-            "subject_name": "BraTS-GLI-02997-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -9801,8 +9720,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9764249898870168,
                 "global_bin_nsd": 0.7741745394889299
-            },
-            "subject_name": "BraTS-GLI-02743-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -9922,8 +9840,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9716491974903786,
                 "global_bin_nsd": 0.77897276491878
-            },
-            "subject_name": "BraTS-GLI-02132-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -10044,8 +9961,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9655815677311755,
                 "global_bin_nsd": 0.6650058267920653
-            },
-            "subject_name": "BraTS-GLI-02290-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -10164,8 +10080,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.8605988498909379,
                 "global_bin_nsd": 0.3870541052212037
-            },
-            "subject_name": "BraTS-GLI-02993-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -10282,8 +10197,7 @@
                 "sq_nsd_std": 0.003428683460233506,
                 "global_bin_dsc": 0.9693145006954882,
                 "global_bin_nsd": 0.7786638958695492
-            },
-            "subject_name": "BraTS-GLI-02092-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -10402,8 +10316,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9579702195949378,
                 "global_bin_nsd": 0.6887086635475531
-            },
-            "subject_name": "BraTS-GLI-02801-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -10522,8 +10435,7 @@
                 "sq_nsd_std": 0.2411519852523969,
                 "global_bin_dsc": 0.9573515838601258,
                 "global_bin_nsd": 0.7261831421863087
-            },
-            "subject_name": "BraTS-GLI-02609-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -10644,8 +10556,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.968302761540012,
                 "global_bin_nsd": 0.7527471409487917
-            },
-            "subject_name": "BraTS-GLI-00463-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -10765,8 +10676,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9714335684719874,
                 "global_bin_nsd": 0.77906413776142
-            },
-            "subject_name": "BraTS-GLI-02197-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -10886,8 +10796,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.933607725186006,
                 "global_bin_nsd": 0.5540911365387764
-            },
-            "subject_name": "BraTS-GLI-02124-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -11004,8 +10913,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9406951630899327,
                 "global_bin_nsd": 0.6638974484104853
-            },
-            "subject_name": "BraTS-GLI-02651-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -11124,8 +11032,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.917947141353411,
                 "global_bin_nsd": 0.4389516305029013
-            },
-            "subject_name": "BraTS-GLI-02900-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -11244,8 +11151,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.8345155292335239,
                 "global_bin_nsd": 0.3654175123652365
-            },
-            "subject_name": "BraTS-GLI-02968-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -11360,8 +11266,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9818877114210156,
                 "global_bin_nsd": 0.7408062609744995
-            },
-            "subject_name": "BraTS-GLI-02249-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -11482,8 +11387,7 @@
                 "sq_nsd_std": 0.24255469301143745,
                 "global_bin_dsc": 0.9753230224983283,
                 "global_bin_nsd": 0.8013265063168344
-            },
-            "subject_name": "BraTS-GLI-02087-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -11600,8 +11504,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9535533766854462,
                 "global_bin_nsd": 0.6095727487725355
-            },
-            "subject_name": "BraTS-GLI-03049-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -11721,8 +11624,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9583324425440941,
                 "global_bin_nsd": 0.5775968371786806
-            },
-            "subject_name": "BraTS-GLI-02300-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -11843,8 +11745,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9719167757091588,
                 "global_bin_nsd": 0.7393342920428903
-            },
-            "subject_name": "BraTS-GLI-02060-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -11963,8 +11864,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.8576899928872354,
                 "global_bin_nsd": 0.45268283673971926
-            },
-            "subject_name": "BraTS-GLI-02993-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -12085,8 +11985,7 @@
                 "sq_nsd_std": 0.02321574683646721,
                 "global_bin_dsc": 0.9832471378685409,
                 "global_bin_nsd": 0.8103270585470759
-            },
-            "subject_name": "BraTS-GLI-02087-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -12207,8 +12106,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9797525224825887,
                 "global_bin_nsd": 0.8126528649666965
-            },
-            "subject_name": "BraTS-GLI-02112-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -12327,8 +12225,7 @@
                 "sq_nsd_std": 0.031075822771627216,
                 "global_bin_dsc": 0.974997484656404,
                 "global_bin_nsd": 0.7771240294834476
-            },
-            "subject_name": "BraTS-GLI-02193-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -12447,8 +12344,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9388773024924526,
                 "global_bin_nsd": 0.5002649773695523
-            },
-            "subject_name": "BraTS-GLI-02632-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -12563,8 +12459,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9419256135127871,
                 "global_bin_nsd": 0.6844414367833572
-            },
-            "subject_name": "BraTS-GLI-02247-102.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -12685,8 +12580,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.875352125152809,
                 "global_bin_nsd": 0.45762238406750627
-            },
-            "subject_name": "BraTS-GLI-00517-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -12805,8 +12699,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9546752661137149,
                 "global_bin_nsd": 0.6902695380663931
-            },
-            "subject_name": "BraTS-GLI-02388-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -12923,8 +12816,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.97510609441309,
                 "global_bin_nsd": 0.7850650207671371
-            },
-            "subject_name": "BraTS-GLI-02211-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -13045,8 +12937,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9699484350641564,
                 "global_bin_nsd": 0.6940965874381007
-            },
-            "subject_name": "BraTS-GLI-02514-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -13165,8 +13056,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9726900949608374,
                 "global_bin_nsd": 0.8219720529582637
-            },
-            "subject_name": "BraTS-GLI-02069-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -13285,8 +13175,7 @@
                 "sq_nsd_std": 0.13850192483806312,
                 "global_bin_dsc": 0.9650461303988896,
                 "global_bin_nsd": 0.7335297477797882
-            },
-            "subject_name": "BraTS-GLI-02598-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -13401,8 +13290,7 @@
                 "sq_nsd_std": 0.23631933290423698,
                 "global_bin_dsc": 0.9314222712238148,
                 "global_bin_nsd": 0.587173169894468
-            },
-            "subject_name": "BraTS-GLI-02882-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -13517,8 +13405,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9645119626053262,
                 "global_bin_nsd": 0.7058582133408161
-            },
-            "subject_name": "BraTS-GLI-02780-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -13635,8 +13522,7 @@
                 "sq_nsd_std": 0.10018023845376506,
                 "global_bin_dsc": 0.9409454975068193,
                 "global_bin_nsd": 0.5170966690204277
-            },
-            "subject_name": "BraTS-GLI-02746-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -13751,8 +13637,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.8911073285181947,
                 "global_bin_nsd": 0.4403298366112609
-            },
-            "subject_name": "BraTS-GLI-02871-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -13865,8 +13750,7 @@
                 "sq_nsd_std": 0.10092391028454883,
                 "global_bin_dsc": 0.6828889464147035,
                 "global_bin_nsd": 0.2539547926193889
-            },
-            "subject_name": "BraTS-GLI-02946-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -13985,8 +13869,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9099644596551271,
                 "global_bin_nsd": 0.6364396917828841
-            },
-            "subject_name": "BraTS-GLI-02748-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -14105,8 +13988,7 @@
                 "sq_nsd_std": 0.15426901578370883,
                 "global_bin_dsc": 0.7927788178657394,
                 "global_bin_nsd": 0.35197166777574174
-            },
-            "subject_name": "BraTS-GLI-02745-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -14221,8 +14103,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9356467414454068,
                 "global_bin_nsd": 0.6247678072821594
-            },
-            "subject_name": "BraTS-GLI-02792-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -14342,8 +14223,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9557173430405824,
                 "global_bin_nsd": 0.7101313141942737
-            },
-            "subject_name": "BraTS-GLI-02154-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -14458,8 +14338,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9460799360065482,
                 "global_bin_nsd": 0.4935824143213502
-            },
-            "subject_name": "BraTS-GLI-02873-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -14578,8 +14457,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9240712578752988,
                 "global_bin_nsd": 0.49912649242701446
-            },
-            "subject_name": "BraTS-GLI-02952-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -14694,8 +14572,7 @@
                 "sq_nsd_std": 0.10394384918123611,
                 "global_bin_dsc": 0.9468610149212522,
                 "global_bin_nsd": 0.6984996900278102
-            },
-            "subject_name": "BraTS-GLI-02111-103.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -14816,8 +14693,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9780956381148554,
                 "global_bin_nsd": 0.7985051888101429
-            },
-            "subject_name": "BraTS-GLI-02085-104.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -14932,8 +14808,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.8761479864258762,
                 "global_bin_nsd": 0.349453071935385
-            },
-            "subject_name": "BraTS-GLI-02879-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -15048,8 +14923,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.8746086412022542,
                 "global_bin_nsd": 0.3626595947960215
-            },
-            "subject_name": "BraTS-GLI-02885-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -15168,8 +15042,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9526693900549373,
                 "global_bin_nsd": 0.6151003495039347
-            },
-            "subject_name": "BraTS-GLI-02777-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -15290,8 +15163,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9101748207772608,
                 "global_bin_nsd": 0.47986602907592607
-            },
-            "subject_name": "BraTS-GLI-02326-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -15408,8 +15280,7 @@
                 "sq_nsd_std": 0.08752858477623066,
                 "global_bin_dsc": 0.9416374675689411,
                 "global_bin_nsd": 0.6899785327010509
-            },
-            "subject_name": "BraTS-GLI-02111-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -15528,8 +15399,7 @@
                 "sq_nsd_std": 0.20469094360235018,
                 "global_bin_dsc": 0.7663440413277122,
                 "global_bin_nsd": 0.3045533219212322
-            },
-            "subject_name": "BraTS-GLI-02745-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -15648,8 +15518,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.8869203420610628,
                 "global_bin_nsd": 0.3580941872835011
-            },
-            "subject_name": "BraTS-GLI-03028-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -15768,8 +15637,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9714742735270594,
                 "global_bin_nsd": 0.7879860800045035
-            },
-            "subject_name": "BraTS-GLI-02092-102.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -15890,8 +15758,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9542575259061947,
                 "global_bin_nsd": 0.654675369259074
-            },
-            "subject_name": "BraTS-GLI-02071-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -16006,8 +15873,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9289226412665723,
                 "global_bin_nsd": 0.5260508288457881
-            },
-            "subject_name": "BraTS-GLI-02788-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -16126,8 +15992,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.8966143233185078,
                 "global_bin_nsd": 0.4651761549741745
-            },
-            "subject_name": "BraTS-GLI-02329-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -16248,8 +16113,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9571209610088599,
                 "global_bin_nsd": 0.6938597774054698
-            },
-            "subject_name": "BraTS-GLI-02976-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -16364,8 +16228,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9084360455597914,
                 "global_bin_nsd": 0.5360502628590017
-            },
-            "subject_name": "BraTS-GLI-02980-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -16480,8 +16343,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.953471654148385,
                 "global_bin_nsd": 0.6816015811298308
-            },
-            "subject_name": "BraTS-GLI-02980-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -16600,8 +16462,7 @@
                 "sq_nsd_std": 0.03710850556864553,
                 "global_bin_dsc": 0.9844929797191888,
                 "global_bin_nsd": 0.816278352783437
-            },
-            "subject_name": "BraTS-GLI-02518-103.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -16720,8 +16581,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.8742775656050746,
                 "global_bin_nsd": 0.4259930807789539
-            },
-            "subject_name": "BraTS-GLI-02791-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -16838,8 +16698,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9759976583081276,
                 "global_bin_nsd": 0.7464845834133714
-            },
-            "subject_name": "BraTS-GLI-02238-103.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -16960,8 +16819,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9288999616711384,
                 "global_bin_nsd": 0.5370983365713003
-            },
-            "subject_name": "BraTS-GLI-03008-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -17080,8 +16938,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.827805068904056,
                 "global_bin_nsd": 0.4141358134192694
-            },
-            "subject_name": "BraTS-GLI-02888-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -17196,8 +17053,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.915594253373966,
                 "global_bin_nsd": 0.4624327914199404
-            },
-            "subject_name": "BraTS-GLI-02953-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -17318,8 +17174,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9283381712626996,
                 "global_bin_nsd": 0.5456191761023634
-            },
-            "subject_name": "BraTS-GLI-02393-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -17438,8 +17293,7 @@
                 "sq_nsd_std": 0.27365673039323407,
                 "global_bin_dsc": 0.9814764776712986,
                 "global_bin_nsd": 0.8024622641487902
-            },
-            "subject_name": "BraTS-GLI-02514-105.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -17560,8 +17414,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.958060317250204,
                 "global_bin_nsd": 0.6360547498934721
-            },
-            "subject_name": "BraTS-GLI-02303-102.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -17682,8 +17535,7 @@
                 "sq_nsd_std": 0.01897498561336508,
                 "global_bin_dsc": 0.966278808459637,
                 "global_bin_nsd": 0.774446101565802
-            },
-            "subject_name": "BraTS-GLI-02770-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -17798,8 +17650,7 @@
                 "sq_nsd_std": 0.06536039341349179,
                 "global_bin_dsc": 0.9655749535522902,
                 "global_bin_nsd": 0.7856131563569579
-            },
-            "subject_name": "BraTS-GLI-02859-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -17918,8 +17769,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9748276914072957,
                 "global_bin_nsd": 0.7371018195861914
-            },
-            "subject_name": "BraTS-GLI-02128-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -18039,8 +17889,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9736503438324645,
                 "global_bin_nsd": 0.670421202456364
-            },
-            "subject_name": "BraTS-GLI-02634-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -18159,8 +18008,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9394592366355,
                 "global_bin_nsd": 0.5521465525128066
-            },
-            "subject_name": "BraTS-GLI-02337-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -18277,8 +18125,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9394097222222222,
                 "global_bin_nsd": 0.7199992275340035
-            },
-            "subject_name": "BraTS-GLI-02215-103.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -18398,8 +18245,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9374764943432289,
                 "global_bin_nsd": 0.6548926525814681
-            },
-            "subject_name": "BraTS-GLI-02919-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -18514,8 +18360,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9819195826212107,
                 "global_bin_nsd": 0.8019574565130904
-            },
-            "subject_name": "BraTS-GLI-02655-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -18634,8 +18479,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9170788517271614,
                 "global_bin_nsd": 0.4007280399429358
-            },
-            "subject_name": "BraTS-GLI-02884-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -18756,8 +18600,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.8828008692824997,
                 "global_bin_nsd": 0.431843539198447
-            },
-            "subject_name": "BraTS-GLI-02307-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -18872,8 +18715,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.932470703125,
                 "global_bin_nsd": 0.5580737042939066
-            },
-            "subject_name": "BraTS-GLI-02992-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -18992,8 +18834,7 @@
                 "sq_nsd_std": 0.0682771213271437,
                 "global_bin_dsc": 0.9608307769552465,
                 "global_bin_nsd": 0.7569746060516236
-            },
-            "subject_name": "BraTS-GLI-02270-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -19108,8 +18949,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9677053503076356,
                 "global_bin_nsd": 0.7040433574390456
-            },
-            "subject_name": "BraTS-GLI-02752-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -19230,8 +19070,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9779184147150648,
                 "global_bin_nsd": 0.7939731921506963
-            },
-            "subject_name": "BraTS-GLI-02078-103.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -19350,8 +19189,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.960464062627658,
                 "global_bin_nsd": 0.7364240020383077
-            },
-            "subject_name": "BraTS-GLI-02961-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -19468,8 +19306,7 @@
                 "sq_nsd_std": 0.039068810460031356,
                 "global_bin_dsc": 0.9443265539686703,
                 "global_bin_nsd": 0.6482897924062259
-            },
-            "subject_name": "BraTS-GLI-02131-103.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -19584,8 +19421,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.8386682287139564,
                 "global_bin_nsd": 0.2967149786562856
-            },
-            "subject_name": "BraTS-GLI-02932-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -19706,8 +19542,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.8855978087776292,
                 "global_bin_nsd": 0.594244876266019
-            },
-            "subject_name": "BraTS-GLI-03018-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -19828,8 +19663,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9660965180207697,
                 "global_bin_nsd": 0.7016451737861769
-            },
-            "subject_name": "BraTS-GLI-02164-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -19949,8 +19783,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9366004421129952,
                 "global_bin_nsd": 0.6139406423022737
-            },
-            "subject_name": "BraTS-GLI-02824-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -20069,8 +19902,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9540867530182483,
                 "global_bin_nsd": 0.7399959732363415
-            },
-            "subject_name": "BraTS-GLI-02209-102.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -20185,8 +20017,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.8928884064568087,
                 "global_bin_nsd": 0.5169715718470365
-            },
-            "subject_name": "BraTS-GLI-02779-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -20305,8 +20136,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9681554350491866,
                 "global_bin_nsd": 0.7340216970118312
-            },
-            "subject_name": "BraTS-GLI-02744-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -20426,8 +20256,7 @@
                 "sq_nsd_std": 0.09468446355523608,
                 "global_bin_dsc": 0.9814158083564722,
                 "global_bin_nsd": 0.8410833717985289
-            },
-            "subject_name": "BraTS-GLI-02088-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -20545,8 +20374,7 @@
                 "sq_nsd_std": 0.11516087572961757,
                 "global_bin_dsc": 0.7865142909281689,
                 "global_bin_nsd": 0.3081604350115132
-            },
-            "subject_name": "BraTS-GLI-02912-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -20661,8 +20489,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9150301380517207,
                 "global_bin_nsd": 0.5704592738760021
-            },
-            "subject_name": "BraTS-GLI-02903-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -20781,8 +20608,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9852606980833037,
                 "global_bin_nsd": 0.8145749337352968
-            },
-            "subject_name": "BraTS-GLI-02278-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -20896,8 +20722,7 @@
                 "sq_nsd_std": NaN,
                 "global_bin_dsc": 0.6320185614849188,
                 "global_bin_nsd": 0.4999846145324972
-            },
-            "subject_name": "BraTS-GLI-02861-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -21018,8 +20843,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9601711105573553,
                 "global_bin_nsd": 0.6938561931402404
-            },
-            "subject_name": "BraTS-GLI-02195-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -21134,8 +20958,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9799132910905313,
                 "global_bin_nsd": 0.8345763385609288
-            },
-            "subject_name": "BraTS-GLI-02219-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -21254,8 +21077,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9835920679886686,
                 "global_bin_nsd": 0.8628141263758343
-            },
-            "subject_name": "BraTS-GLI-02063-104.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -21375,8 +21197,7 @@
                 "sq_nsd_std": 0.06208691836008168,
                 "global_bin_dsc": 0.9051978704713117,
                 "global_bin_nsd": 0.535128132777356
-            },
-            "subject_name": "BraTS-GLI-03005-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -21486,8 +21307,7 @@
                 "sq_nsd_std": NaN,
                 "global_bin_dsc": 0.0,
                 "global_bin_nsd": Infinity
-            },
-            "subject_name": "BraTS-GLI-02767-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -21597,8 +21417,7 @@
                 "sq_nsd_std": NaN,
                 "global_bin_dsc": 0.0,
                 "global_bin_nsd": Infinity
-            },
-            "subject_name": "BraTS-GLI-02767-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -21713,8 +21532,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9259537572254335,
                 "global_bin_nsd": 0.551930948066098
-            },
-            "subject_name": "BraTS-GLI-02845-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -21829,8 +21647,7 @@
                 "sq_nsd_std": 0.026730448330674672,
                 "global_bin_dsc": 0.9810038886157422,
                 "global_bin_nsd": 0.8391036248769328
-            },
-            "subject_name": "BraTS-GLI-02092-103.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -21945,8 +21762,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9236400100275758,
                 "global_bin_nsd": 0.5787865935874237
-            },
-            "subject_name": "BraTS-GLI-02902-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -22061,8 +21877,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9314647068877115,
                 "global_bin_nsd": 0.5065984225556459
-            },
-            "subject_name": "BraTS-GLI-02916-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -22183,8 +21998,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.8745891041152414,
                 "global_bin_nsd": 0.5031418702572569
-            },
-            "subject_name": "BraTS-GLI-02608-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -22305,8 +22119,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9596905278642972,
                 "global_bin_nsd": 0.6813836740330631
-            },
-            "subject_name": "BraTS-GLI-02997-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -22425,8 +22238,7 @@
                 "sq_nsd_std": 0.026952932776556082,
                 "global_bin_dsc": 0.9596295167106467,
                 "global_bin_nsd": 0.6683031680802263
-            },
-            "subject_name": "BraTS-GLI-02808-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -22545,8 +22357,7 @@
                 "sq_nsd_std": 0.13928789975083572,
                 "global_bin_dsc": 0.9688700570698726,
                 "global_bin_nsd": 0.8379600656151824
-            },
-            "subject_name": "BraTS-GLI-02112-103.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -22665,8 +22476,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9773201537616694,
                 "global_bin_nsd": 0.8013918009062344
-            },
-            "subject_name": "BraTS-GLI-02809-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -22781,8 +22591,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9675486694120234,
                 "global_bin_nsd": 0.7087494322501208
-            },
-            "subject_name": "BraTS-GLI-02241-102.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -22901,8 +22710,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9274066779038276,
                 "global_bin_nsd": 0.560226815220042
-            },
-            "subject_name": "BraTS-GLI-02817-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -23021,8 +22829,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.919411557343926,
                 "global_bin_nsd": 0.5653941771230453
-            },
-            "subject_name": "BraTS-GLI-00483-100.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -23137,8 +22944,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9358670343465991,
                 "global_bin_nsd": 0.6281248505674345
-            },
-            "subject_name": "BraTS-GLI-02637-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -23259,8 +23065,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.967874952932857,
                 "global_bin_nsd": 0.6535438991178735
-            },
-            "subject_name": "BraTS-GLI-02287-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -23380,8 +23185,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9160895986433013,
                 "global_bin_nsd": 0.5943873989500865
-            },
-            "subject_name": "BraTS-GLI-02103-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -23496,8 +23300,7 @@
                 "sq_nsd_std": 0.04200168088974773,
                 "global_bin_dsc": 0.8984095725324828,
                 "global_bin_nsd": 0.43792225561888687
-            },
-            "subject_name": "BraTS-GLI-00543-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -23612,8 +23415,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.9847274493140706,
                 "global_bin_nsd": 0.8597852741666903
-            },
-            "subject_name": "BraTS-GLI-02219-103.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -23730,8 +23532,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.7858330562021949,
                 "global_bin_nsd": 0.3751366691615668
-            },
-            "subject_name": "BraTS-GLI-02797-101.nii.gz"
+            }
         },
         {
             "snfh": {
@@ -23846,8 +23647,7 @@
                 "sq_nsd_std": 0.0,
                 "global_bin_dsc": 0.8344056891296986,
                 "global_bin_nsd": 0.40737948500328186
-            },
-            "subject_name": "BraTS-GLI-02901-101.nii.gz"
+            }
         }
     ],
     "time": [
