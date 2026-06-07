@@ -3,11 +3,15 @@
 ![Python](https://img.shields.io/badge/python-3.9%2B-blue)
 ![DOI](https://img.shields.io/badge/DOI-10.XXXX%2FPLACEHOLDER-green)
 
-# AEGIS
+# AEGIS: AI/ML Evaluation and Governance Infrastructure for Safety
 
-**An Operational Infrastructure for Post-Market Governance of Adaptive Medical AI Under US and EU Regulations**
+## An Operational Infrastructure for Post-Market Governance of Adaptive Medical AI Under US and EU Regulatory Frameworks
 
-AEGIS provides a structured, regulatory-aligned framework for governing adaptive medical AI systems through iterative retraining cycles. It combines dataset management (DARM), performance and drift monitoring (MMM), and rule-based clinical decision logic (CDM) to produce traceable, auditable governance decisions.
+AEGIS provides a structured, regulatory-aligned infrastructure for governing continuously learning medical AI systems through iterative retraining cycles. 
+It achieves continuous safety oversight through three integrated modules:
+- Dataset Assimilation and Retraining Module (DARM),
+- Model Monitoring Module (MMM), and
+- Conditional Decision Module (CDM).
 
 ## Quick start
 
