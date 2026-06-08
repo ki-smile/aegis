@@ -29,8 +29,8 @@ jupyter notebook notebooks/AEGIS_Sepsis_Physionet_standalone.ipynb
 | Documentation | [ki-smile.github.io/aegis](https://ki-smile.github.io/aegis) |
 | Implementation guide | [Guide](https://ki-smile.github.io/aegis/guide/) |
 | Interactive forms | [Forms](https://ki-smile.github.io/aegis/forms/) |
-| Sepsis example | [examples/sepsis](examples/sepsis/) |
-| Brain tumour example | [examples/brain_tumor](examples/brain_tumor/) |
+| Sepsis example | [Sepsis notebook](notebooks/) |
+| Brain tumour example | [Brain tumour notebook](notebooks/) |
 
 ## Citation
 
